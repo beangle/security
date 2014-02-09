@@ -26,7 +26,7 @@ import org.beangle.security.core.Authentication
  * <p>
  * The security context is stored in a {@link SecurityContextHolder}.
  * </p>
- * 
+ *
  * @author chaostone
  */
 trait SecurityContext extends Serializable {
@@ -34,20 +34,54 @@ trait SecurityContext extends Serializable {
   /**
    * Obtains the currently authenticated principal, or an authentication
    * request token.
-   * 
+   *
    * @return the <code>Authentication</code> or <code>null</code> if no
    *         authentication information is available
    */
-   def authentication:Authentication
+  def authentication: Authentication
 
   /**
    * Changes the currently authenticated principal, or removes the
    * authentication information.
-   * 
+   *
    * @param authentication
    *          the new <code>Authentication</code> token, or <code>null</code> if no further
    *          authentication information
    *          should be stored
    */
-  def authentication_=(authentication:Authentication );
+  def authentication_=(authentication: Authentication);
+}
+
+/**
+ * Base implementation of {@link SecurityContext}.
+ * <p>
+ * Used by default by {@link SecurityContextHolder}.
+ * </p>
+ *
+ * @author chaostone
+ * @version $Id: SecurityContextBean.java 2217 2007-10-27 00:45:30Z $
+ */
+@SerialVersionUID(3146265469090172129L)
+class SecurityContextBean extends SecurityContext {
+
+  var authentication: Authentication = _
+
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case sc: SecurityContext => authentication == sc.authentication
+      case _ => false
+    }
+  }
+
+  override def hashCode(): Int = if (authentication == null) -1 else authentication.hashCode()
+
+  override def toString(): String = {
+    val sb = new StringBuffer()
+    sb.append(super.toString())
+
+    if (authentication == null) sb.append(": Null authentication");
+    else sb.append(": Authentication: ").append(authentication);
+
+    sb.toString()
+  }
 }
