@@ -16,27 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.core
+package org.beangle.security
 
-import java.security.Principal;
-import java.util.Collection;
-
-/**
- * 认证信息
- * 
- * @author chaostone
- */
-trait Authentication extends Principal with Serializable {
-
-  def principal:AnyRef
-
-  def credentials:AnyRef
-
-  def authorites:Iterable[Authority]
-
-  def details:AnyRef
-
-  def authenticated:Boolean
-
-  def authenticated_= (authenticated:Boolean)
-}
+@SerialVersionUID(1521217606839712065L)
+class SecurityException(message:String,cause:Throwable) extends RuntimeException(message,cause) 

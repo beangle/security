@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.core.context
+package org.beangle.security.context
 
-import java.lang.reflect.Constructor
 import org.beangle.commons.lang.Throwables
-import SecurityContextHolder._
-import scala.reflect.{ BeanProperty, BooleanBeanProperty }
 
 /**
  * Associates a given {@link SecurityContext} with the current execution thread.
@@ -58,10 +55,8 @@ object SecurityContextHolder {
    */
   def buildHolder(strategyName: String): SecurityContextHolder = {
     strategyName match {
-      case "threadLocal" =>
-        ThreadLocalHolder.inheritable(false)
-      case "inheritableThreadLocal" =>
-        ThreadLocalHolder.inheritable(true)
+      case "threadLocal" => new ThreadLocalHolder(false)
+      case "inheritableThreadLocal" => new ThreadLocalHolder(true)
       case "global" => GlobalHolder
       case _ => {
         try {
@@ -116,15 +111,9 @@ object GlobalHolder extends SecurityContextHolder {
  * @author chaostone
  * @see java.lang.ThreadLocal
  */
-object ThreadLocalHolder extends SecurityContextHolder {
+class ThreadLocalHolder(inheritable: Boolean) extends SecurityContextHolder {
 
-  private var contexts: ThreadLocal[SecurityContext] = _
-
-  protected[context] def inheritable(enable: Boolean): this.type = {
-    if (enable) contexts = new InheritableThreadLocal[SecurityContext]
-    else contexts = new ThreadLocal[SecurityContext]
-    this
-  }
+  private val contexts = if (inheritable) new ThreadLocal[SecurityContext] else new InheritableThreadLocal[SecurityContext]
 
   def context: SecurityContext = contexts.get
 

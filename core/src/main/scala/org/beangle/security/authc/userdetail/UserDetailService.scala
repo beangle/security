@@ -1,4 +1,4 @@
-package org.beangle.security.core.userdetail
+package org.beangle.security.authc.userdetail
 
 trait UserDetailService {
 

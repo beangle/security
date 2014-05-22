@@ -1,9 +1,9 @@
 
-package org.beangle.security.core.userdetail
+package org.beangle.security.authc.userdetail
 
 import java.io.Serializable
 import java.util.Collection
-import org.beangle.security.core.Authority
+import org.beangle.security.authz.Authority
 
 trait UserDetail extends Serializable {
 

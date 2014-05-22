@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.core
+package org.beangle.security.authz
+
+import java.{lang => jl}
+
+import org.beangle.commons.lang.Assert
 
 /**
  * Represents an authority granted to an {@link Authentication} object.
@@ -40,4 +44,35 @@ trait Authority extends Serializable with Ordered[Authority] {
    *         authority cannot be expressed as a <code>String</code> with sufficient precision).
    */
   def authority:Any
+}
+
+/** Basic concrete implementation of a {@link Authority}. */
+@SerialVersionUID(1L)
+class GrantedAuthority(val role: Any) extends Authority with Serializable {
+
+  Assert.notNull(role, "A granted authority textual representation is required")
+
+  def authority: Any = role
+
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case ga: GrantedAuthority => ga.role == this.role
+      case _ => false
+    }
+  }
+
+  override def hashCode(): Int = role.hashCode
+
+  override def toString(): String = role.toString
+
+  def compare(o: Authority): Int = {
+    if (o != null) {
+      o.authority match {
+        case or: Ordered[_] => or.asInstanceOf[Ordered[Any]] compare role
+        case comp: jl.Comparable[_] => comp.asInstanceOf[jl.Comparable[Any]] compareTo role
+        case _ =>
+          throw new RuntimeException("Cannot compare GrantedAuthority using role:" + role)
+      }
+    } else -1
+  }
 }

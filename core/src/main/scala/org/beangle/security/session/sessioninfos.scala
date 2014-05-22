@@ -1,9 +1,9 @@
-package org.beangle.security.core.session
+package org.beangle.security.session
 
 import java.util.Date
-import org.beangle.security.core.Authentication
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
+import org.beangle.security.authc.AuthenticationInfo
 
 trait Sessioninfo {
 
@@ -36,7 +36,7 @@ trait SessioninfoBuilder {
 
   def getSessioninfoType(): Class[_ <: Sessioninfo]
 
-  def build(auth: Authentication, sessionid: String): Sessioninfo
+  def build(auth: AuthenticationInfo, sessionid: String): Sessioninfo
 }
 
 trait SessionIdAware {
@@ -46,7 +46,7 @@ trait SessionIdAware {
 
 trait SessionRegistry {
 
-  def register(authentication: Authentication, sessionid: String)
+  def register(authentication: AuthenticationInfo, sessionid: String)
 
   def remove(sessionid: String): Option[Sessioninfo]
 
@@ -69,15 +69,15 @@ trait SessionRegistry {
 
 trait SessionController {
 
-  def onRegister(auth: Authentication, sessionId: String, registry: SessionRegistry): Boolean
+  def onRegister(auth: AuthenticationInfo, sessionId: String, registry: SessionRegistry): Boolean
 
   def onLogout(info: Sessioninfo)
 
   def stat()
 
-  def getMaxSessions(auth: Authentication): Int
+  def getMaxSessions(auth: AuthenticationInfo): Int
 
-  def getInactiveInterval(auth: Authentication): Option[Short]
+  def getInactiveInterval(auth: AuthenticationInfo): Option[Short]
 }
 
 @SerialVersionUID(-1110252524091983477L)
@@ -136,7 +136,7 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
 
   def getSessioninfo(sessionid: String): Option[Sessioninfo] = sessionids.get(sessionid)
 
-  def register(auth: Authentication, sessionid: String) {
+  def register(auth: AuthenticationInfo, sessionid: String) {
     val principal = auth.getName
     val existed = getSessioninfo(sessionid) match {
       case Some(existed) => {
@@ -160,12 +160,12 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
       case Some(info) => {
         sessionids.remove(sessionid)
         val principal = info.username
-        logger.debug("Remove session {} for {}", sessionid, principal)
+        debug("Remove session " + sessionid + " for " + principal)
         val sids = principals.get(principal) foreach { sids =>
           sids.remove(sessionid)
           if (sids.isEmpty) {
             principals.remove(principal)
-            logger.debug("Remove principal {} from registry", principal)
+            debug("Remove principal "+principal+" from registry" )
           }
         }
         controller.onLogout(info)

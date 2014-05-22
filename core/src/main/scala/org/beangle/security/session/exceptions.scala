@@ -1,6 +1,6 @@
-package org.beangle.security.core.session
+package org.beangle.security.session
 
-import org.beangle.security.core.AuthenticationException
+import org.beangle.security.authc.AuthenticationException
 
 @SerialVersionUID(-2827989849698493720L)
 class SessionException(msg: String) extends AuthenticationException(msg) {

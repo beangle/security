@@ -1,4 +1,4 @@
-package org.beangle.security.core.session
+package org.beangle.security.session
 
 import org.beangle.commons.event.Event
 

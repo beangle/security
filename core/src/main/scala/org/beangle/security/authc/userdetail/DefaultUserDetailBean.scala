@@ -1,11 +1,10 @@
-package org.beangle.security.core.userdetail
+package org.beangle.security.authc.userdetail
 
 import java.util.Collection
 import org.beangle.commons.lang.Objects
-import scala.reflect.{ BeanProperty, BooleanBeanProperty }
 import scala.collection.JavaConversions._
-import org.beangle.security.core.Authority
-import org.beangle.security.core.authority.GrantedAuthority
+import org.beangle.security.authz.Authority
+import org.beangle.security.authz.GrantedAuthority
 
 @SerialVersionUID(1L)
 class DefaultUserDetailBean(var username: String, var password: String, var enabled: Boolean, var accountExpired: Boolean, var credentialsExpired: Boolean, var accountLocked: Boolean, var authorities: Seq[_ <: Authority]) extends UserDetail {

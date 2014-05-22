@@ -1,11 +1,8 @@
-package org.beangle.security.core.userdetail
+package org.beangle.security.authc.userdetail
 
 import org.beangle.commons.text.i18n.TextResource
 import org.beangle.commons.text.i18n.impl.NullTextResource
-import org.beangle.security.auth.AccountExpiredException
-import org.beangle.security.auth.CredentialsExpiredException
-import org.beangle.security.auth.DisabledException
-import org.beangle.security.auth.LockedException
+import org.beangle.security.authc.{AccountExpiredException, CredentialsExpiredException, DisabledException, LockedException}
 
 trait UserDetailChecker {
 

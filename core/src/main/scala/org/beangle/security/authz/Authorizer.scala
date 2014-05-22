@@ -16,29 +16,16 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.core
+package org.beangle.security.authz
 
-import org.beangle.commons.lang.Strings
-import org.beangle.commons.lang.Throwables
-import org.beangle.security.BeangleSecurityException
+import org.beangle.security.SecurityException
+import org.beangle.security.authc.AuthenticationInfo
 
-/**
-  * 认证异常
-  * 
-  * @author chaostone
-  */
-@SerialVersionUID(-3529782031102169004L)
-class AuthenticationException(message:String,cause:Throwable=null) extends BeangleSecurityException(message,cause) {
+trait Authorizer {
 
-  var  authentication:Authentication=_
+  def isPermitted(auth: AuthenticationInfo, resource: Object): Boolean
+}
 
-  var extraInfo:AnyRef=_
-
-  override  def getMessage() :String = {
-    val msg = super.getMessage()
-    if (null == msg) {
-      Strings.concat("security." + Strings.substringBefore(getClass().getSimpleName(), "Exception"))
-    } else  msg
-  }
+class AccessDeniedException(val resource: Any, message: String, cause: Throwable) extends SecurityException(message, cause) {
 
 }

@@ -1,6 +1,4 @@
-package org.beangle.security.auth
-
-import org.beangle.security.core.AuthenticationException
+package org.beangle.security.authc
 
 class BadCredentialsException(message:String,cause:Throwable) extends AuthenticationException(message,cause)
 

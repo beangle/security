@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.core.context
+package org.beangle.security.context
 
-import org.beangle.security.core.Authentication
+import org.beangle.security.authc.AuthenticationInfo
 
 /**
  * Interface defining the minimum security information associated with the
@@ -38,7 +38,7 @@ trait SecurityContext extends Serializable {
    * @return the <code>Authentication</code> or <code>null</code> if no
    *         authentication information is available
    */
-  def authentication: Authentication
+  def authentication: AuthenticationInfo
 
   /**
    * Changes the currently authenticated principal, or removes the
@@ -49,7 +49,7 @@ trait SecurityContext extends Serializable {
    *          authentication information
    *          should be stored
    */
-  def authentication_=(authentication: Authentication);
+  def authentication_=(authentication: AuthenticationInfo)
 }
 
 /**
@@ -64,7 +64,7 @@ trait SecurityContext extends Serializable {
 @SerialVersionUID(3146265469090172129L)
 class SecurityContextBean extends SecurityContext {
 
-  var authentication: Authentication = _
+  var authentication: AuthenticationInfo = _
 
   override def equals(obj: Any): Boolean = {
     obj match {
