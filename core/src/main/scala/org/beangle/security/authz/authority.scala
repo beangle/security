@@ -18,9 +18,14 @@
  */
 package org.beangle.security.authz
 
-import java.{lang => jl}
+import java.{ lang => jl }
 
 import org.beangle.commons.lang.Assert
+
+trait AuthorizationInfo {
+  def roles: List[Any]
+  def permissions: List[Any]
+}
 
 /**
  * Represents an authority granted to an {@link Authentication} object.
@@ -39,11 +44,11 @@ trait Authority extends Serializable with Ordered[Authority] {
    * <code>Authority</code> implementation, so returning <code>null</code> should be avoided
    * unless actually required.
    * </p>
-   * 
+   *
    * @return a representation of the granted authority (or <code>null</code> if the granted
    *         authority cannot be expressed as a <code>String</code> with sufficient precision).
    */
-  def authority:Any
+  def authority: Any
 }
 
 /** Basic concrete implementation of a {@link Authority}. */

@@ -1,6 +1,7 @@
 package org.beangle.security.authc
 
 import org.beangle.commons.logging.Logging
+import org.beangle.security.session.Session
 /**
  * Authentication Manager
  */
@@ -17,8 +18,9 @@ trait Authenticator {
 trait AuthenticationListener {
   def onSuccess(token: AuthenticationToken, info: AuthenticationInfo)
   def onFailure(token: AuthenticationToken, cause: AuthenticationException)
-//  def onSuccess(token: AuthenticationToken, info: AuthenticationInfo)
+  def onLogout(info: Session)
 }
+
 abstract class AbstractAuthenticator extends Authenticator with Logging {
 
   var listeners: List[AuthenticationListener] = List.empty

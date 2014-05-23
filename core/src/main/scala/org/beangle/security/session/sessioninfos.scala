@@ -10,7 +10,7 @@ trait Session {
 
   def id: jSerializable
 
-  def principal: String
+  def principal: Any
 
   def loginAt: Date
 
@@ -97,7 +97,7 @@ trait SessionController {
 }
 
 @SerialVersionUID(-1110252524091983477L)
-class SessionStatus(val principal: String, var lastAccessAt: Long, var acessed: jSerializable) extends jSerializable() {
+class SessionStatus(val principal: Any, var lastAccessAt: Long, var acessed: jSerializable) extends jSerializable() {
 
   def this(info: Session) {
     this(info.principal, info.lastAccessAt.getTime(), info.lastAccessed)
@@ -121,7 +121,7 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
 
   var builder: SessionBuilder = _
 
-  protected var principals = new collection.concurrent.TrieMap[String, collection.mutable.HashSet[jSerializable]]
+  protected var principals = new collection.concurrent.TrieMap[Any, collection.mutable.HashSet[jSerializable]]
 
   protected var sessionids = new collection.concurrent.TrieMap[jSerializable, Session]
 
@@ -210,4 +210,3 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     }
   }
 }
-

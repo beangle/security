@@ -2,7 +2,6 @@ package org.beangle.security.authc
 
 import org.beangle.commons.lang.Objects
 import org.beangle.security.authz.Authority
-import org.beangle.security.authc.userdetail.UserDetail
 import java.security.Principal
 
 /**
@@ -14,12 +13,11 @@ trait AuthenticationInfo extends Principal with Serializable {
 
   def principal: Any
 
-  def credentials: Any
-
-  def authorities: List[Authority]
-
   def details: Any
+  
+  def getName = principal.toString
 
+  override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
 }
 
 /**
@@ -35,13 +33,13 @@ trait AuthenticationToken extends Principal with Serializable {
 }
 
 @SerialVersionUID(3966615358056184985L)
-class AuthenticationTokenBean(val principal: Any, val credentials: Any) extends AuthenticationToken {
+class SimpleAuthenticationToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
 
   var details: Any = _
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case test: AuthenticationTokenBean =>
+      case test: SimpleAuthenticationToken =>
         Objects.equalsBuilder().add(principal, test.principal)
           .add(credentials, test.credentials).add(details, test.details)
           .isEquals
@@ -53,34 +51,6 @@ class AuthenticationTokenBean(val principal: Any, val credentials: Any) extends 
 
   override def getName: String = {
     this.principal match {
-      case detail: UserDetail => detail.username
-      case jPrincipal: java.security.Principal => jPrincipal.getName
-      case null => ""
-      case obj: Any => obj.toString
-    }
-  }
-}
-@SerialVersionUID(3966615358056184985L)
-class AuthenticationInfoBean(val principal: Any, val credentials: Any, val authorities: List[Authority]) extends AuthenticationInfo {
-
-  var details: Any = _
-
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case test: AuthenticationInfoBean =>
-        Objects.equalsBuilder().add(principal, test.principal)
-          .add(credentials, test.credentials).add(details, test.details)
-          .add(authorities, test.authorities)
-          .isEquals
-      case _ => false
-    }
-  }
-
-  override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
-
-  override def getName: String = {
-    this.principal match {
-      case detail: UserDetail => detail.username
       case jPrincipal: java.security.Principal => jPrincipal.getName
       case null => ""
       case obj: Any => obj.toString
@@ -88,13 +58,4 @@ class AuthenticationInfoBean(val principal: Any, val credentials: Any, val autho
   }
 }
 
-class AnonymousInfo(authorities: List[Authority] = List.empty) extends AuthenticationInfoBean("anonymous", "", authorities) {
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case test: AnonymousInfo => Objects.equals(principal, test.principal)
-      case _ => false
-    }
-  }
-}
-
-object AnonymousToken extends AuthenticationTokenBean("anonymous", "")
+object AnonymousToken extends SimpleAuthenticationToken("anonymous","")
