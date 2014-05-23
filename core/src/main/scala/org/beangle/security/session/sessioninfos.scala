@@ -4,74 +4,90 @@ import java.util.Date
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.AuthenticationInfo
+import java.io.{ Serializable => jSerializable }
 
-trait Sessioninfo {
+trait Session {
 
-  def id: String
+  def id: jSerializable
 
-  def username: String
-
-  def fullname: String
+  def principal: String
 
   def loginAt: Date
+
+  def lastAccessAt: Date
+
+  def expiredAt: Date
 
   def expired: Boolean
 
   def onlineTime: Long
 
+  def lastAccessed: jSerializable
+
   def remark: String
 
-  def expireNow(): Sessioninfo
-
-  def addRemark(added: String): Sessioninfo
-
-  def expiredAt: Date
-
-  def lastAccessAt: Date
-
+  def os: String
+  
+  def agent: String
+  
+  def host: String
+  
   def server: String
+
+  /** the time in milliseconds that the session session may remain idle before expiring.*/
+  def timeout: Long
+
+  def stop()
+
+  def expire(): Session
+
+  def access(accessAt: Long, accessed: String)
+
+  def remark(added: String): Session
+
+}
+trait SessionKey {
+
+  def sessionId: jSerializable
 }
 
-trait SessioninfoBuilder {
+trait SessionBuilder {
 
-  def getSessioninfoType(): Class[_ <: Sessioninfo]
+  def getSessionType(): Class[_ <: Session]
 
-  def build(auth: AuthenticationInfo, sessionid: String): Sessioninfo
+  def build(auth: AuthenticationInfo, key: SessionKey): Session
 }
 
-trait SessionIdAware {
-
-  def sessionId: String
-}
+case class SessionId(val sessionId: jSerializable) extends SessionKey
 
 trait SessionRegistry {
 
-  def register(authentication: AuthenticationInfo, sessionid: String)
+  def register(authentication: AuthenticationInfo, key: SessionKey)
 
-  def remove(sessionid: String): Option[Sessioninfo]
+  def remove(key: SessionKey): Option[Session]
 
-  def expire(sessionid: String): Boolean
+  def expire(key: SessionKey): Boolean
 
-  def getSessioninfos(principal: String, includeExpiredSessions: Boolean): List[Sessioninfo]
+  def access(key: SessionKey, accessAt: Long, accessed: String)
 
-  def getSessioninfo(sessionid: String): Option[Sessioninfo]
+  def get(principal: String, includeExpiredSessions: Boolean): List[Session]
 
-  def getSessionStatus(sessionid: String): Option[SessionStatus]
+  def get(key: SessionKey): Option[Session]
+
+  def getStatus(key: SessionKey): Option[SessionStatus]
 
   def isRegisted(principal: String): Boolean
 
   def count: Int
-
-  def access(sessionid: String, accessAt: Long)
 
   def controller: SessionController
 }
 
 trait SessionController {
 
-  def onRegister(auth: AuthenticationInfo, sessionId: String, registry: SessionRegistry): Boolean
+  def onRegister(auth: AuthenticationInfo, key: SessionKey, registry: SessionRegistry): Boolean
 
-  def onLogout(info: Sessioninfo)
+  def onLogout(info: Session)
 
   def stat()
 
@@ -81,36 +97,33 @@ trait SessionController {
 }
 
 @SerialVersionUID(-1110252524091983477L)
-class SessionStatus(val username: String) extends Serializable() {
+class SessionStatus(val principal: String, var lastAccessAt: Long, var acessed: jSerializable) extends jSerializable() {
 
-  var lastAccessedTime: Long = _
-
-  def this(info: Sessioninfo) {
-    this(info.username)
-    lastAccessedTime = if ((null == info.lastAccessAt)) -1 else info.lastAccessAt.getTime
+  def this(info: Session) {
+    this(info.principal, info.lastAccessAt.getTime(), info.lastAccessed)
   }
 }
 
 trait SessionStatusCache {
 
-  def get(id: String): SessionStatus
+  def get(sessionId: jSerializable): SessionStatus
 
-  def put(id: String, newstatus: SessionStatus)
+  def put(sessionId: jSerializable, newstatus: SessionStatus)
 
-  def evict(id: String)
+  def evict(sessionId: jSerializable)
 
-  def ids: Set[String]
+  def ids: Set[jSerializable]
 }
 
 class MemSessionRegistry extends SessionRegistry with Initializing with Logging {
 
   var controller: SessionController = _
 
-  var builder: SessioninfoBuilder = _
+  var builder: SessionBuilder = _
 
-  protected var principals = new collection.concurrent.TrieMap[String, collection.mutable.HashSet[String]]
+  protected var principals = new collection.concurrent.TrieMap[String, collection.mutable.HashSet[jSerializable]]
 
-  protected var sessionids = new collection.concurrent.TrieMap[String, Sessioninfo]
+  protected var sessionids = new collection.concurrent.TrieMap[jSerializable, Session]
 
   def init() {
     require(null != controller)
@@ -122,50 +135,51 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     (!sids.isEmpty && !sids.get.isEmpty)
   }
 
-  def getSessioninfos(principal: String, includeExpired: Boolean): List[Sessioninfo] = {
+  override def get(principal: String, includeExpired: Boolean): List[Session] = {
     principals.get(principal) match {
       case None => List.empty
       case Some(sids) => {
-        val list = new collection.mutable.ListBuffer[Sessioninfo]
+        val list = new collection.mutable.ListBuffer[Session]
         for (sessionid <- sids)
-          getSessioninfo(sessionid).foreach(info => if (includeExpired || !info.expired) list += info)
+          get(SessionId(sessionid)).foreach(info => if (includeExpired || !info.expired) list += info)
         list.toList
       }
     }
   }
 
-  def getSessioninfo(sessionid: String): Option[Sessioninfo] = sessionids.get(sessionid)
+  def get(key: SessionKey): Option[Session] = sessionids.get(key.sessionId)
 
-  def register(auth: AuthenticationInfo, sessionid: String) {
+  def register(auth: AuthenticationInfo, key: SessionKey) {
     val principal = auth.getName
-    val existed = getSessioninfo(sessionid) match {
+    val existed = get(key) match {
       case Some(existed) => {
-        if (existed.username != principal) {
-          if (!controller.onRegister(auth, sessionid, this)) throw new SessionException("security.OvermaxSession")
-          existed.addRemark(" expired with replacement.")
-          remove(sessionid)
+        if (existed.principal != principal) {
+          if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession")
+          existed.remark(" expired with replacement.")
+          remove(key)
         }
       }
-      case None => if (!controller.onRegister(auth, sessionid, this)) throw new SessionException("security.OvermaxSession")
+      case None => if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession")
     }
-    sessionids.put(sessionid, builder.build(auth, sessionid))
+
+    sessionids.put(key.sessionId, builder.build(auth, key))
     principals.get(principal) match {
-      case None => principals.put(principal, new collection.mutable.HashSet += sessionid)
-      case Some(sids) => sids += sessionid
+      case None => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
+      case Some(sids) => sids += key.sessionId
     }
   }
 
-  def remove(sessionid: String): Option[Sessioninfo] = {
-    getSessioninfo(sessionid) match {
+  override def remove(key: SessionKey): Option[Session] = {
+    get(key) match {
       case Some(info) => {
-        sessionids.remove(sessionid)
-        val principal = info.username
-        debug("Remove session " + sessionid + " for " + principal)
+        sessionids.remove(key.sessionId)
+        val principal = info.principal
+        debug("Remove session " + key + " for " + principal)
         val sids = principals.get(principal) foreach { sids =>
-          sids.remove(sessionid)
+          sids.remove(key.sessionId)
           if (sids.isEmpty) {
             principals.remove(principal)
-            debug("Remove principal "+principal+" from registry" )
+            debug("Remove principal " + principal + " from registry")
           }
         }
         controller.onLogout(info)
@@ -175,13 +189,13 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     }
   }
 
-  def expire(sessionid: String): Boolean = {
-    getSessioninfo(sessionid).foreach(info => info.expireNow())
+  override def expire(key: SessionKey): Boolean = {
+    get(key).foreach(info => info.expire())
     true
   }
 
-  def getSessionStatus(sessionid: String): Option[SessionStatus] = {
-    getSessioninfo(sessionid) match {
+  def getStatus(key: SessionKey): Option[SessionStatus] = {
+    get(key) match {
       case None => None
       case Some(info) => Some(new SessionStatus(info))
     }
@@ -189,7 +203,11 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
 
   def count(): Int = sessionids.size
 
-  def access(sessionid: String, beginAt: Long) {
+  def access(key: SessionKey, accessAt: Long, accessed: String) {
+    get(key) match {
+      case None => None
+      case Some(info) => info.access(accessAt, accessed)
+    }
   }
 }
 
