@@ -2,6 +2,7 @@ package org.beangle.security.authc
 
 import org.beangle.commons.logging.Logging
 import org.beangle.security.session.Session
+import org.beangle.security.realm.Realm
 /**
  * Authentication Manager
  */
@@ -28,7 +29,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
   override def authenticate(token: AuthenticationToken): AuthenticationInfo = {
     try {
       val info = doAuthenticate(token);
-      if (info == null) throw new AuthenticationException("No account information found for authentication token [" + token + "]")
+      if (info == null) throw new AuthenticationException(s"No account information found for authentication token [$token]")
       notifySuccess(token, info);
       info
     } catch {
@@ -47,12 +48,97 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
     }
   }
 
-  def doAuthenticate(request: AuthenticationToken): AuthenticationInfo
+  def doAuthenticate(token: AuthenticationToken): AuthenticationInfo
 
   @inline
-  protected final def notifySuccess(token: AuthenticationToken, info: AuthenticationInfo): Unit = listeners.foreach(listener => listener.onSuccess(token, info))
+  protected final def notifySuccess(token: AuthenticationToken, info: AuthenticationInfo): Unit = {
+    listeners.foreach(listener => listener.onSuccess(token, info))
+  }
 
   @inline
-  protected final def notifyFailure(token: AuthenticationToken, ae: AuthenticationException): Unit = listeners.foreach(listener => listener.onFailure(token, ae))
+  protected final def notifyFailure(token: AuthenticationToken, ae: AuthenticationException): Unit = {
+    listeners.foreach(listener => listener.onFailure(token, ae))
+  }
 
+}
+
+/**
+ * How we authenticate user within multiple realms
+ */
+trait RealmAuthenticationStrategy {
+  /**
+   * @throws AuthenticationException
+   */
+  def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo
+}
+
+/**
+ * First win,imply at least one and ignore remainders
+ */
+object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
+
+  override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
+    val realmIter = realms.iterator
+    var info: AuthenticationInfo = null
+    while (null != info && realmIter.hasNext) {
+      val realm = realmIter.next()
+      if (realm.supports(token)) {
+        try {
+          info = realm.getAuthenticationInfo(token)
+        } catch {
+          case t: Throwable =>
+            debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
+        }
+      }
+    }
+    info
+  }
+}
+
+/**
+ * All realms should pass the authentication when it support then token and return merged authenticaiton info.
+ */
+object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
+
+  private def merge(info: AuthenticationInfo, aggregate: AuthenticationInfo): AuthenticationInfo = {
+    if (null == aggregate) info
+    else {
+      if (aggregate.isInstanceOf[MergableAuthenticationInfo]) {
+        aggregate.asInstanceOf[MergableAuthenticationInfo].merge(info)
+      } else {
+        throw new IllegalArgumentException("AuthenticationInfo is not of type MergableAuthenticationInfo.");
+      }
+    }
+  }
+
+  override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
+    val realmIter = realms.iterator
+    var aggregate: AuthenticationInfo = null
+    while (realmIter.hasNext) {
+      val realm = realmIter.next()
+      if (realm.supports(token)) {
+        try {
+          val info = realm.getAuthenticationInfo(token)
+          if (null == info)
+            throw new AuthenticationException(s"Realm [$realm] could not find any associated account data for [$token].")
+          else aggregate = merge(info, aggregate)
+        } catch {
+          case e: AuthenticationException => throw e
+          case t: Throwable => throw new AuthenticationException(s"Unable to acquire account data from realm [$realm].", t)
+        }
+      }
+    }
+    aggregate
+  }
+}
+
+/**
+ * Realm Authenticator
+ */
+class RealmAuthenticator extends AbstractAuthenticator with Logging {
+  var reams: List[Realm] = List.empty
+  var strategy: RealmAuthenticationStrategy = _
+  override def doAuthenticate(token: AuthenticationToken): AuthenticationInfo = {
+    strategy.authenticate(reams, token)
+  }
 }

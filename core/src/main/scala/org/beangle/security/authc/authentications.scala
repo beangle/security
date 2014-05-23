@@ -5,8 +5,7 @@ import org.beangle.security.authz.Authority
 import java.security.Principal
 
 /**
- * 认证信息
- *
+ * Authentication Information
  * @author chaostone
  */
 trait AuthenticationInfo extends Principal with Serializable {
@@ -21,6 +20,13 @@ trait AuthenticationInfo extends Principal with Serializable {
 }
 
 /**
+ * Authentication Info can merge with others
+ */
+trait MergableAuthenticationInfo extends AuthenticationInfo{
+  def merge(info:AuthenticationInfo):this.type
+}
+
+/**
  * Authentication Token used before authentication
  */
 trait AuthenticationToken extends Principal with Serializable {
@@ -32,6 +38,9 @@ trait AuthenticationToken extends Principal with Serializable {
   def details: Any
 }
 
+/**
+ * Simple Authentication Token 
+ */
 @SerialVersionUID(3966615358056184985L)
 class SimpleAuthenticationToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
 

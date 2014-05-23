@@ -13,10 +13,10 @@ trait Account extends AuthenticationInfo with AuthorizationInfo {
 
   def credentialsExpired: Boolean
 
-  def enabled: Boolean
+  def disabled: Boolean
 }
 
-class SimpleAccount(val principal: Any) extends Account {
+class SimpleAccount(val principal: Any) extends Account with MergableAuthenticationInfo {
 
   var accountExpired: Boolean = _
 
@@ -24,7 +24,7 @@ class SimpleAccount(val principal: Any) extends Account {
 
   var credentialsExpired: Boolean = _
 
-  var enabled: Boolean = _
+  var disabled: Boolean = _
 
   var roles: List[Any] = List.empty
 
@@ -46,11 +46,26 @@ class SimpleAccount(val principal: Any) extends Account {
 
   override def toString(): String = {
     Objects.toStringBuilder(this).add("principal", principal)
-      .add("enabled", enabled).add("AccountExpired: ", accountExpired)
+      .add("AccountExpired: ", accountExpired)
       .add("credentialsExpired: ", credentialsExpired)
       .add("AccountLocked: ", accountLocked)
+      .add("Disabled: ", disabled)
       .add("Roles: ", roles.mkString(","))
       .add("Permissions: ", permissions.mkString(",")).toString
+  }
+
+  override def merge(info: AuthenticationInfo): Unit = {
+    info match {
+      case ac: Account => {
+        if (ac.accountExpired) this.accountExpired = true
+        if (ac.accountLocked) this.accountLocked = true
+        if (ac.credentialsExpired) this.credentialsExpired = true
+        if (ac.disabled) this.disabled = true
+        if (!ac.roles.isEmpty) this.roles ::= ac.roles
+        if (!ac.permissions.isEmpty) this.permissions ::= ac.permissions
+        if (null != ac.details) this.details = ac.details
+      }
+    }
   }
 
 }
@@ -62,17 +77,17 @@ trait AccountChecker {
 
 class AccountStatusChecker extends AccountChecker {
 
-  var textResource: TextResource = new NullTextResource()
+  var tr: TextResource = new NullTextResource()
 
-  def check(account: Account) {
-    if (account.accountLocked)
-      throw new LockedException(textResource.getText("AbstractUserDetailsAuthenticationProvider.locked", "User account is locked"), account)
-    if (!account.enabled)
-      throw new DisabledException(textResource.getText("AbstractUserDetailsAuthenticationProvider.disabled", "User is disabled"), account)
-    if (account.accountExpired)
-      throw new AccountExpiredException(textResource.getText("AbstractUserDetailsAuthenticationProvider.expired", "User account has expired"), account)
-    if (account.credentialsExpired)
-      throw new CredentialsExpiredException(textResource.getText("AbstractUserDetailsAuthenticationProvider.credentialsExpired", "User credentials have expired"), account)
+  def check(ac: Account) {
+    if (ac.accountLocked)
+      throw new LockedException(tr("AccountStatusChecker.locked", "User account is locked"), ac)
+    if (ac.disabled)
+      throw new DisabledException(tr("AccountStatusChecker.disabled", "User is disabled"), ac)
+    if (ac.accountExpired)
+      throw new AccountExpiredException(tr("AccountStatusChecker.expired", "User account has expired"), ac)
+    if (ac.credentialsExpired)
+      throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialsExpired", "User credentials have expired"), ac)
   }
 
 }

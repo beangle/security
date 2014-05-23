@@ -9,5 +9,5 @@ trait Realm {
    */
   def getAuthenticationInfo(token: AuthenticationToken): AuthenticationInfo
 
-  def supports(token: Class[_ <: AuthenticationToken]): Boolean
+  def supports(token : AuthenticationToken): Boolean
 }
