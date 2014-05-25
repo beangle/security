@@ -79,8 +79,6 @@ trait SessionRegistry {
   def isRegisted(principal: String): Boolean
 
   def count: Int
-
-  def controller: SessionController
 }
 
 trait SessionController {

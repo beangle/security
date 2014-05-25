@@ -70,6 +70,25 @@ trait RealmAuthenticationStrategy {
    * @throws AuthenticationException
    */
   def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo
+
+  protected def merge(info: AuthenticationInfo, aggregate: AuthenticationInfo): AuthenticationInfo = {
+    if (null == aggregate) info
+    else {
+      if (aggregate.isInstanceOf[Mergable]) {
+        aggregate.asInstanceOf[Mergable].merge(info)
+      } else {
+        throw new IllegalArgumentException("AuthenticationInfo is not of type MergableAuthenticationInfo.");
+      }
+    }
+  }
+
+  protected def returnOrRaise(info: AuthenticationInfo, token: AuthenticationToken, t: Throwable): AuthenticationInfo = {
+    if (null == info) throw if (null == t) new RuntimeException(s"Realm not found for $token") else t
+    else {
+      if (info.isInstanceOf[Mergable]) info.asInstanceOf[Mergable].details = info.details ++ token.details
+      info
+    }
+  }
 }
 
 /**
@@ -80,36 +99,52 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
   override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
     val realmIter = realms.iterator
     var info: AuthenticationInfo = null
+    var lastException: Throwable = null
     while (null != info && realmIter.hasNext) {
       val realm = realmIter.next()
       if (realm.supports(token)) {
         try {
           info = realm.getAuthenticationInfo(token)
         } catch {
-          case t: Throwable =>
+          case t: Throwable => {
+            lastException = t
             debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
+          }
         }
       }
     }
-    info
+    returnOrRaise(info, token, lastException)
   }
 }
-
+/**
+ * Pass Through all possible realm and aggregate authentication info
+ */
+object AtLeastOneSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
+  override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
+    val realmIter = realms.iterator
+    var aggregate: AuthenticationInfo = null
+    var lastException: Throwable = null
+    while (realmIter.hasNext) {
+      val realm = realmIter.next()
+      if (realm.supports(token)) {
+        try {
+          val info = realm.getAuthenticationInfo(token)
+          if (null != info) aggregate = merge(info, aggregate)
+        } catch {
+          case t: Throwable => {
+            lastException = t
+            debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
+          }
+        }
+      }
+    }
+    returnOrRaise(aggregate, token, lastException)
+  }
+}
 /**
  * All realms should pass the authentication when it support then token and return merged authenticaiton info.
  */
 object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
-
-  private def merge(info: AuthenticationInfo, aggregate: AuthenticationInfo): AuthenticationInfo = {
-    if (null == aggregate) info
-    else {
-      if (aggregate.isInstanceOf[MergableAuthenticationInfo]) {
-        aggregate.asInstanceOf[MergableAuthenticationInfo].merge(info)
-      } else {
-        throw new IllegalArgumentException("AuthenticationInfo is not of type MergableAuthenticationInfo.");
-      }
-    }
-  }
 
   override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
     val realmIter = realms.iterator
@@ -119,16 +154,15 @@ object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
       if (realm.supports(token)) {
         try {
           val info = realm.getAuthenticationInfo(token)
-          if (null == info)
-            throw new AuthenticationException(s"Realm [$realm] could not find any associated account data for [$token].")
+          if (null == info) throw new AuthenticationException(s"Realm [$realm] could not find account data for [$token].")
           else aggregate = merge(info, aggregate)
         } catch {
           case e: AuthenticationException => throw e
-          case t: Throwable => throw new AuthenticationException(s"Unable to acquire account data from realm [$realm].", t)
+          case t: Throwable => throw new AuthenticationException(s"Unable to acquire account data from [$realm].", t)
         }
       }
     }
-    aggregate
+    returnOrRaise(aggregate, token, null)
   }
 }
 

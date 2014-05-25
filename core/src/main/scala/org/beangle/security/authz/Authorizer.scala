@@ -23,7 +23,7 @@ import org.beangle.security.authc.AuthenticationInfo
 
 trait Authorizer {
 
-  def isPermitted(auth: AuthenticationInfo, resource: Object): Boolean
+  def isPermitted(principal: Any, resource: Object): Boolean
 }
 
 class AccessDeniedException(val resource: Any, message: String, cause: Throwable) extends SecurityException(message, cause) {

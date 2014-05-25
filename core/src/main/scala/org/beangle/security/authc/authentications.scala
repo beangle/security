@@ -12,8 +12,10 @@ trait AuthenticationInfo extends Principal with Serializable {
 
   def principal: Any
 
-  def details: Any
+  def credentials: Any
   
+  def details: Map[String, Any]
+
   def getName = principal.toString
 
   override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
@@ -22,8 +24,10 @@ trait AuthenticationInfo extends Principal with Serializable {
 /**
  * Authentication Info can merge with others
  */
-trait MergableAuthenticationInfo extends AuthenticationInfo{
-  def merge(info:AuthenticationInfo):this.type
+trait Mergable extends AuthenticationInfo {
+  def merge(info: AuthenticationInfo): this.type
+
+  def details_=(data: Map[String, Any])
 }
 
 /**
@@ -35,28 +39,7 @@ trait AuthenticationToken extends Principal with Serializable {
 
   def credentials: Any
 
-  def details: Any
-}
-
-/**
- * Simple Authentication Token 
- */
-@SerialVersionUID(3966615358056184985L)
-class SimpleAuthenticationToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
-
-  var details: Any = _
-
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case test: SimpleAuthenticationToken =>
-        Objects.equalsBuilder().add(principal, test.principal)
-          .add(credentials, test.credentials).add(details, test.details)
-          .isEquals
-      case _ => false
-    }
-  }
-
-  override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
+  def details: Map[String, Any]
 
   override def getName: String = {
     this.principal match {
@@ -65,6 +48,36 @@ class SimpleAuthenticationToken(val principal: Any, val credentials: Any) extend
       case obj: Any => obj.toString
     }
   }
+
+  override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
 }
 
-object AnonymousToken extends SimpleAuthenticationToken("anonymous","")
+/**
+ * Simple Authentication Token
+ */
+@SerialVersionUID(3966615358056184985L)
+class UsernamePasswordAuthenticationToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
+
+  var details: Map[String, Any] = Map.empty
+
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case test: UsernamePasswordAuthenticationToken =>
+        Objects.equalsBuilder().add(principal, test.principal)
+          .add(credentials, test.credentials).add(details, test.details)
+          .isEquals
+      case _ => false
+    }
+  }
+
+}
+
+object AnonymousToken extends AuthenticationToken {
+
+  def principal: Any = "anonymous"
+
+  def credentials: Any = ""
+
+  def details: Map[String, Any] = Map.empty
+
+}

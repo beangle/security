@@ -30,7 +30,7 @@ import org.beangle.security.SecurityException
 @SerialVersionUID(-3529782031102169004L)
 class AuthenticationException(message: String, cause: Throwable = null) extends SecurityException(message, cause) {
 
-  var authentication: AuthenticationToken = _
+  var token: AuthenticationToken = _
 
   var extraInfo: Any = _
 
