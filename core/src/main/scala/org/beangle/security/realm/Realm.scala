@@ -1,7 +1,6 @@
 package org.beangle.security.realm
 
-import org.beangle.security.authc.AuthenticationToken
-import org.beangle.security.authc.AuthenticationInfo
+import org.beangle.security.authc.{AuthenticationInfo, AuthenticationToken}
 
 trait Realm {
   /**

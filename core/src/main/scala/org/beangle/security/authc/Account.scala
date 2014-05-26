@@ -2,13 +2,13 @@ package org.beangle.security.authc
 
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.lang.{ Objects, Strings }
+import org.beangle.commons.logging.Logging
 import org.beangle.commons.text.i18n.TextResource
 import org.beangle.commons.text.i18n.impl.NullTextResource
 import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
-import org.beangle.commons.logging.Logging
 
-trait Account extends AuthenticationInfo with AuthorizationInfo {
+trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable {
 
   def accountExpired: Boolean
 
@@ -75,20 +75,41 @@ class SimpleAccount(val principal: Any, val credentials: Any) extends Account wi
 
 }
 
-trait AccountLoader {
-  def load(principal: Any): Account
+abstract class AbstractAccountRealm extends Realm with Logging {
 
-}
-trait AccountChecker {
-
-  def check(account: Account): Unit
-}
-
-class AccountStatusChecker extends AccountChecker {
+  var parent: AbstractAccountRealm = _
 
   var tr: TextResource = new NullTextResource()
 
-  def check(ac: Account) {
+  protected def determinePrincipal(token: AuthenticationToken): String = {
+    if (token == null) "NONE_PROVIDED" else token.getName()
+  }
+
+  override def getAuthenticationInfo(token: AuthenticationToken): Account = {
+    var merged: Account = if (null != parent) parent.getAuthenticationInfo(token) else null
+
+    val principal = determinePrincipal(token)
+    if (Strings.isEmpty(principal)) {
+      val ex = new AuthenticationException("cannot find username for " + token.principal)
+      ex.token = token
+      throw ex
+    }
+    val account = loadAccount(token.principal)
+
+    if (null != account) {
+      if (null == merged) {
+        merged = account
+        credentialsCheck(token, account)
+      } else merged.merge(account)
+
+      additionalCheck(merged)
+    } else {
+      if (null != merged) throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
+    }
+    merged
+  }
+
+  protected def additionalCheck(ac: Account) {
     if (ac.accountLocked)
       throw new LockedException(tr("AccountStatusChecker.locked", "User account is locked"), ac)
     if (ac.disabled)
@@ -98,35 +119,11 @@ class AccountStatusChecker extends AccountChecker {
     if (ac.credentialsExpired)
       throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialsExpired", "User credentials have expired"), ac)
   }
-}
 
-abstract class AbstractAccountRealm extends Realm with Initializing with Logging {
-  var loader: AccountLoader = _
-  var accountChecker: AccountChecker = new AccountStatusChecker
+  protected def loadAccount(principal: Any): Account
 
-  protected def determinePrincipal(token: AuthenticationToken): String = {
-    if (token == null) "NONE_PROVIDED" else token.getName()
-  }
-
-  override def getAuthenticationInfo(token: AuthenticationToken): AuthenticationInfo = {
-    val principal = determinePrincipal(token)
-    if (Strings.isEmpty(principal)) {
-      val ex = new AuthenticationException("cannot find username for " + token.principal)
-      ex.token = token
-      throw ex
-    }
-    val account = loader.load(token.principal)
-    if (null != account) {
-      accountChecker.check(account)
-      additionalCheck(token, account)
-    }
-    account
-  }
-
-  protected def additionalCheck(token: AuthenticationToken, account: Account): Unit
+  protected def credentialsCheck(token: AuthenticationToken, account: Account): Unit
 
   def supports(token: AuthenticationToken): Boolean = token.isInstanceOf[UsernamePasswordAuthenticationToken]
-
-  def init(): Unit = assert(null != loader)
 
 }

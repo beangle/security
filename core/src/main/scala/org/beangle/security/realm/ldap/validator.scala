@@ -10,15 +10,16 @@ import javax.naming.directory.InitialDirContext
 import javax.naming.Context
 import org.beangle.commons.lang.Arrays
 import org.beangle.commons.codec.binary.Hex
-trait LdapValidator {
 
-  def verifyPassword(name: String, password: String): Boolean
+trait LdapPasswordValidator {
+
+  def verify(name: String, password: String): Boolean
 }
 
 /**
  * @author chaostone
  */
-class SimpleBindValidator(val userStore: LdapUserStore) extends LdapValidator {
+class SimpleBindValidator(val userStore: LdapUserStore) extends LdapPasswordValidator {
 
   var properties = new jl.Hashtable[String, String]
 
@@ -32,7 +33,7 @@ class SimpleBindValidator(val userStore: LdapUserStore) extends LdapValidator {
     env
   }
 
-  def verifyPassword(name: String, password: String): Boolean = {
+  override def verify(name: String, password: String): Boolean = {
     val env = enviroment(name, password)
     env.putAll(properties)
     try {
@@ -45,9 +46,9 @@ class SimpleBindValidator(val userStore: LdapUserStore) extends LdapValidator {
   }
 }
 
-class DefaultLdapValidator(val userStore: LdapUserStore) extends LdapValidator {
+class DefaultLdapPasswordValidator(val userStore: LdapUserStore) extends LdapPasswordValidator {
 
-  override def verifyPassword(name: String, password: String): Boolean = {
+  override def verify(name: String, password: String): Boolean = {
     val ldapPwd = userStore.getPassword(name)
     try {
       return (null != ldapPwd) && (LdapPasswordHandler.verify(ldapPwd, password))
@@ -56,6 +57,7 @@ class DefaultLdapValidator(val userStore: LdapUserStore) extends LdapValidator {
     }
   }
 }
+
 object LdapPasswordHandler {
 
   def verify(digest: String, password: String): Boolean = {
