@@ -85,7 +85,7 @@ object LdapPasswordHandler {
     }
 
     val msgDigest = MessageDigest.getInstance(alg);
-    val hs = split(Base64.decode(digest.toCharArray()), size)
+    val hs = split(Base64.decode(digestContent.toCharArray()), size)
     msgDigest.reset();
     msgDigest.update(password.getBytes());
     msgDigest.update(hs._2)
