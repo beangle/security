@@ -19,7 +19,7 @@ trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable {
   def disabled: Boolean
 }
 
-class SimpleAccount(val principal: Any, val credentials: Any) extends Account with Mergable {
+class SimpleAccount(val principal: Any) extends Account with Mergable {
 
   var accountExpired: Boolean = _
 
@@ -39,7 +39,6 @@ class SimpleAccount(val principal: Any, val credentials: Any) extends Account wi
     obj match {
       case test: SimpleAccount =>
         Objects.equalsBuilder().add(principal, test.principal)
-          .add(credentials, test.credentials)
           .add(details, test.details)
           .add(roles, test.roles)
           .add(permissions, test.permissions)

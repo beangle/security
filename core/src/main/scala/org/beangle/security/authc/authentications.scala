@@ -11,8 +11,6 @@ import java.security.Principal
 trait AuthenticationInfo extends Principal with Serializable {
 
   def principal: Any
-
-  def credentials: Any
   
   def details: Map[String, Any]
 

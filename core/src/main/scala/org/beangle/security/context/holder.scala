@@ -34,9 +34,8 @@ import org.beangle.commons.lang.Throwables
  * </p>
  *
  * @author chaostone
- * @version $Id: holder.scala 2217 2007-10-27 00:45:30Z $
  */
-object SecurityContextHolder {
+object ContextHolder {
 
   private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
 
@@ -44,7 +43,7 @@ object SecurityContextHolder {
     holder.context = context
   }
 
-  def context = holder.context
+  def context: Option[SecurityContext] = if (null == holder.context) None else Some(holder.context)
 
   /**
    * <ul>
@@ -53,21 +52,28 @@ object SecurityContextHolder {
    * <li> global
    * </ul>
    */
-  def buildHolder(strategyName: String): SecurityContextHolder = {
+  def buildHolder(strategyName: String): ContextHolder = {
     strategyName match {
       case "threadLocal" => new ThreadLocalHolder(false)
       case "inheritableThreadLocal" => new ThreadLocalHolder(true)
       case "global" => GlobalHolder
       case _ => {
         try {
-          val clazz = Class.forName(strategyName).asInstanceOf[Class[SecurityContextHolder]]
+          val clazz = Class.forName(strategyName).asInstanceOf[Class[ContextHolder]]
           val customStrategy = clazz.getConstructor()
-          customStrategy.newInstance(Array()).asInstanceOf[SecurityContextHolder]
+          customStrategy.newInstance(Array()).asInstanceOf[ContextHolder]
         } catch {
           case ex: Exception => throw Throwables.propagate(ex)
         }
       }
     }
+  }
+
+  def hasValidContext: Boolean = !context.isEmpty && SecurityContext.Anonymous != context.get.principal
+
+  def principal: Any = context match {
+    case None => SecurityContext.Anonymous
+    case Some(context) => context.principal
   }
 }
 
@@ -81,12 +87,11 @@ object SecurityContextHolder {
  * @author chaostone
  * @version $Id: SecurityContextHolderStrategy.java 2142 2007-09-21 18:18:21Z $
  */
-trait SecurityContextHolder {
+trait ContextHolder {
 
   def context: SecurityContext
 
   def context_=(context: SecurityContext)
-
 }
 
 /**
@@ -99,7 +104,7 @@ trait SecurityContextHolder {
  *
  * @author chaostone
  */
-object GlobalHolder extends SecurityContextHolder {
+object GlobalHolder extends ContextHolder {
 
   var context: SecurityContext = _
 }
@@ -111,7 +116,7 @@ object GlobalHolder extends SecurityContextHolder {
  * @author chaostone
  * @see java.lang.ThreadLocal
  */
-class ThreadLocalHolder(inheritable: Boolean) extends SecurityContextHolder {
+class ThreadLocalHolder(inheritable: Boolean) extends ContextHolder {
 
   private val contexts = if (inheritable) new ThreadLocal[SecurityContext] else new InheritableThreadLocal[SecurityContext]
 

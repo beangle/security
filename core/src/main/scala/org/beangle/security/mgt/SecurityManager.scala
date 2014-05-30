@@ -15,10 +15,11 @@ trait SecurityManager {
 
   def sessionRegistry: SessionRegistry
 
+  def isPermitted(principal: Any,  operation: Any,resource: Any): Boolean = authorizer.isPermitted(principal, operation,resource)
   /**
-   * @throw AuthenticationException
+   * @throws AuthenticationException
    */
   def login(token: AuthenticationToken): SecurityContext
 
-  def logout (context:SecurityContext)
+  def logout(context: SecurityContext)
 }

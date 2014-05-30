@@ -18,8 +18,9 @@
 
   <modules>
     <module>core</module>
-<!--
+    <module>cas</module>
     <module>web</module>
+<!--
     <module>blueprint</module>
 -->
   </modules>
@@ -40,6 +41,11 @@
         <groupId>org.beangle.commons</groupId>
         <artifactId>beangle-commons-jpa</artifactId>
         <version>${commons.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.beangle.security</groupId>
+        <artifactId>beangle-security-core</artifactId>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

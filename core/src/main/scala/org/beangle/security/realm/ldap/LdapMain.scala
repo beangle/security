@@ -51,7 +51,7 @@ object LdapMain {
   def main(args: Array[String]): Unit = {
     var host, username, password, base = ""
     if (args.length < 4) {
-      println("Usage: LdapMain host:port username password base")
+      println("Usage: LdapMain host:port base username password")
       host = Consoles.prompt("host:port = ")
       base = Consoles.prompt("base DN = ")
       username = Consoles.prompt("username = ")

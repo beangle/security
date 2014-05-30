@@ -19,7 +19,12 @@
 package org.beangle.security.context
 
 import org.beangle.security.authc.AuthenticationInfo
+import org.beangle.security.session.Session
+import org.beangle.security.mgt.SecurityManager
 
+object SecurityContext {
+  val Anonymous = "anonymous"
+}
 /**
  * Interface defining the minimum security information associated with the
  * current thread of execution.
@@ -32,24 +37,14 @@ import org.beangle.security.authc.AuthenticationInfo
 trait SecurityContext extends Serializable {
 
   /**
-   * Obtains the currently authenticated principal, or an authentication
-   * request token.
-   *
-   * @return the <code>Authentication</code> or <code>null</code> if no
-   *         authentication information is available
+   * Obtains the currently authenticated principal
    */
-  def authentication: AuthenticationInfo
+  def principal: Any
 
-  /**
-   * Changes the currently authenticated principal, or removes the
-   * authentication information.
-   *
-   * @param authentication
-   *          the new <code>Authentication</code> token, or <code>null</code> if no further
-   *          authentication information
-   *          should be stored
-   */
-  def authentication_=(authentication: AuthenticationInfo)
+  def anthenticated: Boolean
+
+  def session: Session
+
 }
 
 /**
@@ -59,28 +54,31 @@ trait SecurityContext extends Serializable {
  * </p>
  *
  * @author chaostone
- * @version $Id: SecurityContextBean.java 2217 2007-10-27 00:45:30Z $
  */
 @SerialVersionUID(3146265469090172129L)
-class SecurityContextBean extends SecurityContext {
+class SecurityContextBean(initialPrincipal: Any, @transient val securityManager: SecurityManager) extends SecurityContext {
 
-  var authentication: AuthenticationInfo = _
+  def principal = if (null != session) session.principal else initialPrincipal
+
+  var session: Session = _
+
+  var anthenticated: Boolean = _
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case sc: SecurityContext => authentication == sc.authentication
+      case sc: SecurityContext => principal == sc.principal
       case _ => false
     }
   }
 
-  override def hashCode(): Int = if (authentication == null) -1 else authentication.hashCode()
+  override def hashCode(): Int = if (initialPrincipal == null) -1 else initialPrincipal.hashCode()
 
   override def toString(): String = {
     val sb = new StringBuffer()
     sb.append(super.toString())
 
-    if (authentication == null) sb.append(": Null authentication");
-    else sb.append(": Authentication: ").append(authentication);
+    if (principal == null) sb.append(": Null authentication");
+    else sb.append(": principal: ").append(principal);
 
     sb.toString()
   }

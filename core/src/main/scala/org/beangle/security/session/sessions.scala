@@ -5,12 +5,19 @@ import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.AuthenticationInfo
 import java.io.{ Serializable => jSerializable }
+import java.security.Principal
+
+trait SessionKey {
+  def sessionId: jSerializable
+}
+
+case class SessionId(val sessionId: jSerializable) extends SessionKey
 
 trait Session {
 
   def id: jSerializable
 
-  def principal: Any
+  def principal: Principal
 
   def loginAt: Date
 
@@ -27,28 +34,33 @@ trait Session {
   def remark: String
 
   def os: String
-  
+
   def agent: String
-  
+
   def host: String
-  
+
   def server: String
 
   /** the time in milliseconds that the session session may remain idle before expiring.*/
   def timeout: Long
 
-  def stop()
+  def stop(): Unit
 
-  def expire(): Session
+  def expire(): Unit
 
   def access(accessAt: Long, accessed: String)
 
   def remark(added: String): Session
 
 }
-trait SessionKey {
-
-  def sessionId: jSerializable
+/**
+ * registry aware session
+ */
+trait RegistrySession extends Session {
+  def registry: SessionRegistry
+  override def stop() = registry.remove(SessionId(id))
+  override def expire() = registry.expire(SessionId(id))
+  override def access(accessAt: Long, accessed: String): Unit = registry.access(SessionId(id), accessAt, accessed)
 }
 
 trait SessionBuilder {
@@ -57,8 +69,6 @@ trait SessionBuilder {
 
   def build(auth: AuthenticationInfo, key: SessionKey): Session
 }
-
-case class SessionId(val sessionId: jSerializable) extends SessionKey
 
 trait SessionRegistry {
 
@@ -95,7 +105,7 @@ trait SessionController {
 }
 
 @SerialVersionUID(-1110252524091983477L)
-class SessionStatus(val principal: Any, var lastAccessAt: Long, var acessed: jSerializable) extends jSerializable() {
+class SessionStatus(val principal: Principal, var lastAccessAt: Long, var acessed: jSerializable) extends jSerializable() {
 
   def this(info: Session) {
     this(info.principal, info.lastAccessAt.getTime(), info.lastAccessed)
@@ -151,7 +161,7 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     val principal = auth.getName
     val existed = get(key) match {
       case Some(existed) => {
-        if (existed.principal != principal) {
+        if (existed.principal.getName() != principal) {
           if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession")
           existed.remark(" expired with replacement.")
           remove(key)
