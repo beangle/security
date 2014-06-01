@@ -41,7 +41,7 @@ trait SecurityContext extends Serializable {
    */
   def principal: Any
 
-  def anthenticated: Boolean
+  def anthenticated: Boolean = null != session
 
   def session: Session
 
@@ -56,13 +56,9 @@ trait SecurityContext extends Serializable {
  * @author chaostone
  */
 @SerialVersionUID(3146265469090172129L)
-class SecurityContextBean(initialPrincipal: Any, @transient val securityManager: SecurityManager) extends SecurityContext {
+class SecurityContextBean(val session: Session) extends SecurityContext {
 
-  def principal = if (null != session) session.principal else initialPrincipal
-
-  var session: Session = _
-
-  var anthenticated: Boolean = _
+  def principal = session.principal
 
   override def equals(obj: Any): Boolean = {
     obj match {
@@ -71,7 +67,7 @@ class SecurityContextBean(initialPrincipal: Any, @transient val securityManager:
     }
   }
 
-  override def hashCode(): Int = if (initialPrincipal == null) -1 else initialPrincipal.hashCode()
+  override def hashCode(): Int = session.hashCode()
 
   override def toString(): String = {
     val sb = new StringBuffer()

@@ -19,31 +19,62 @@
 package org.beangle.security.web.access;
 
 import java.io.IOException
-import scala.annotation.elidable
-import scala.annotation.elidable.FINE
-import org.beangle.commons.web.filter.GenericHttpFilter
+
+import org.beangle.commons.inject.{ Container, ContainerHook }
+import org.beangle.commons.web.filter.MatchedCompositeFilter
+import org.beangle.commons.web.util.RequestUtils
 import org.beangle.security.SecurityException
-import org.beangle.security.authc.{ AnonymousToken, AuthenticationException }
+import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
-import org.beangle.security.context.ContextHolder
+import org.beangle.security.context.{ ContextHolder, SecurityContextBean }
+import org.beangle.security.session.{ SessionId, SessionRegistry }
 import org.beangle.security.web.EntryPoint
-import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
-import org.beangle.commons.web.filter.FilterChainProxy
-import org.beangle.commons.inject.ContainerHook
-import org.beangle.commons.inject.Container
+import org.beangle.security.web.authc.LogoutHandler
 
-class SecurityFilter extends FilterChainProxy with ContainerHook {
+import javax.servlet.{ Filter, FilterChain, ServletRequest, ServletResponse }
+import javax.servlet.http.HttpServletRequest
 
+/**
+ *  handle
+ *  <ul>
+ *  <li> Exception handling
+ *  <li> Context Holder loading and clear
+ *  <li> Session access info update and concurrent logic
+ *  </ul>
+ */
+
+class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedCompositeFilter(urlMap) with ContainerHook {
+
+  var expiredUrl: String
   var accessDeniedHandler: AccessDeniedHandler = _
   var entryPoint: EntryPoint = _
-
-  override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain): Unit = {
+  var registry: SessionRegistry = _
+  var logoutHandler: LogoutHandler = _
+  /**
+   *
+   */
+  override def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain): Unit = {
     try {
-      new VirtualFilterChain(chain, getFilters(request)).doFilter(request, response)
+      val request = req.asInstanceOf[HttpServletRequest]
+      val hs = request.getSession(false)
+      val sid = SessionId(hs.getId)
+      if (null != hs) registry.get(sid).foreach { s =>
+        if (s.expired) {
+          registry.remove(sid)
+          hs.invalidate()
+          if (null != logoutHandler) logoutHandler.logout(req, res, s)
+        } else {
+          s.access(System.currentTimeMillis, RequestUtils.getServletPath(request))
+          ContextHolder.context = new SecurityContextBean(s)
+        }
+      }
+      new VirtualFilterChain(chain, getFilters(req)).doFilter(req, res)
     } catch {
       case ioe: IOException => throw ioe
-      case bse: SecurityException => handleException(request, response, chain, bse)
+      case bse: SecurityException => handleException(req, res, chain, bse)
       case ex: Exception => throw ex
+    } finally {
+      ContextHolder.context = null
     }
   }
 
@@ -64,11 +95,8 @@ class SecurityFilter extends FilterChainProxy with ContainerHook {
         debug("Authentication exception occurred", ae);
         sendStartAuthentication(request, response, chain, ae)
       case ade: AccessDeniedException =>
-        if (ContextHolder.hasValidContext) {
-          accessDeniedHandler.handle(request, response, ade)
-        } else {
-          sendStartAuthentication(request, response, chain, new AuthenticationException("access denied", ade));
-        }
+        if (ContextHolder.hasValidContext) accessDeniedHandler.handle(request, response, ade)
+        else sendStartAuthentication(request, response, chain, new AuthenticationException("access denied", ade));
     }
   }
 
