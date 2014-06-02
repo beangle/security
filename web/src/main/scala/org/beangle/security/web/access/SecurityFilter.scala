@@ -20,19 +20,19 @@ package org.beangle.security.web.access;
 
 import java.io.IOException
 
-import org.beangle.commons.inject.{ Container, ContainerHook }
+import org.beangle.commons.inject.{Container, ContainerHook}
 import org.beangle.commons.web.filter.MatchedCompositeFilter
-import org.beangle.commons.web.util.RequestUtils
+import org.beangle.commons.web.util.{RedirectUtils, RequestUtils}
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
-import org.beangle.security.session.{ SessionId, SessionRegistry }
+import org.beangle.security.session.{SessionId, SessionRegistry}
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.authc.LogoutHandler
 
-import javax.servlet.{ Filter, FilterChain, ServletRequest, ServletResponse }
-import javax.servlet.http.HttpServletRequest
+import javax.servlet.{Filter, FilterChain, ServletRequest, ServletResponse}
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 /**
  *  handle
@@ -45,7 +45,7 @@ import javax.servlet.http.HttpServletRequest
 
 class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedCompositeFilter(urlMap) with ContainerHook {
 
-  var expiredUrl: String
+  var expiredUrl: String = _
   var accessDeniedHandler: AccessDeniedHandler = _
   var entryPoint: EntryPoint = _
   var registry: SessionRegistry = _
@@ -56,17 +56,25 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
       val request = req.asInstanceOf[HttpServletRequest]
       val hs = request.getSession(false)
       val sid = SessionId(hs.getId)
+      var breakChain=false
       if (null != hs) registry.get(sid).foreach { s =>
         if (s.expired) {
+          breakChain = true
           registry.remove(sid)
           hs.invalidate()
           if (null != logoutHandler) logoutHandler.logout(req, res, s)
+          if(null!=expiredUrl) RedirectUtils.sendRedirect(request, res.asInstanceOf[HttpServletResponse], expiredUrl)
+          else{
+            res.getWriter().print(
+              "This session has been expired (possibly due to multiple concurrent logins being attempted as the same user).")
+          res.flushBuffer()
+          }
         } else {
           s.access(System.currentTimeMillis, RequestUtils.getServletPath(request))
           SecurityContext.session = s
         }
       }
-      new VirtualFilterChain(chain, getFilters(req)).doFilter(req, res)
+      if(!breakChain) new VirtualFilterChain(chain, getFilters(req)).doFilter(req, res)
     } catch {
       case ioe: IOException => throw ioe
       case bse: SecurityException => handleException(req, res, chain, bse)
