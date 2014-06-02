@@ -1,9 +1,15 @@
 package org.beangle.security.authc
 
-import org.beangle.commons.lang.Objects
-import org.beangle.security.authz.Authority
 import java.security.Principal
 
+import org.beangle.commons.lang.Objects
+
+object DetailNames {
+  val Agent = "agent"
+  val Os = "os"
+  val Server = "server"
+  val Host = "host"
+}
 /**
  * Authentication Information
  * @author chaostone
@@ -11,7 +17,7 @@ import java.security.Principal
 trait AuthenticationInfo extends Principal with Serializable {
 
   def principal: Any
-  
+
   def details: Map[String, Any]
 
   def getName = principal.toString

@@ -48,10 +48,29 @@ trait Session {
 
   def expire(): Unit
 
-  def access(accessAt: Long, accessed: String)
+  def access(accessAt: Long, accessed: String): Unit
 
-  def remark(added: String): Session
+  def remark(added: String): Unit
 
+}
+class SessionBean(val id: jSerializable, val principal: Principal, val loginAt: Date, val os: String, val agent: String, val host: String) extends Session {
+  var server: String = _
+  var expiredAt: Date = _
+  var remark: String = _
+  var timeout: Long = _
+  var registry: SessionRegistry = _
+  var lastAccessAt: Date = _
+  var lastAccessed: jSerializable = _
+
+  def onlineTime: Long = {
+    if (null == expiredAt) System.currentTimeMillis() - loginAt.getTime()
+    else expiredAt.getTime() - loginAt.getTime()
+  }
+  def expired: Boolean = null != expiredAt
+  def stop(): Unit = registry.remove(SessionId(id))
+  def expire(): Unit = expiredAt = new Date()
+  def access(accessAt: Long, accessed: String): Unit = registry.access(SessionId(id), accessAt, accessed)
+  def remark(added: String): Unit = if (null == remark) remark = added else remark = remark + added
 }
 /**
  * registry aware session
@@ -64,10 +83,14 @@ trait RegistrySession extends Session {
 }
 
 trait SessionBuilder {
-
-  def getSessionType(): Class[_ <: Session]
-
   def build(auth: AuthenticationInfo, key: SessionKey): Session
+}
+
+class DefaultSessionBuilder extends SessionBuilder {
+  import org.beangle.security.authc.DetailNames._
+  def build(auth: AuthenticationInfo, key: SessionKey): Session = {
+    new SessionBean(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+  }
 }
 
 trait SessionRegistry {
