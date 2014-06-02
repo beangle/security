@@ -1,13 +1,14 @@
 package org.beangle.security.web.access
 
-import org.beangle.commons.http.HttpMethods._
-import org.beangle.commons.web.filter.{ OncePerRequestFilter }
+import org.beangle.commons.http.HttpMethods.{DELETE, GET, HEAD, OPTIONS, POST, PUT, TRACE}
+import org.beangle.commons.web.filter.OncePerRequestFilter
 import org.beangle.commons.web.util.RequestUtils
 import org.beangle.security.authz.AccessDeniedException
+import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
-import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
+
+import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
 import javax.servlet.http.HttpServletRequest
-import org.beangle.security.context.ContextHolder
 
 abstract class AuthorizationFilter extends OncePerRequestFilter {
 
@@ -19,7 +20,7 @@ abstract class AuthorizationFilter extends OncePerRequestFilter {
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
     if (isFirstEnter(request)) {
-      if (!securityManager.isPermitted(ContextHolder.principal, getResource(request), getOperation(request)))
+      if (!securityManager.isPermitted(SecurityContext.principal, getResource(request), getOperation(request)))
         throw new AccessDeniedException(request, "access denied", null);
     } else
       chain.doFilter(request, response);

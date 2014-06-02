@@ -26,7 +26,7 @@ import org.beangle.commons.web.util.RequestUtils
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
-import org.beangle.security.context.{ ContextHolder, SecurityContextBean }
+import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.{ SessionId, SessionRegistry }
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.authc.LogoutHandler
@@ -50,9 +50,7 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
   var entryPoint: EntryPoint = _
   var registry: SessionRegistry = _
   var logoutHandler: LogoutHandler = _
-  /**
-   *
-   */
+
   override def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain): Unit = {
     try {
       val request = req.asInstanceOf[HttpServletRequest]
@@ -65,7 +63,7 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
           if (null != logoutHandler) logoutHandler.logout(req, res, s)
         } else {
           s.access(System.currentTimeMillis, RequestUtils.getServletPath(request))
-          ContextHolder.context = new SecurityContextBean(s)
+          SecurityContext.session = s
         }
       }
       new VirtualFilterChain(chain, getFilters(req)).doFilter(req, res)
@@ -74,7 +72,7 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
       case bse: SecurityException => handleException(req, res, chain, bse)
       case ex: Exception => throw ex
     } finally {
-      ContextHolder.context = null
+      SecurityContext.session = null
     }
   }
 
@@ -95,14 +93,14 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
         debug("Authentication exception occurred", ae);
         sendStartAuthentication(request, response, chain, ae)
       case ade: AccessDeniedException =>
-        if (ContextHolder.hasValidContext) accessDeniedHandler.handle(request, response, ade)
+        if (SecurityContext.hasValidContext) accessDeniedHandler.handle(request, response, ade)
         else sendStartAuthentication(request, response, chain, new AuthenticationException("access denied", ade));
     }
   }
 
   protected def sendStartAuthentication(request: ServletRequest, response: ServletResponse, chain: FilterChain,
     reason: AuthenticationException): Unit = {
-    ContextHolder.context = null
+    SecurityContext.session = null
     entryPoint.commence(request, response, reason);
   }
 

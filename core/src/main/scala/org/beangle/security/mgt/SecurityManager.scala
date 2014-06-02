@@ -6,6 +6,7 @@ import org.beangle.security.session.SessionRegistry
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.authc.AuthenticationToken
 import javax.security.auth.Subject
+import org.beangle.security.session.Session
 
 trait SecurityManager {
 
@@ -19,7 +20,7 @@ trait SecurityManager {
   /**
    * @throws AuthenticationException
    */
-  def login(token: AuthenticationToken): SecurityContext
+  def login(token: AuthenticationToken): Session
 
-  def logout(context: SecurityContext)
+  def logout(session: Session)
 }

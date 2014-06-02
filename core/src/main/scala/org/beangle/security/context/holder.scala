@@ -19,31 +19,10 @@
 package org.beangle.security.context
 
 import org.beangle.commons.lang.Throwables
+import org.beangle.security.session.Session
 
-/**
- * Associates a given {@link SecurityContext} with the current execution thread.
- * <p>
- * This object provides a series of methods that delegate to an instance of
- * {@link org.beangle.security.core.context.SecurityContextHolder} . The purpose of the
- * class is to provide a convenient way to specify the holder that should be used for a given JVM.
- * This is a JVM-wide setting.
- * </p>
- *
- * <p>
- * It can set the system property keyed on {@link #SYSTEM_PROPERTY} to specify the desired holder name <code>String</code>.
- * </p>
- *
- * @author chaostone
- */
-object ContextHolder {
-
-  private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
-
-  def context_=(context: SecurityContext) {
-    holder.context = context
-  }
-
-  def context: Option[SecurityContext] = if (null == holder.context) None else Some(holder.context)
+object SecurityContext {
+  val Anonymous = "anonymous"
 
   /**
    * <ul>
@@ -52,7 +31,7 @@ object ContextHolder {
    * <li> global
    * </ul>
    */
-  def buildHolder(strategyName: String): ContextHolder = {
+  private def buildHolder(strategyName: String): ContextHolder = {
     strategyName match {
       case "threadLocal" => new ThreadLocalHolder(false)
       case "inheritableThreadLocal" => new ThreadLocalHolder(true)
@@ -68,12 +47,17 @@ object ContextHolder {
       }
     }
   }
+  private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
 
-  def hasValidContext: Boolean = !context.isEmpty && SecurityContext.Anonymous != context.get.principal
+  def session_=(session: Session): Unit = holder.session = session
 
-  def principal: Any = context match {
+  def session: Option[Session] = if (null == holder.session) None else Some(holder.session)
+
+  def hasValidContext: Boolean = !session.isEmpty && Anonymous != session.get.principal
+
+  def principal: Any = session match {
     case None => SecurityContext.Anonymous
-    case Some(context) => context.principal
+    case Some(session) => session.principal
   }
 }
 
@@ -81,48 +65,33 @@ object ContextHolder {
  * A holder for storing security context information against a thread.
  * <p>
  * The preferred holder is loaded by
- * {@link org.beangle.security.core.context.SecurityContextHolder}.
+ * {@link org.beangle.security.core.context.ContextHolder}.
  * </p>
  *
- * @author chaostone
- * @version $Id: SecurityContextHolderStrategy.java 2142 2007-09-21 18:18:21Z $
  */
 trait ContextHolder {
 
-  def context: SecurityContext
+  def session: Session
 
-  def context_=(context: SecurityContext)
+  def session_=(session: Session)
 }
 
 /**
- * A <code>static</code> field-based implementation of
- * {@link org.beangle.security.core.context.SecurityContextHolder}.
- * <p>
- * This means that all instances in the JVM share the same <code>SecurityContext</code>. This is
- * generally useful with rich clients, such as Swing.
- * </p>
- *
- * @author chaostone
+ * A <code>static</code> field-based implementation of {@link org.beangle.security.core.context. ContextHolder}.
  */
 object GlobalHolder extends ContextHolder {
 
-  var context: SecurityContext = _
+  var session: Session = _
 }
 
 /**
- * A <code>ThreadLocal</code>-based implementation of
- * {@link org.beangle.security.core.context.SecurityContextHolder}.
- *
- * @author chaostone
- * @see java.lang.ThreadLocal
+ * A <code>ThreadLocal</code>-based implementation of  {@link org.beangle.security.core.context.ContextHolder}.
  */
 class ThreadLocalHolder(inheritable: Boolean) extends ContextHolder {
 
-  private val contexts = if (inheritable) new ThreadLocal[SecurityContext] else new InheritableThreadLocal[SecurityContext]
+  private val sessions = if (inheritable) new ThreadLocal[Session] else new InheritableThreadLocal[Session]
 
-  def context: SecurityContext = contexts.get
+  def session: Session = sessions.get
 
-  def context_=(newContext: SecurityContext) {
-    contexts.set(newContext)
-  }
+  def session_=(newSession: Session): Unit = sessions.set(newSession)
 }
