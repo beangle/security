@@ -28,11 +28,7 @@ import org.beangle.security.SecurityException
  * @author chaostone
  */
 @SerialVersionUID(-3529782031102169004L)
-class AuthenticationException(message: String, cause: Throwable = null) extends SecurityException(message, cause) {
-
-  var token: AuthenticationToken = _
-
-  var extraInfo: Any = _
+class AuthenticationException(message: String, val principal: Any, cause: Throwable = null) extends SecurityException(message, cause) {
 
   override def getMessage(): String = {
     val msg = super.getMessage()

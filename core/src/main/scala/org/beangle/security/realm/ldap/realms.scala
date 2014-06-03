@@ -10,7 +10,7 @@ class DefaultLdapRealm extends AbstractAccountRealm {
   var userStore: LdapUserStore = _
 
   protected override def credentialsCheck(token: AuthenticationToken, account: Account): Unit = {
-    if (!passwordValidator.verify(account.getName, token.credentials.toString)) throw new BadCredentialsException("Incorrect password", null)
+    if (!passwordValidator.verify(account.getName, token.credentials.toString)) throw new BadCredentialsException("Incorrect password",token, null)
   }
 
   protected def loadAccount(principal: Any): Account = {

@@ -185,12 +185,12 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     val existed = get(key) match {
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
-          if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession")
+          if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession",auth)
           existed.remark(" expired with replacement.")
           remove(key)
         }
       }
-      case None => if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession")
+      case None => if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession",auth)
     }
 
     sessionids.put(key.sessionId, builder.build(auth, key))

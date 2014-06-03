@@ -10,6 +10,7 @@ import javax.naming.directory.InitialDirContext
 import javax.naming.Context
 import org.beangle.commons.lang.Arrays
 import org.beangle.commons.codec.binary.Hex
+import org.beangle.security.authc.UsernamePasswordAuthenticationToken
 
 trait LdapPasswordValidator {
 
@@ -40,7 +41,8 @@ class SimpleBindValidator(val userStore: LdapUserStore) extends LdapPasswordVali
       new InitialDirContext(env).close()
       true
     } catch {
-      case e: javax.naming.AuthenticationException => throw new BadCredentialsException(s"Bad credential $name", e)
+      case e: javax.naming.AuthenticationException =>
+        throw new BadCredentialsException(s"Bad credential $name", new UsernamePasswordAuthenticationToken(name, password), e)
       case e1: Exception => e1.printStackTrace(); false;
     }
   }

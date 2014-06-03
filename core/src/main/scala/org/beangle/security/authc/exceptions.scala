@@ -1,18 +1,18 @@
 package org.beangle.security.authc
 
-class BadCredentialsException(message: String, cause: Throwable) extends AuthenticationException(message, cause)
+class BadCredentialsException(message: String, token: AuthenticationToken, cause: Throwable)
+  extends AuthenticationException(message, token, cause)
 
 @SerialVersionUID(1L)
-class UsernameNotFoundException(message: String, cause: Throwable = null) extends BadCredentialsException(message, cause)
+class UsernameNotFoundException(message: String, token: AuthenticationToken, cause: Throwable = null)
+  extends BadCredentialsException(message, token, cause)
 
-class AccountStatusException(message: String, user: Any) extends AuthenticationException(message, null) {
-  this.extraInfo = user
-}
+class AccountStatusException(message: String, token: AuthenticationToken) extends AuthenticationException(message, token, null)
 
-class LockedException(message: String, user: Any) extends AccountStatusException(message, user)
+class LockedException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
 
-class DisabledException(message: String, user: Any) extends AccountStatusException(message, user)
+class DisabledException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
 
-class CredentialsExpiredException(message: String, user: Any) extends AccountStatusException(message, user)
+class CredentialsExpiredException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
 
-class AccountExpiredException(message: String, user: Any) extends AccountStatusException(message, user) 
+class AccountExpiredException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token) 

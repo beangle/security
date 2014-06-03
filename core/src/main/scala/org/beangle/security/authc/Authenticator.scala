@@ -29,13 +29,13 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
   override def authenticate(token: AuthenticationToken): AuthenticationInfo = {
     try {
       val info = doAuthenticate(token);
-      if (info == null) throw new AuthenticationException(s"No account information found for authentication token [$token]")
+      if (info == null) throw new AuthenticationException(s"No account information found for authentication token [$token]", token)
       notifySuccess(token, info);
       info
     } catch {
       case e: Throwable =>
         val ae = if (e.isInstanceOf[AuthenticationException]) e.asInstanceOf[AuthenticationException]
-        else new AuthenticationException(s"Authentication failed for token submission [$token].  Possible unexpected error?", e)
+        else new AuthenticationException(s"Authentication failed for token submission [$token].  Possible unexpected error?", token, e)
         try {
           notifyFailure(token, ae)
         } catch {
@@ -154,11 +154,10 @@ object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
       if (realm.supports(token)) {
         try {
           val info = realm.getAuthenticationInfo(token)
-          if (null == info) throw new AuthenticationException(s"Realm [$realm] could not find account data for [$token].")
+          if (null == info) throw new AuthenticationException(s"Realm [$realm] could not find account data for [$token].", token)
           else aggregate = merge(info, aggregate)
         } catch {
-          case e: AuthenticationException => throw e
-          case t: Throwable => throw new AuthenticationException(s"Unable to acquire account data from [$realm].", t)
+          case e: Throwable => throw e
         }
       }
     }

@@ -89,9 +89,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
 
     val principal = determinePrincipal(token)
     if (Strings.isEmpty(principal)) {
-      val ex = new AuthenticationException("cannot find username for " + token.principal)
-      ex.token = token
-      throw ex
+      throw new AuthenticationException("cannot find username for " + token.principal,token)
     }
     val account = loadAccount(token.principal)
 
@@ -101,22 +99,22 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         credentialsCheck(token, account)
       } else merged.merge(account)
 
-      additionalCheck(merged)
+      additionalCheck(token,merged)
     } else {
       if (null != merged) throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
     }
     merged
   }
 
-  protected def additionalCheck(ac: Account) {
+  protected def additionalCheck(token: AuthenticationToken,ac: Account) {
     if (ac.accountLocked)
-      throw new LockedException(tr("AccountStatusChecker.locked", "User account is locked"), ac)
+      throw new LockedException(tr("AccountStatusChecker.locked", "User account is locked"), token)
     if (ac.disabled)
-      throw new DisabledException(tr("AccountStatusChecker.disabled", "User is disabled"), ac)
+      throw new DisabledException(tr("AccountStatusChecker.disabled", "User is disabled"), token)
     if (ac.accountExpired)
-      throw new AccountExpiredException(tr("AccountStatusChecker.expired", "User account has expired"), ac)
+      throw new AccountExpiredException(tr("AccountStatusChecker.expired", "User account has expired"), token)
     if (ac.credentialsExpired)
-      throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialsExpired", "User credentials have expired"), ac)
+      throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialsExpired", "User credentials have expired"), token)
   }
 
   protected def loadAccount(principal: Any): Account
