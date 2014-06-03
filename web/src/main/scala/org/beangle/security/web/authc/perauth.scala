@@ -1,27 +1,49 @@
 package org.beangle.security.web
 
+import java.util.Date
+
+import org.beangle.commons.codec.digest.Digests
+import org.beangle.commons.lang.{ Objects, Strings }
+import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.ServletResponse
-import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.http.HttpServletResponse
-import org.beangle.security.authc.AuthenticationInfo
-import org.beangle.security.mgt.SecurityManager
+import org.beangle.commons.web.util.RequestUtils
+import org.beangle.security.authc.{ AccountStatusException, AuthenticationException, AuthenticationInfo, AuthenticationToken, UsernameNotFoundException }
 import org.beangle.security.context.SecurityContext
+import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.Session
-import org.beangle.security.authc.AccountStatusException
-import org.beangle.security.authc.UsernameNotFoundException
-import org.beangle.security.authc.AuthenticationToken
-import org.beangle.security.authc.AuthenticationException
+import org.beangle.security.web.authc.WebDetails
+
+import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
+import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 trait PreauthAliveChecker {
   def check(session: Session, request: HttpServletRequest): Boolean
+}
+
+/**
+ * Preauth Authentication Token
+ */
+class PreauthToken(val principal: Any) extends AuthenticationToken {
+
+  var details: Map[String, Any] = Map.empty
+
+  def credentials: Any = null
+
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case test: PreauthToken =>
+        Objects.equalsBuilder().add(principal, test.principal)
+          .add(details, test.details)
+          .isEquals
+      case _ => false
+    }
+  }
 
 }
+
 abstract class AbstractPreauthFilter extends GenericHttpFilter {
 
-  var securityManager: SecurityManager
+  var securityManager: SecurityManager = _
   var aliveChecker: PreauthAliveChecker = _
   /**
    * Try to authenticate a pre-authenticated user if the
@@ -32,35 +54,31 @@ abstract class AbstractPreauthFilter extends GenericHttpFilter {
     val response = res.asInstanceOf[HttpServletResponse]
     val requireAuth = requiresAuthentication(request, response)
     if (requireAuth) doAuthenticate(request, response)
-    chain.doFilter(req, res);
+    chain.doFilter(req, res)
   }
 
   /** Do the actual authentication for a pre-authenticated user. */
   private def doAuthenticate(request: HttpServletRequest, response: HttpServletResponse): Unit = {
-    var authResult: AuthenticationInfo = null;
-    val token = getPreauthToken(request, response);
-    //    if (null != auth) {
-    //    try {
-    //      auth.setDetails(authenticationDetailsSource.buildDetails(request));
-    //      authResult = securityManager.login(request, auth);
-    //      successfulAuthentication(request, response, authResult);
-    //      return authResult;
-    //    } catch (AuthenticationException failed) {
-    //      unsuccessfulAuthentication(request, response, failed);
-    //      if (!continueOnFail) throw failed;
-    //      else return null;
-    //    }
-    //     }
+    var authResult: AuthenticationInfo = null
+    val token = getPreauthToken(request, response)
+    token.details ++= WebDetails.get(request)
+    if (null != token) {
+      try {
+        SecurityContext.session = securityManager.login(token)
+      } catch {
+        case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
+      }
+    }
   }
 
-  def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): AuthenticationToken
+  protected def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken
 
   protected def requiresAuthentication(request: HttpServletRequest, response: HttpServletResponse): Boolean = {
     SecurityContext.session match {
       case None => true
       case Some(s) => {
         if (null != aliveChecker && !aliveChecker.check(s, request)) {
-          unsuccessfulAuthentication(request, response,null)
+          unsuccessfulAuthentication(request, response, null)
           true
         } else false
       }
@@ -89,6 +107,121 @@ abstract class AbstractPreauthFilter extends GenericHttpFilter {
     if (null != failed) {
       debug("Cleared security context due to exception", failed)
       if (failed.isInstanceOf[UsernameNotFoundException] || failed.isInstanceOf[AccountStatusException]) throw failed
+    }
+  }
+}
+
+/**
+ * Source of the username supplied with pre-authenticated authentication
+ * request. The username can be supplied in the request: in cookie, request
+ * header, request parameter or as ServletRequest.getRemoteUser().
+ */
+trait UsernameSource {
+  /**
+   * Obtain username supplied in the request.
+   */
+  def obtainUsername(request: HttpServletRequest): Option[String]
+}
+
+/**
+ * Abtain username by cookie
+ */
+class CookieUsernameSource extends UsernameSource {
+
+  var cookieName: String = _
+
+  def obtainUsername(request: HttpServletRequest): Option[String] = {
+    val cookies = request.getCookies
+    if (cookies != null) {
+      cookies.find(c => c.getName == cookieName) match {
+        case Some(c) => Some(c.getValue)
+        case None => None
+      }
+    }
+    None
+  }
+}
+
+/**
+ * Source of the username supplied with pre-authenticated authentication request
+ * as remote user header value. Optionally can strip prefix: "domain\\username"
+ * -> "username", if <tt>stripPrefix</tt> property value is "true".
+ */
+class RemoteUsernameSource extends UsernameSource with Logging {
+
+  var stripPrefix = true
+
+  def obtainUsername(request: HttpServletRequest): Option[String] = {
+    var username: String = null
+    val p = request.getUserPrincipal()
+    if (null != p) username = p.getName()
+    if (Strings.isEmpty(username)) username = request.getRemoteUser()
+    if (null != username && stripPrefix) username = stripPrefix(username)
+    if (null != username) debug(s"Obtained username=[${username}] from remote user")
+    if (null == username) None else Some(username)
+  }
+
+  private def stripPrefix(userName: String): String = {
+    val index = userName.lastIndexOf("\\")
+    if (-1 == index) userName else userName.substring(index + 1)
+  }
+}
+
+class ParameterUsernameSource extends UsernameSource with Logging {
+
+  var enableExpired = true
+
+  // default 10min second
+  var expiredTime = 600
+
+  var timeParam = "t"
+
+  var userParam = "cid"
+
+  var digestParam = "s"
+
+  var extra = "123456!"
+
+  def obtainUsername(request: HttpServletRequest): Option[String] = {
+    val ip = RequestUtils.getIpAddr(request)
+    val cid = request.getParameter(userParam)
+    val timeParamStr = request.getParameter(timeParam)
+    var t: Long = 0
+    if (null != timeParamStr) t = java.lang.Long.valueOf(timeParamStr)
+
+    val s = request.getParameter(digestParam)
+    if (0 == t || null == s || null == cid || null == ip) None
+    else {
+      val full = cid + "," + ip + "," + t + "," + extra
+      val digest = Digests.md5Hex(full)
+      if (isDebugEnabled) {
+        debug(s"user $cid at :$ip")
+        debug(s"time:$t digest:$s ")
+        debug(s"full:$full")
+        debug(s"my_digest:$digest")
+      }
+      if (digest.equals(s)) {
+        val time = t * 1000
+        val now = new Date()
+        if (enableExpired && (Math.abs(now.getTime() - time) > (expiredTime * 1000))) {
+          debug(s"user $cid time expired:server time:${now} and given time :${new java.util.Date(time)}")
+          None
+        } else {
+          debug(s"user $cid login at server time:$now")
+          Some(cid)
+        }
+      } else None
+    }
+  }
+}
+
+class UsernamePreauthFilter extends AbstractPreauthFilter {
+  var usernameSource: UsernameSource = _
+
+  protected override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {
+    usernameSource.obtainUsername(request) match {
+      case Some(name) => if (Strings.isNotBlank(name)) new PreauthToken(name) else null
+      case None => null
     }
   }
 }
