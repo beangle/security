@@ -1,7 +1,7 @@
 package org.beangle.security.realm.ldap
 
 import org.beangle.security.authc.{ AbstractAccountRealm, Account, AuthenticationToken, BadCredentialsException }
-import org.beangle.security.authc.SimpleAccount
+import org.beangle.security.authc.DefaultAccount
 
 class DefaultLdapRealm extends AbstractAccountRealm {
   
@@ -17,7 +17,7 @@ class DefaultLdapRealm extends AbstractAccountRealm {
     val uid = principal.toString
     val dn = userStore.getUserDN(uid)
     if (null != dn) {
-      val account = new SimpleAccount(principal, userStore.getPassword(uid))
+      val account = new DefaultAccount(principal, userStore.getPassword(uid))
       account
     } else null
   }

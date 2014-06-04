@@ -1,7 +1,6 @@
 package org.beangle.security.web
 
 import java.util.Date
-
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
@@ -12,9 +11,9 @@ import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.Session
 import org.beangle.security.web.authc.WebDetails
-
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.session.SessionId
 
 trait PreauthAliveChecker {
   def check(session: Session, request: HttpServletRequest): Boolean
@@ -64,7 +63,7 @@ abstract class AbstractPreauthFilter extends GenericHttpFilter {
     token.details ++= WebDetails.get(request)
     if (null != token) {
       try {
-        SecurityContext.session = securityManager.login(token)
+        SecurityContext.session = securityManager.login(token,SessionId(request.getSession(true).getId))
       } catch {
         case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
       }

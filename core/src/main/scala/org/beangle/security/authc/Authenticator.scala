@@ -13,7 +13,7 @@ trait Authenticator {
    * @param auth
    * @throws AuthenticationException
    */
-  def authenticate(auth: AuthenticationToken): AuthenticationInfo
+  def authenticate(token: AuthenticationToken): AuthenticationInfo
 }
 
 trait AuthenticationListener {

@@ -95,7 +95,7 @@ class DefaultSessionBuilder extends SessionBuilder {
 
 trait SessionRegistry {
 
-  def register(authentication: AuthenticationInfo, key: SessionKey)
+  def register(info: AuthenticationInfo, key: SessionKey):Session
 
   def remove(key: SessionKey): Option[Session]
 
@@ -178,26 +178,28 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     }
   }
 
-  def get(key: SessionKey): Option[Session] = sessionids.get(key.sessionId)
+  override def get(key: SessionKey): Option[Session] = sessionids.get(key.sessionId)
 
-  def register(auth: AuthenticationInfo, key: SessionKey) {
+  override def register(auth: AuthenticationInfo, key: SessionKey): Session = {
     val principal = auth.getName
     val existed = get(key) match {
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
-          if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession",auth)
+          if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession", auth)
           existed.remark(" expired with replacement.")
           remove(key)
         }
       }
-      case None => if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession",auth)
+      case None => if (!controller.onRegister(auth, key, this)) throw new SessionException("security.OvermaxSession", auth)
     }
 
-    sessionids.put(key.sessionId, builder.build(auth, key))
+    val newSession = builder.build(auth, key)
+    sessionids.put(key.sessionId, newSession)
     principals.get(principal) match {
       case None => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
       case Some(sids) => sids += key.sessionId
     }
+    newSession
   }
 
   override def remove(key: SessionKey): Option[Session] = {

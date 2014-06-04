@@ -3,6 +3,7 @@ package org.beangle.security.mgt
 import org.beangle.security.authc.{AuthenticationToken, Authenticator}
 import org.beangle.security.authz.Authorizer
 import org.beangle.security.session.{Session, SessionRegistry}
+import org.beangle.security.session.SessionKey
 
 trait SecurityManager {
 
@@ -16,7 +17,7 @@ trait SecurityManager {
   /**
    * @throws AuthenticationException
    */
-  def login(token: AuthenticationToken): Session
+  def login(token: AuthenticationToken,key:SessionKey): Session
 
   def logout(session: Session): Unit = session.stop()
 }
@@ -27,8 +28,9 @@ class DefaultSecurityManager extends SecurityManager {
   var authorizer: Authorizer = _
   var authenticator: Authenticator = _
 
-  def login(token: AuthenticationToken): Session = {
-    null
+  def login(token: AuthenticationToken,key:SessionKey): Session = {
+    val info =authenticator.authenticate(token)
+    sessionRegistry.register(info, key)
   }
 
 }
