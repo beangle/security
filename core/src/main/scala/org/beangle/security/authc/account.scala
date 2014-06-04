@@ -19,7 +19,7 @@ trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable {
   def disabled: Boolean
 }
 
-class DefaultAccount(val principal: Any) extends Account with Mergable {
+class DefaultAccount(val principal: Any, var id: Any) extends Account with Mergable {
 
   var accountExpired: Boolean = _
 
@@ -74,6 +74,10 @@ class DefaultAccount(val principal: Any) extends Account with Mergable {
 
 }
 
+trait AccountStore {
+  def load(principal: Any): Option[Account]
+}
+
 abstract class AbstractAccountRealm extends Realm with Logging {
 
   var parent: AbstractAccountRealm = _
@@ -89,24 +93,24 @@ abstract class AbstractAccountRealm extends Realm with Logging {
 
     val principal = determinePrincipal(token)
     if (Strings.isEmpty(principal)) {
-      throw new AuthenticationException("cannot find username for " + token.principal,token)
+      throw new AuthenticationException("cannot find username for " + token.principal, token)
     }
-    val account = loadAccount(token.principal)
 
-    if (null != account) {
-      if (null == merged) {
-        merged = account
-        credentialsCheck(token, account)
-      } else merged.merge(account)
+    loadAccount(token.principal) match {
+      case Some(account) =>
+        if (null == merged) {
+          merged = account
+          credentialsCheck(token, account)
+        } else merged.merge(account)
+        additionalCheck(token, merged)
 
-      additionalCheck(token,merged)
-    } else {
-      if (null != merged) throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
+      case None =>
+        if (null != merged) throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
     }
     merged
   }
 
-  protected def additionalCheck(token: AuthenticationToken,ac: Account) {
+  protected def additionalCheck(token: AuthenticationToken, ac: Account) {
     if (ac.accountLocked)
       throw new LockedException(tr("AccountStatusChecker.locked", "User account is locked"), token)
     if (ac.disabled)
@@ -117,7 +121,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
       throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialsExpired", "User credentials have expired"), token)
   }
 
-  protected def loadAccount(principal: Any): Account
+  protected def loadAccount(principal: Any): Option[Account]
 
   protected def credentialsCheck(token: AuthenticationToken, account: Account): Unit
 

@@ -41,8 +41,8 @@ trait Session {
 
   def server: String
 
-  /** the time in milliseconds that the session session may remain idle before expiring.*/
-  def timeout: Long
+  /** the time in seconds that the session session may remain idle before expiring.*/
+  def timeout: Int
 
   def stop(): Unit
 
@@ -57,7 +57,7 @@ class SessionBean(val id: jSerializable, val principal: Principal, val loginAt: 
   var server: String = _
   var expiredAt: Date = _
   var remark: String = _
-  var timeout: Long = _
+  var timeout: Int = 30 * 60 //default 30 minutes
   var registry: SessionRegistry = _
   var lastAccessAt: Date = _
   var lastAccessed: jSerializable = _
@@ -89,13 +89,15 @@ trait SessionBuilder {
 class DefaultSessionBuilder extends SessionBuilder {
   import org.beangle.security.authc.DetailNames._
   def build(auth: AuthenticationInfo, key: SessionKey): Session = {
-    new SessionBean(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+    val session = new SessionBean(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+    auth.details.get(Timeout) foreach { timeout => session.timeout = timeout.asInstanceOf }
+    session
   }
 }
 
 trait SessionRegistry {
 
-  def register(info: AuthenticationInfo, key: SessionKey):Session
+  def register(info: AuthenticationInfo, key: SessionKey): Session
 
   def remove(key: SessionKey): Option[Session]
 

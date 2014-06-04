@@ -9,6 +9,7 @@ object DetailNames {
   val Os = "os"
   val Server = "server"
   val Host = "host"
+  val Timeout = "timeout"
 }
 /**
  * Authentication Information

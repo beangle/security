@@ -1,19 +1,20 @@
 package org.beangle.security.web
 
 import java.util.Date
+
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
 import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.{ AccountStatusException, AuthenticationException, AuthenticationInfo, AuthenticationToken, UsernameNotFoundException }
+import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStatusException, AccountStore, AuthenticationException, AuthenticationInfo, AuthenticationToken, UsernameNotFoundException }
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
-import org.beangle.security.session.Session
+import org.beangle.security.session.{ Session, SessionId }
 import org.beangle.security.web.authc.WebDetails
+
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.security.session.SessionId
 
 trait PreauthAliveChecker {
   def check(session: Session, request: HttpServletRequest): Boolean
@@ -63,7 +64,10 @@ abstract class AbstractPreauthFilter extends GenericHttpFilter {
     token.details ++= WebDetails.get(request)
     if (null != token) {
       try {
-        SecurityContext.session = securityManager.login(token,SessionId(request.getSession(true).getId))
+        val httpSession = request.getSession(true)
+        val session = securityManager.login(token, SessionId(httpSession.getId))
+        SecurityContext.session = session
+        httpSession.setMaxInactiveInterval(session.timeout)
       } catch {
         case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
       }
@@ -223,4 +227,14 @@ class UsernamePreauthFilter extends AbstractPreauthFilter {
       case None => null
     }
   }
+}
+
+class PreauthRealm extends AbstractAccountRealm {
+  var accountStore: AccountStore = _
+
+  protected override def credentialsCheck(token: AuthenticationToken, account: Account): Unit = {}
+
+  protected override def loadAccount(principal: Any): Option[Account] = accountStore.load(principal)
+
+  override def supports(token: AuthenticationToken): Boolean = token.isInstanceOf[PreauthToken]
 }

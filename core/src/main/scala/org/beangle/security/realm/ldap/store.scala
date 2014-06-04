@@ -1,20 +1,22 @@
 package org.beangle.security.realm.ldap
 
 import java.{ util => jl }
-
 import org.beangle.commons.bean.Disposable
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
-
 import javax.naming.{ CompositeName, NamingException }
 import javax.naming.directory.{ Attribute, Attributes, DirContext, InitialDirContext, SearchControls }
+import org.beangle.security.authc.AccountStore
+import org.beangle.security.authc.DefaultAccount
+import org.beangle.security.authc.Account
 
 /**
  * Ldap User Store (RFC 4510)
  * @see http://tools.ietf.org/html/rfc4510
  * @see http://www.rfc-base.org/rfc-4510.html
  */
-trait LdapUserStore {
+trait LdapUserStore extends AccountStore {
+
   def getUserDN(uid: String): String
 
   def getPassword(uid: String): String
@@ -107,7 +109,7 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
     env.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory")
     env.put("java.naming.provider.url", url)
     env.put("java.naming.security.authentication", "simple")
-    env.put("java.naming.security.principal",userName)
+    env.put("java.naming.security.principal", userName)
     env.put("java.naming.security.credentials", password)
     env
   }
@@ -142,4 +144,11 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
 
   override def destroy(): Unit = this.disConnect()
 
+  override def load(principal: Any): Option[Account] = {
+    val dn = getUserDN(principal.toString)
+    if (null != dn) {
+      val account = new DefaultAccount(principal, dn)
+      Some(account)
+    } else None
+  }
 }
