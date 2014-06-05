@@ -10,6 +10,10 @@ import org.beangle.security.realm.Realm
 
 trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable {
 
+  def id: Any
+
+  def category: Any
+
   def accountExpired: Boolean
 
   def accountLocked: Boolean
@@ -29,6 +33,8 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
 
   var disabled: Boolean = _
 
+  var category: Any = _
+
   var roles: List[Any] = List.empty
 
   var permissions: List[Any] = List.empty
@@ -38,21 +44,19 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: DefaultAccount =>
-        Objects.equalsBuilder().add(principal, test.principal)
-          .add(details, test.details)
-          .add(roles, test.roles)
-          .add(permissions, test.permissions)
-          .isEquals
+        Objects.equalsBuilder().add(principal, test.principal).add(id, test.id).isEquals
       case _ => false
     }
   }
 
   override def toString(): String = {
     Objects.toStringBuilder(this).add("Principal:", principal)
+      .add("Id: ", id)
       .add("AccountExpired: ", accountExpired)
       .add("credentialsExpired: ", credentialsExpired)
       .add("AccountLocked: ", accountLocked)
       .add("Disabled: ", disabled)
+      .add("Category: ", category)
       .add("Roles: ", roles.mkString(","))
       .add("Permissions: ", permissions.mkString(",")).toString
   }
@@ -64,6 +68,8 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
         if (ac.accountLocked) this.accountLocked = true
         if (ac.credentialsExpired) this.credentialsExpired = true
         if (ac.disabled) this.disabled = true
+        if (null != ac.id) this.id = ac.id
+        if (null != ac.category) this.category = ac.category
         if (!ac.roles.isEmpty) this.roles ::= ac.roles
         if (!ac.permissions.isEmpty) this.permissions ::= ac.permissions
         if (!ac.details.isEmpty) this.details ++= ac.details

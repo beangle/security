@@ -6,6 +6,7 @@ import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.AuthenticationInfo
 import java.io.{ Serializable => jSerializable }
 import java.security.Principal
+import org.beangle.commons.event.EventPublisher
 
 trait SessionKey {
   def sessionId: jSerializable
@@ -53,7 +54,7 @@ trait Session {
   def remark(added: String): Unit
 
 }
-class SessionBean(val id: jSerializable, val principal: Principal, val loginAt: Date, val os: String, val agent: String, val host: String) extends Session {
+class DefaultSession(val id: jSerializable, val principal: Principal, val loginAt: Date, val os: String, val agent: String, val host: String) extends Session {
   var server: String = _
   var expiredAt: Date = _
   var remark: String = _
@@ -89,7 +90,7 @@ trait SessionBuilder {
 class DefaultSessionBuilder extends SessionBuilder {
   import org.beangle.security.authc.DetailNames._
   def build(auth: AuthenticationInfo, key: SessionKey): Session = {
-    val session = new SessionBean(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+    val session = new DefaultSession(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
     auth.details.get(Timeout) foreach { timeout => session.timeout = timeout.asInstanceOf }
     session
   }
@@ -148,7 +149,7 @@ trait SessionStatusCache {
   def ids: Set[jSerializable]
 }
 
-class MemSessionRegistry extends SessionRegistry with Initializing with Logging {
+class MemSessionRegistry extends SessionRegistry with Initializing with Logging with EventPublisher {
 
   var controller: SessionController = _
 
@@ -201,14 +202,15 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
       case None => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
       case Some(sids) => sids += key.sessionId
     }
+    publish(new LoginEvent(newSession))
     newSession
   }
 
   override def remove(key: SessionKey): Option[Session] = {
     get(key) match {
-      case Some(info) => {
+      case Some(s) => {
         sessionids.remove(key.sessionId)
-        val principal = info.principal
+        val principal = s.principal
         debug("Remove session " + key + " for " + principal)
         val sids = principals.get(principal) foreach { sids =>
           sids.remove(key.sessionId)
@@ -217,8 +219,9 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
             debug("Remove principal " + principal + " from registry")
           }
         }
-        controller.onLogout(info)
-        Some(info)
+        controller.onLogout(s)
+        publish(new LogoutEvent(s))
+        Some(s)
       }
       case None => None
     }

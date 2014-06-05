@@ -1,5 +1,23 @@
 package org.beangle.security.authc
 
+import org.beangle.commons.lang.Strings
+
+/**
+ * 认证异常
+ *
+ * @author chaostone
+ */
+@SerialVersionUID(-3529782031102169004L)
+class AuthenticationException(message: String, val principal: Any, cause: Throwable = null) extends SecurityException(message, cause) {
+
+  override def getMessage(): String = {
+    val msg = super.getMessage()
+    if (null == msg) {
+      Strings.concat("security." + Strings.substringBefore(getClass().getSimpleName(), "Exception"))
+    } else msg
+  }
+}
+
 class BadCredentialsException(message: String, token: AuthenticationToken, cause: Throwable)
   extends AuthenticationException(message, token, cause)
 

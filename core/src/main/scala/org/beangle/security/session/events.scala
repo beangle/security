@@ -3,13 +3,15 @@ package org.beangle.security.session
 import org.beangle.commons.event.Event
 
 @SerialVersionUID(-6802410177820837015L)
-class LoginEvent(source: Session) extends Event(source) {
+class LoginEvent(src: Session) extends Event(src) {
 
-  def sessioninfo = source.asInstanceOf[Session]
+  def session :Session = source.asInstanceOf[Session]
 }
 
 @SerialVersionUID(5562102005395894399L)
-class LogoutEvent(source: Session) extends Event(source) {
+class LogoutEvent(src: Session) extends Event(src) {
 
-  def sessioninfo = source.asInstanceOf[Session]
+  def session:Session = source.asInstanceOf[Session]
 }
+
+
