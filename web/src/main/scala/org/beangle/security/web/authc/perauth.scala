@@ -41,9 +41,8 @@ class PreauthToken(val principal: Any) extends AuthenticationToken {
 
 }
 
-abstract class AbstractPreauthFilter extends GenericHttpFilter {
+abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter {
 
-  var securityManager: SecurityManager = _
   var aliveChecker: PreauthAliveChecker = _
   /**
    * Try to authenticate a pre-authenticated user if the
@@ -218,7 +217,7 @@ class ParameterUsernameSource extends UsernameSource with Logging {
   }
 }
 
-class UsernamePreauthFilter extends AbstractPreauthFilter {
+class UsernamePreauthFilter(securityManager: SecurityManager) extends AbstractPreauthFilter(securityManager) {
   var usernameSource: UsernameSource = _
 
   protected override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {

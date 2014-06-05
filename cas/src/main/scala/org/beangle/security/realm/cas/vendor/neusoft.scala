@@ -16,7 +16,7 @@ import org.beangle.commons.web.util.HttpUtils
 class NeusoftCasTicketValidator extends AbstractTicketValidator {
   encoding = "GBK"
 
-  protected override def parseResponseFromServer(ticket: String, response: String): Assertion = {
+  protected[vendor] override def parseResponse(ticket: String, response: String): Assertion = {
     val r = XMLReaderFactory.createXMLReader();
     r.setFeature("http://xml.org/sax/features/namespaces", false);
     val handler = new ServiceXmlHandler();

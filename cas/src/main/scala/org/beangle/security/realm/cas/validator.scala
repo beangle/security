@@ -93,13 +93,12 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
    * Parses the response from the server into a CAS Assertion.
    * @throws TicketValidationException
    */
-  protected def parseResponseFromServer(ticket: String, response: String): Assertion
+  protected def parseResponse(ticket: String, response: String): Assertion
 
   /**
    * Contacts the CAS Server to retrieve the response for the ticket validation.
    */
-
-  protected def retrieveResponseFromServer(validationUrl: URL, ticket: String): String = {
+  protected def retrieveResponse(validationUrl: URL, ticket: String): String = {
     return HttpUtils.getResponseText(validationUrl, hostnameVerifier, encoding)
   }
 
@@ -108,11 +107,11 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     debug(s"Constructing validation url: $validationUrl")
     try {
       debug("Retrieving response from server.")
-      val serverResponse = retrieveResponseFromServer(new URL(validationUrl), ticket)
+      val serverResponse = retrieveResponse(new URL(validationUrl), ticket)
 
       if (serverResponse == null) throw new TicketValidationException("The CAS server returned no response.")
       debug(s"Server response: $serverResponse")
-      return parseResponseFromServer(ticket, serverResponse)
+      return parseResponse(ticket, serverResponse)
     } catch {
       case e: MalformedURLException => throw new TicketValidationException(e.getMessage())
     }
@@ -212,7 +211,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
 class Cas20ServiceTicketValidator extends AbstractTicketValidator {
 
-  protected def parseResponseFromServer(ticket: String, response: String): Assertion = {
+  protected override def parseResponse(ticket: String, response: String): Assertion = {
     val error = getTextForElement(response, "authenticationFailure")
     if (Strings.isNotBlank(error)) { throw new TicketValidationException(error) }
     val principal = getTextForElement(response, "user")

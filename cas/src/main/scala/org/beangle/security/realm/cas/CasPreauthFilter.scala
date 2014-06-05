@@ -4,19 +4,13 @@ import org.beangle.commons.lang.Assert
 import org.beangle.security.web.{ AbstractPreauthFilter, PreauthToken }
 
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.mgt.SecurityManager
 /**
  * Processes a CAS service ticket.
  */
-class CasPreauthFilter extends AbstractPreauthFilter {
+class CasPreauthFilter(securityManager:SecurityManager,val config:CasConfig) extends AbstractPreauthFilter(securityManager) {
 
-  var config: CasConfig = _
-
-  protected override def initFilterBean() {
-    super.initFilterBean()
-    Assert.notNull(config, "config is a required field.")
-  }
-
-  protected override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {
+  protected[cas] override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {
     val ticket = request.getParameter("ticket")
     if (ticket == null) {
       null

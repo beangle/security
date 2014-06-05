@@ -42,10 +42,9 @@ object CasEntryPoint {
   }
 }
 
-class CasEntryPoint extends EntryPoint {
+class CasEntryPoint(val config:CasConfig) extends EntryPoint {
   import CasEntryPoint._
   import CasConfig._
-  var config: CasConfig = _
   /** 本地登录地址 */
   var localLogin: String = _
 

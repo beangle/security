@@ -1,7 +1,7 @@
 package org.beangle.security.authc
 
 import org.beangle.commons.lang.Strings
-
+import org.beangle.security.SecurityException
 /**
  * 认证异常
  *
