@@ -30,9 +30,8 @@ trait AuthenticationInfo extends Principal with Serializable {
  * Authentication Info can merge with others
  */
 trait Mergable extends AuthenticationInfo {
-  def merge(info: AuthenticationInfo): this.type
-
   def details_=(data: Map[String, Any])
+  def merge(info: AuthenticationInfo): this.type
 }
 
 /**

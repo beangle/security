@@ -19,9 +19,7 @@ object CasConfig {
     }
     if (null != serverName) {
       sb.append(serverName)
-      if (includePort && port > 0) {
-        sb.append(':').append(port)
-      }
+      if (includePort && port > 0) sb.append(':').append(port)
     }
     sb.toString
   }

@@ -1,12 +1,14 @@
 package org.beangle.security.session
 
-import java.util.Date
-import org.beangle.commons.bean.Initializing
-import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.AuthenticationInfo
 import java.io.{ Serializable => jSerializable }
 import java.security.Principal
+import java.util.Date
+
+import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
+import org.beangle.commons.logging.Logging
+import org.beangle.security.authc.AuthenticationInfo
+import org.beangle.security.authc.DetailNames._
 
 trait SessionKey {
   def sessionId: jSerializable
@@ -43,7 +45,9 @@ trait Session {
   def server: String
 
   /** the time in seconds that the session session may remain idle before expiring.*/
-  def timeout: Int
+  def timeout: Short
+
+  def timeout_=(s: Short)
 
   def stop(): Unit
 
@@ -58,7 +62,7 @@ class DefaultSession(val id: jSerializable, val principal: Principal, val loginA
   var server: String = _
   var expiredAt: Date = _
   var remark: String = _
-  var timeout: Int = 30 * 60 //default 30 minutes
+  var timeout: Short = 30 * 60 //default 30 minutes
   var registry: SessionRegistry = _
   var lastAccessAt: Date = _
   var lastAccessed: jSerializable = _
@@ -88,11 +92,9 @@ trait SessionBuilder {
 }
 
 class DefaultSessionBuilder extends SessionBuilder {
-  import org.beangle.security.authc.DetailNames._
+
   def build(auth: AuthenticationInfo, key: SessionKey): Session = {
-    val session = new DefaultSession(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
-    auth.details.get(Timeout) foreach { timeout => session.timeout = timeout.asInstanceOf }
-    session
+    new DefaultSession(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
   }
 }
 
@@ -127,7 +129,7 @@ trait SessionController {
 
   def getMaxSessions(auth: AuthenticationInfo): Int
 
-  def getInactiveInterval(auth: AuthenticationInfo): Option[Short]
+  def getTimeout(auth: AuthenticationInfo): Short
 }
 
 @SerialVersionUID(-1110252524091983477L)
@@ -197,6 +199,7 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     }
 
     val newSession = builder.build(auth, key)
+    newSession.timeout = controller.getTimeout(auth)
     sessionids.put(key.sessionId, newSession)
     principals.get(principal) match {
       case None => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
