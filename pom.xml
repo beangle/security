@@ -20,9 +20,8 @@
     <module>core</module>
     <module>cas</module>
     <module>web</module>
-<!--
-    <module>blueprint</module>
--->
+    <module>session-jdbc</module>
+    <module>session-redis</module>
   </modules>
 
   <dependencyManagement>

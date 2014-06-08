@@ -2,13 +2,15 @@ package org.beangle.security.session
 
 import java.io.{ Serializable => jSerializable }
 import java.security.Principal
-import java.util.Date
-
+import java.{ util => ju }
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.AuthenticationInfo
 import org.beangle.security.authc.DetailNames._
+import java.util.Calendar
+import org.beangle.commons.lang.Dates
+import org.beangle.commons.lang.time.Stopwatch
 
 trait SessionKey {
   def sessionId: jSerializable
@@ -22,11 +24,11 @@ trait Session {
 
   def principal: Principal
 
-  def loginAt: Date
+  def loginAt: ju.Date
 
-  def lastAccessAt: Date
+  def lastAccessAt: ju.Date
 
-  def expiredAt: Date
+  def expiredAt: ju.Date
 
   def expired: Boolean
 
@@ -58,13 +60,13 @@ trait Session {
   def remark(added: String): Unit
 
 }
-class DefaultSession(val id: jSerializable, val principal: Principal, val loginAt: Date, val os: String, val agent: String, val host: String) extends Session {
+class DefaultSession(val id: jSerializable, val principal: Principal, val loginAt: ju.Date, val os: String, val agent: String, val host: String) extends Session {
   var server: String = _
-  var expiredAt: Date = _
+  var expiredAt: ju.Date = _
   var remark: String = _
   var timeout: Short = 30 * 60 //default 30 minutes
   var registry: SessionRegistry = _
-  var lastAccessAt: Date = _
+  var lastAccessAt: ju.Date = _
   var lastAccessed: jSerializable = _
 
   def onlineTime: Long = {
@@ -73,7 +75,7 @@ class DefaultSession(val id: jSerializable, val principal: Principal, val loginA
   }
   def expired: Boolean = null != expiredAt
   def stop(): Unit = registry.remove(SessionId(id))
-  def expire(): Unit = expiredAt = new Date()
+  def expire(): Unit = expiredAt = new ju.Date()
   def access(accessAt: Long, accessed: String): Unit = registry.access(SessionId(id), accessAt, accessed)
   def remark(added: String): Unit = if (null == remark) remark = added else remark = remark + added
 }
@@ -94,7 +96,7 @@ trait SessionBuilder {
 class DefaultSessionBuilder extends SessionBuilder {
 
   def build(auth: AuthenticationInfo, key: SessionKey): Session = {
-    new DefaultSession(key.sessionId, auth, new Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+    new DefaultSession(key.sessionId, auth, new ju.Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
   }
 }
 
@@ -110,11 +112,18 @@ trait SessionRegistry {
 
   def get(principal: String, includeExpiredSessions: Boolean): List[Session]
 
+  /**
+   * Get Expired and last accessed before the time
+   */
+  def getExpired(lastAccessAt: ju.Date): Seq[Session]
+
   def get(key: SessionKey): Option[Session]
 
   def getStatus(key: SessionKey): Option[SessionStatus]
 
   def isRegisted(principal: String): Boolean
+
+  def controller: SessionController
 
   def count: Int
 }
@@ -183,6 +192,15 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     }
   }
 
+  override def getExpired(lastAccessAt: ju.Date): Seq[Session] = {
+    val expired = new collection.mutable.ListBuffer[Session]
+    sessionids foreach {
+      case (id, s) =>
+        if (s.expired || s.lastAccessAt.before(lastAccessAt)) expired += s
+    }
+    expired
+  }
+
   override def get(key: SessionKey): Option[Session] = sessionids.get(key.sessionId)
 
   override def register(auth: AuthenticationInfo, key: SessionKey): Session = {
@@ -248,6 +266,37 @@ class MemSessionRegistry extends SessionRegistry with Initializing with Logging 
     get(key) match {
       case None => None
       case Some(info) => info.access(accessAt, accessed)
+    }
+  }
+}
+
+class SessionCleanupDaemon(val registry: SessionRegistry) extends Logging {
+
+  /** 默认 过期时间 30分钟 */
+  var expiredTime = 30
+
+  /**
+   * Default interval(5 minutes) for clean up expired session infos.
+   */
+  var cleanInterval = 5 * 60 * 1000
+  /**
+   * Check expired or will expire session(now-lastAccessAt>=expiredTime),clean them
+   */
+  def cleanup() {
+    val watch = new Stopwatch(true)
+    debug("clean up expired or over expired time session start ...")
+    val calendar = Calendar.getInstance()
+    try {
+      var removed = 0
+      registry.getExpired(Dates.rollMinutes(calendar.getTime(), -expiredTime)) foreach { s =>
+        registry.remove(SessionId(s.id)) foreach { olds =>
+          removed += 1
+        }
+      }
+      if (removed > 0) info(s"removed $removed expired sessions in $watch")
+      registry.controller.stat()
+    } catch {
+      case e: Exception => error("Beangle session cleanup failure.", e)
     }
   }
 }
