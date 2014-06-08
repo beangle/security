@@ -64,8 +64,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
           res.sendRedirect(redirectUrl + "&isLoginService=11")
         }
       } else {
-        val serviceUrl = constructServiceUrl(req, res, null,
-          getLocalServer(req), config.artifactName, config.encode)
+        val serviceUrl = constructServiceUrl(req, res, null, getLocalServer(req), config.artifactName, config.encode)
         val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, false)
         res.sendRedirect(redirectUrl)
       }
@@ -101,8 +100,7 @@ class CasPreauthFilter(securityManager: SecurityManager, val config: CasConfig) 
     if (ticket == null) {
       null
     } else {
-      val url = CasEntryPoint.constructServiceUrl(request, response, null,
-        CasConfig.getLocalServer(request), CasConfig.TicketName, config.encode)
+      val url = CasEntryPoint.constructServiceUrl(request, response, null, getLocalServer(request), TicketName, config.encode)
       val token = new CasToken(ticket)
       token.details += "url" -> url
       token
