@@ -98,9 +98,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   /**
    * Contacts the CAS Server to retrieve the response for the ticket validation.
    */
-  protected def retrieveResponse(validationUrl: URL, ticket: String): String = {
-    return HttpUtils.getResponseText(validationUrl, hostnameVerifier, encoding)
-  }
+  protected def retrieveResponse(url: URL, ticket: String): String = HttpUtils.getResponseText(url, hostnameVerifier, encoding)
 
   def validate(ticket: String, service: String): Assertion = {
     val validationUrl = constructValidationUrl(ticket, service)
@@ -108,10 +106,9 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     try {
       debug("Retrieving response from server.")
       val serverResponse = retrieveResponse(new URL(validationUrl), ticket)
-
       if (serverResponse == null) throw new TicketValidationException("The CAS server returned no response.")
       debug(s"Server response: $serverResponse")
-      return parseResponse(ticket, serverResponse)
+      parseResponse(ticket, serverResponse)
     } catch {
       case e: MalformedURLException => throw new TicketValidationException(e.getMessage())
     }
@@ -134,25 +131,21 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
     val handler = new DefaultHandler() {
 
-      private var foundElement = false
+      private var founded = false
 
       private var buffer = new StringBuilder()
 
-      override def startElement(uri: String, localName: String, qName: String, attributes: Attributes): Unit = {
-        if (localName.equals(element)) this.foundElement = true
-      }
+      override def startElement(uri: String, ln: String, qn: String, attr: Attributes): Unit = if (ln == element) founded = true
 
-      override def endElement(uri: String, localName: String, qName: String): Unit = {
-        if (localName.equals(element)) {
-          this.foundElement = false
-          elements += this.buffer.toString
-          this.buffer = new StringBuilder()
+      override def endElement(uri: String, ln: String, qn: String): Unit = {
+        if (ln == element) {
+          founded = false
+          elements += buffer.toString
+          buffer = new StringBuilder()
         }
       }
 
-      override def characters(ch: Array[Char], start: Int, length: Int): Unit = {
-        if (this.foundElement) this.buffer.append(ch, start, length)
-      }
+      override def characters(ch: Array[Char], start: Int, length: Int): Unit = if (founded) buffer.append(ch, start, length)
     }
 
     reader.setContentHandler(handler)
@@ -169,8 +162,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     }
   }
   /**
-   * Retrieve the text for a specific element (when we know there is only
-   * one).
+   * Retrieve the text for a specific element (when we know there is only one).
    */
   def getTextForElement(xmlAsString: String, element: String): String = {
     val reader = xmlReader
@@ -178,19 +170,13 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
     val handler = new DefaultHandler() {
 
-      private var foundElement = false
+      private var founded = false
 
-      override def startElement(uri: String, localName: String, qName: String, attributes: Attributes): Unit = {
-        if (localName.equals(element)) this.foundElement = true
-      }
+      override def startElement(uri: String, ln: String, qn: String, attrs: Attributes): Unit = if (ln == element) founded = true
 
-      override def endElement(uri: String, localName: String, qName: String): Unit = {
-        if (localName.equals(element)) this.foundElement = false
-      }
+      override def endElement(uri: String, ln: String, qn: String): Unit = if (ln == element) founded = false
 
-      override def characters(ch: Array[Char], start: Int, length: Int): Unit = {
-        if (this.foundElement) builder.append(ch, start, length)
-      }
+      override def characters(ch: Array[Char], start: Int, length: Int): Unit = if (founded) builder.append(ch, start, length)
     }
 
     reader.setContentHandler(handler)
@@ -230,10 +216,6 @@ class Cas20ServiceTicketValidator extends AbstractTicketValidator {
    * <p>
    * This code is here merely for sample/demonstration purposes for those wishing to modify the CAS2
    * protocol. You'll probably want a more robust implementation or to use SAML 1.1
-   *
-   * @param xml
-   *          the XML to parse.
-   * @return the map of attributes.
    */
   protected def extractCustomAttributes(xml: String): Map[String, Any] = {
     val pos1 = xml.indexOf("<cas:attributes>")
@@ -251,9 +233,7 @@ class Cas20ServiceTicketValidator extends AbstractTicketValidator {
         var line = br.readLine()
         while (line != null) {
           val trimmedLine = line.trim()
-          if (trimmedLine.length() > 0) {
-            attributeNames += (trimmedLine.substring(trimmedLine.indexOf(":") + 1, trimmedLine.indexOf(">")))
-          }
+          if (trimmedLine.length() > 0) attributeNames += (trimmedLine.substring(trimmedLine.indexOf(":") + 1, trimmedLine.indexOf(">")))
           line = br.readLine()
         }
         br.close()
@@ -263,11 +243,8 @@ class Cas20ServiceTicketValidator extends AbstractTicketValidator {
 
       attributeNames.foreach { name =>
         val values = getTextForElements(xml, name)
-        if (values.size == 1) {
-          attributes.put(name, values(0))
-        } else {
-          attributes.put(name, values)
-        }
+        if (values.size == 1) attributes.put(name, values(0))
+        else attributes.put(name, values)
       }
       attributes.toMap
     }
