@@ -23,16 +23,39 @@ trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable {
   def disabled: Boolean
 }
 
+object AccountStatusMask {
+  val Locked = 1;
+  val Disabled = 2
+  val AccountExpired = 4
+  val CredentialsExpired = 8
+}
+
 class DefaultAccount(val principal: Any, var id: Any) extends Account with Mergable {
 
-  var accountExpired: Boolean = _
+  import AccountStatusMask._
 
-  var accountLocked: Boolean = _
+  private def change(value: Boolean, mask: Int): Unit = if (value) status = status | mask else status = status ^ mask
 
-  var credentialsExpired: Boolean = _
+  private def get(mask: Int): Boolean = (status & mask) > 0
 
-  var disabled: Boolean = _
+  def accountExpired: Boolean = get(AccountExpired)
 
+  def accountExpired_=(value: Boolean) = change(value, AccountExpired)
+
+  def accountLocked: Boolean = get(Locked)
+
+  def accountLocked_=(locked: Boolean): Unit = change(locked, Locked)
+
+  def credentialsExpired: Boolean = get(CredentialsExpired)
+
+  def credentialsExpired_=(expired: Boolean): Unit = change(expired, CredentialsExpired)
+
+  def disabled: Boolean = get(Disabled)
+
+  def disabled_=(value: Boolean): Unit = change(value, Disabled)
+
+  var status: Int = _
+  
   var category: Any = _
 
   var roles: List[Any] = List.empty

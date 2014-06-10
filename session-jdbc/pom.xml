@@ -12,5 +12,18 @@
   <properties>
     <bundle.symbolicName>org.beangle.security.session.jdbc</bundle.symbolicName>
     <bundle.namespace>org.beangle.security.session.jdbc</bundle.namespace>
+    <beangle.data.version>4.1.0-SNAPSHOT</beangle.data.version>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.beangle.security</groupId>
+      <artifactId>beangle-security-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.beangle.data</groupId>
+      <artifactId>beangle-data-jdbc</artifactId>
+      <version>${beangle.data.version}</version>
+    </dependency>
+  </dependencies>
 </project>
