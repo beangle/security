@@ -1,14 +1,13 @@
 package org.beangle.security.authc
 
-import org.beangle.commons.bean.Initializing
-import org.beangle.commons.lang.{ Objects, Strings }
+import org.beangle.commons.lang.{Objects, Strings}
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.text.i18n.TextResource
 import org.beangle.commons.text.i18n.impl.NullTextResource
 import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
 
-trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable {
+trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable with Serializable {
 
   def id: Any
 

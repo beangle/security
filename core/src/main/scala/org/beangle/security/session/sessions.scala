@@ -20,7 +20,7 @@ trait Session {
 
   def id: jSerializable
 
-  def principal: Principal
+  def principal: AuthenticationInfo
 
   def loginAt: ju.Date
 
@@ -59,7 +59,7 @@ trait Session {
 
 }
 
-class DefaultSession(val id: jSerializable, val principal: Principal, val loginAt: ju.Date, val os: String, val agent: String, val host: String)
+class DefaultSession(val id: jSerializable, val principal: AuthenticationInfo, val loginAt: ju.Date, val os: String, val agent: String, val host: String)
   extends Session {
   var server: String = _
   var expiredAt: ju.Date = _
@@ -96,7 +96,9 @@ trait SessionBuilder {
 class DefaultSessionBuilder extends SessionBuilder {
 
   def build(auth: AuthenticationInfo, key: SessionKey): Session = {
-    new DefaultSession(key.sessionId, auth, new ju.Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+    val session = new DefaultSession(key.sessionId, auth, new ju.Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+    session.lastAccessAt = new ju.Date()
+    session
   }
 }
 

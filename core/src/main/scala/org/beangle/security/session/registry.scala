@@ -25,7 +25,7 @@ trait SessionRegistry {
 
   def get(key: SessionKey): Option[Session]
 
-  def get(principal: String, includeExpiredSessions: Boolean): List[Session]
+  def get(principal: String, includeExpiredSessions: Boolean): Seq[Session]
   /**
    * Get Expired and last accessed before the time
    */
@@ -43,6 +43,12 @@ trait SessionProfile {
   def capacity: Int
   def maxSession: Int
   def timeout: Short
+}
+
+object DefaultSessionProfile extends DefaultSessionProfile("*") {
+  this.capacity = Short.MaxValue
+  this.maxSession = 2
+  this.timeout = Session.DefaultTimeOut
 }
 
 class DefaultSessionProfile(val category: String) extends SessionProfile {
@@ -67,16 +73,16 @@ abstract class AbstractSessionRegistry extends SessionRegistry with Logging with
   /**
    * allocate a slot for user
    */
-  def allocate(auth: AuthenticationInfo, key: SessionKey): Boolean = {
+  def tryAllocate(auth: AuthenticationInfo, key: SessionKey): Unit = {
     val sessions = get(auth.getName, false)
     if (sessions.isEmpty) {
-      doAllocate(auth)
+      if (!allocate(auth, key)) throw new OvermaxSessionException(getMaxSession(auth), auth)
     } else {
-      val allowableSessions = getMaxSession(auth)
-      if (sessions.size < allowableSessions || allowableSessions == -1) allocate(auth, key)
-      // Determine least recently used session, and mark it for invalidation
+      val limit = getMaxSession(auth)
+      if (sessions.size < limit || limit == -1) {
+        if (!allocate(auth, key)) throw new OvermaxSessionException(getMaxSession(auth), auth)
+      } // Determine least recently used session, and mark it for invalidation
       else sessions.minBy(_.loginAt).expire()
-      true
     }
   }
 
@@ -93,7 +99,7 @@ abstract class AbstractSessionRegistry extends SessionRegistry with Logging with
       case None => Session.DefaultTimeOut
     }
   }
-  protected def doAllocate(auth: AuthenticationInfo): Boolean
+  protected def allocate(auth: AuthenticationInfo, key: SessionKey): Boolean
   /**
    * release slot for user
    */
@@ -108,21 +114,21 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
 
   protected var sessionids = new collection.concurrent.TrieMap[jSerializable, Session]
 
-  protected var onlines = new collection.concurrent.TrieMap[jSerializable, Int]
+  private val defaultProfile = new DefaultSessionProfile("*")
 
   def isRegisted(principal: String): Boolean = {
     val sids = principals.get(principal)
     (!sids.isEmpty && !sids.get.isEmpty)
   }
 
-  override def get(principal: String, includeExpired: Boolean): List[Session] = {
+  override def get(principal: String, includeExpired: Boolean): Seq[Session] = {
     principals.get(principal) match {
       case None => List.empty
       case Some(sids) => {
         val list = new collection.mutable.ListBuffer[Session]
         for (sessionid <- sids)
           get(SessionId(sessionid)).foreach(info => if (includeExpired || !info.expired) list += info)
-        list.toList
+        list
       }
     }
   }
@@ -142,12 +148,12 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
     val existed = get(key) match {
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
-          if (!allocate(auth, key)) throw new OvermaxSessionException(getMaxSession(auth), auth)
+          tryAllocate(auth, key)
           existed.remark(" expired with replacement.")
           remove(key)
         }
       }
-      case None => if (!allocate(auth, key)) new OvermaxSessionException(getMaxSession(auth), auth)
+      case None => tryAllocate(auth, key)
     }
 
     val newSession = builder.build(auth, key)
@@ -181,23 +187,15 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
 
   def count(): Int = sessionids.size
 
-  override def stat() {
+  override def stat(): Unit = {}
 
-  }
-  
-  protected override def doAllocate(auth: AuthenticationInfo): Boolean = {
-    true
-  }
+  protected override def allocate(auth: AuthenticationInfo, key: SessionKey): Boolean = true
   /**
    * release slot for user
    */
-  protected override def release(session: Session): Unit = {
+  protected override def release(session: Session): Unit = {}
 
-  }
-
-  protected def getProfile(auth: AuthenticationInfo): Option[SessionProfile] = {
-    None
-  }
+  protected def getProfile(auth: AuthenticationInfo): Option[SessionProfile] = Some(DefaultSessionProfile)
 
 }
 
