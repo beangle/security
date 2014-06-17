@@ -110,9 +110,9 @@ abstract class AbstractSessionRegistry extends SessionRegistry with Logging with
 
 class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionRegistry with Logging with EventPublisher {
 
-  protected var principals = new collection.concurrent.TrieMap[Any, collection.mutable.HashSet[jSerializable]]
+  protected val principals = new collection.concurrent.TrieMap[Any, collection.mutable.HashSet[jSerializable]]
 
-  protected var sessionids = new collection.concurrent.TrieMap[jSerializable, Session]
+  protected val sessionids = new collection.concurrent.TrieMap[jSerializable, Session]
 
   private val defaultProfile = new DefaultSessionProfile("*")
 

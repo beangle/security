@@ -33,7 +33,7 @@ import org.beangle.security.web.authc.LogoutHandler
 
 import javax.servlet.{ Filter, FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-
+import java.{ util => ju }
 /**
  *  handle
  *  <ul>
@@ -70,7 +70,7 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
             res.flushBuffer()
           }
         } else {
-          s.access(System.currentTimeMillis, RequestUtils.getServletPath(request))
+          s.access(new ju.Date(), RequestUtils.getServletPath(request))
           SecurityContext.session = s
         }
       }

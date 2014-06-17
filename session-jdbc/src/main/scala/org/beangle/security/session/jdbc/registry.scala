@@ -77,7 +77,7 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
 
   // FIXME update db to offen
   override def onAccess(session: Session, accessAt: ju.Date, accessed: String): Unit = {
-    executor.update(s"update $table set last_access_at=? ,last_accessed=? where id=?", new ju.Date(accessed), accessed, session.id)
+    executor.update(s"update $table set last_access_at=? ,last_accessed=? where id=?", accessAt, accessed, session.id)
   }
 
   override def get(principal: String, includeExpired: Boolean): Seq[Session] = {

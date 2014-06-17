@@ -10,9 +10,7 @@ import org.beangle.security.mgt.SecurityManager
 import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
 import javax.servlet.http.HttpServletRequest
 
-abstract class AuthorizationFilter extends OncePerRequestFilter {
-
-  var securityManager: SecurityManager = _
+abstract class AuthorizationFilter(val securityManager:SecurityManager) extends OncePerRequestFilter {
 
   def getResource(request: ServletRequest): Any
 
@@ -35,7 +33,7 @@ object HttpActions {
   val methodActions = Map((POST, Create), (GET, Read), (HEAD, Read), (OPTIONS, Read), (TRACE, Read), (PUT, Update), (DELETE, Delete))
 }
 
-class HttpMethodPermissionFilter extends AuthorizationFilter {
+class HttpMethodPermissionFilter(sm:SecurityManager) extends AuthorizationFilter(sm) {
 
   def getResource(request: ServletRequest): Any = RequestUtils.getServletPath(request.asInstanceOf[HttpServletRequest])
 
