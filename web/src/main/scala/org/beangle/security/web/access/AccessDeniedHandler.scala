@@ -21,11 +21,10 @@ trait AccessDeniedHandler {
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit
 }
 
-class DefaultAccessDeniedHandler extends AccessDeniedHandler with Logging with Initializing {
+class DefaultAccessDeniedHandler(val errorPage: String=null) extends AccessDeniedHandler with Logging {
 
+  require(errorPage.startsWith("/"), "errorPage must begin with '/'")
   //public static final String ACCESS_DENIED_EXCEPTION_KEY = "403_EXCEPTION";
-
-  var errorPage: String = _
 
   var location: String = _
 
@@ -46,12 +45,5 @@ class DefaultAccessDeniedHandler extends AccessDeniedHandler with Logging with I
     }
   }
 
-  /**
-   * The error page to use. Must begin with a "/" and is interpreted relative
-   * to the current context root.
-   */
-  override def init() {
-    if (null != errorPage) require(errorPage.startsWith("/"), "errorPage must begin with '/'")
-  }
-
 }
+

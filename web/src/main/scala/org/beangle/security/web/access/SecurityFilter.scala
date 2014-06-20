@@ -41,20 +41,18 @@ import java.{ util => ju }
  *  <li> Context Holder loading and clear
  *  <li> Session access info update and concurrent logic
  *  </ul>
+ *  FIXME convert property to constructor argument
  */
-
-class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedCompositeFilter(urlMap) with ContainerHook {
+class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val entryPoint: EntryPoint, val accessDeniedHandler: AccessDeniedHandler)
+  extends MatchedCompositeFilter(MatchedCompositeFilter.build(filters)) {
 
   var expiredUrl: String = _
-  var accessDeniedHandler: AccessDeniedHandler = _
-  var entryPoint: EntryPoint = _
-  var registry: SessionRegistry = _
   var logoutHandler: LogoutHandler = _
 
   override def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain): Unit = {
     try {
       val request = req.asInstanceOf[HttpServletRequest]
-      val hs = request.getSession(false)
+      val hs = request.getSession(true)
       val sid = SessionId(hs.getId)
       var breakChain = false
       if (null != hs) registry.get(sid).foreach { s =>
@@ -82,16 +80,6 @@ class SecurityFilter(urlMap: Map[String, List[Filter]]) extends MatchedComposite
     } finally {
       SecurityContext.session = null
     }
-  }
-
-  def notify(container: Container) {
-    val handlers = container.getBeans(classOf[AccessDeniedHandler])
-    if (handlers.size != 1) require(null != accessDeniedHandler, "AccessDeniedHandler required");
-    else this.accessDeniedHandler = handlers.values.head
-
-    val entryPoints = container.getBeans(classOf[EntryPoint])
-    if (entryPoints.size != 1) require(null != entryPoint, "authenticationEntryPoint must be specified");
-    else this.entryPoint = entryPoints.values.head
   }
 
   private def handleException(request: ServletRequest, response: ServletResponse, chain: FilterChain,

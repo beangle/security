@@ -12,13 +12,13 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
-
-  val securityManager = new DefaultSecurityManager()
-  securityManager.authenticator = new Authenticator() {
+ 
+  val authenticator= new Authenticator() {
     def authenticate(token: AuthenticationToken): AuthenticationInfo = {
       throw new BadCredentialsException("Rejected", token, null)
     }
   }
+  val securityManager = new DefaultSecurityManager(authenticator,null,null)
 
   val filter = new CasPreauthFilter(securityManager, new CasConfig("http://localhost/cas"))
 

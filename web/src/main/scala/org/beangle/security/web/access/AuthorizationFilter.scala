@@ -1,16 +1,16 @@
 package org.beangle.security.web.access
 
-import org.beangle.commons.http.HttpMethods.{DELETE, GET, HEAD, OPTIONS, POST, PUT, TRACE}
+import org.beangle.commons.http.HttpMethods.{ DELETE, GET, HEAD, OPTIONS, POST, PUT, TRACE }
 import org.beangle.commons.web.filter.OncePerRequestFilter
 import org.beangle.commons.web.util.RequestUtils
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
 
-import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
+import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.HttpServletRequest
 
-abstract class AuthorizationFilter(val securityManager:SecurityManager) extends OncePerRequestFilter {
+abstract class AuthorizationFilter(val securityManager: SecurityManager) extends OncePerRequestFilter {
 
   def getResource(request: ServletRequest): Any
 
@@ -19,9 +19,10 @@ abstract class AuthorizationFilter(val securityManager:SecurityManager) extends 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
     if (isFirstEnter(request)) {
       if (!securityManager.isPermitted(SecurityContext.principal, getResource(request), getOperation(request)))
-        throw new AccessDeniedException(request, "access denied", null);
+        throw new AccessDeniedException(request, "access denied", null)
+      chain.doFilter(request, response)
     } else
-      chain.doFilter(request, response);
+      chain.doFilter(request, response)
   }
 }
 
@@ -33,7 +34,7 @@ object HttpActions {
   val methodActions = Map((POST, Create), (GET, Read), (HEAD, Read), (OPTIONS, Read), (TRACE, Read), (PUT, Update), (DELETE, Delete))
 }
 
-class HttpMethodPermissionFilter(sm:SecurityManager) extends AuthorizationFilter(sm) {
+class HttpMethodPermissionFilter(sm: SecurityManager) extends AuthorizationFilter(sm) {
 
   def getResource(request: ServletRequest): Any = RequestUtils.getServletPath(request.asInstanceOf[HttpServletRequest])
 

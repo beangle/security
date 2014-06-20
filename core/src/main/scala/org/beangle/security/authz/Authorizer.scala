@@ -25,3 +25,9 @@ trait Authorizer {
 
   def isPermitted(principal: Any, operation: Any, resource: Any): Boolean
 }
+
+class DefaultAuthorizer extends Authorizer{
+  def isPermitted(principal: Any, operation: Any, resource: Any): Boolean={
+    true
+  }
+}

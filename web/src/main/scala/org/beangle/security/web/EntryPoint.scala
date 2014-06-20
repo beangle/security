@@ -7,15 +7,14 @@ import org.beangle.commons.lang.Strings
 import org.beangle.commons.web.util.RedirectUtils
 import javax.servlet.RequestDispatcher
 import org.beangle.commons.logging.Logging
+import java.io.IOException
+import javax.servlet.ServletException
 
 trait EntryPoint {
 
-  /**
-   * @throws IOException
-   * @throws ServletException
-   */
+  @throws(classOf[IOException])
+  @throws(classOf[ServletException])
   def commence(request: HttpServletRequest, response: HttpServletResponse, ae: AuthenticationException): Unit
-
 }
 
 class UrlEntryPoint(val url: String) extends EntryPoint with Logging {
