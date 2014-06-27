@@ -23,8 +23,8 @@ import java.{ lang => jl }
 import org.beangle.commons.lang.Assert
 
 trait AuthorizationInfo {
-  def roles: List[Any]
-  def permissions: List[Any]
+  def authorities: Seq[Authority]
+  def permissions: Seq[Any]
 }
 
 /**

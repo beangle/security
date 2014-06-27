@@ -7,12 +7,8 @@ import org.beangle.security.realm.Realm
  * Authentication Manager
  */
 trait Authenticator {
-  /**
-   * authenticate
-   *
-   * @param auth
-   * @throws AuthenticationException
-   */
+
+  @throws(classOf[AuthenticationException])
   def authenticate(token: AuthenticationToken): AuthenticationInfo
 }
 
@@ -168,9 +164,8 @@ object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
 /**
  * Realm Authenticator
  */
-class RealmAuthenticator extends AbstractAuthenticator with Logging {
-  var reams: List[Realm] = List.empty
-  var strategy: RealmAuthenticationStrategy = _
+class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator with Logging {
+  var strategy: RealmAuthenticationStrategy = FirstSuccessfulStrategy
   override def doAuthenticate(token: AuthenticationToken): AuthenticationInfo = {
     strategy.authenticate(reams, token)
   }

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest
 class SecurityAccessRequestBuilder(val registry: SessionRegistry) extends DefaultAccessRequestBuilder {
 
   protected override def abtainUsername(request: HttpServletRequest): String = {
-    val session = request.getSession();
+    val session = request.getSession
     if (null == session) null
     else {
       registry.get(SessionId(session.getId())) match {

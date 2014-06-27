@@ -41,7 +41,6 @@ import java.{ util => ju }
  *  <li> Context Holder loading and clear
  *  <li> Session access info update and concurrent logic
  *  </ul>
- *  FIXME convert property to constructor argument
  */
 class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val entryPoint: EntryPoint, val accessDeniedHandler: AccessDeniedHandler)
   extends MatchedCompositeFilter(MatchedCompositeFilter.build(filters)) {

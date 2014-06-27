@@ -6,6 +6,7 @@ import org.beangle.commons.text.i18n.TextResource
 import org.beangle.commons.text.i18n.impl.NullTextResource
 import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
+import org.beangle.security.authz.Authority
 
 trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable with Serializable {
 
@@ -17,7 +18,7 @@ trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable wi
 
   def accountLocked: Boolean
 
-  def credentialsExpired: Boolean
+  def credentialExpired: Boolean
 
   def disabled: Boolean
 }
@@ -26,7 +27,7 @@ object AccountStatusMask {
   val Locked = 1;
   val Disabled = 2
   val AccountExpired = 4
-  val CredentialsExpired = 8
+  val CredentialExpired = 8
 }
 
 class DefaultAccount(val principal: Any, var id: Any) extends Account with Mergable {
@@ -45,9 +46,9 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
 
   def accountLocked_=(locked: Boolean): Unit = change(locked, Locked)
 
-  def credentialsExpired: Boolean = get(CredentialsExpired)
+  def credentialExpired: Boolean = get(CredentialExpired)
 
-  def credentialsExpired_=(expired: Boolean): Unit = change(expired, CredentialsExpired)
+  def credentialExpired_=(expired: Boolean): Unit = change(expired, CredentialExpired)
 
   def disabled: Boolean = get(Disabled)
 
@@ -57,7 +58,7 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
   
   var category: Any = _
 
-  var roles: List[Any] = List.empty
+  var authorities: Seq[Authority] = List.empty
 
   var permissions: List[Any] = List.empty
 
@@ -75,11 +76,11 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
     Objects.toStringBuilder(this).add("Principal:", principal)
       .add("Id: ", id)
       .add("AccountExpired: ", accountExpired)
-      .add("credentialsExpired: ", credentialsExpired)
+      .add("credentialExpired: ", credentialExpired)
       .add("AccountLocked: ", accountLocked)
       .add("Disabled: ", disabled)
       .add("Category: ", category)
-      .add("Roles: ", roles.mkString(","))
+      .add("Authorities: ", authorities.mkString(","))
       .add("Permissions: ", permissions.mkString(",")).toString
   }
 
@@ -88,11 +89,11 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
       case ac: Account => {
         if (ac.accountExpired) this.accountExpired = true
         if (ac.accountLocked) this.accountLocked = true
-        if (ac.credentialsExpired) this.credentialsExpired = true
+        if (ac.credentialExpired) this.credentialExpired = true
         if (ac.disabled) this.disabled = true
         if (null != ac.id) this.id = ac.id
         if (null != ac.category) this.category = ac.category
-        if (!ac.roles.isEmpty) this.roles ::= ac.roles
+        if (!ac.authorities.isEmpty) this.authorities = this.authorities ++ ac.authorities
         if (!ac.permissions.isEmpty) this.permissions ::= ac.permissions
         if (!ac.details.isEmpty) this.details ++= ac.details
       }
@@ -145,8 +146,8 @@ abstract class AbstractAccountRealm extends Realm with Logging {
       throw new DisabledException(tr("AccountStatusChecker.disabled", "User is disabled"), token)
     if (ac.accountExpired)
       throw new AccountExpiredException(tr("AccountStatusChecker.expired", "User account has expired"), token)
-    if (ac.credentialsExpired)
-      throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialsExpired", "User credentials have expired"), token)
+    if (ac.credentialExpired)
+      throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialExpired", "User credentials have expired"), token)
   }
 
   protected def loadAccount(principal: Any): Option[Account]
