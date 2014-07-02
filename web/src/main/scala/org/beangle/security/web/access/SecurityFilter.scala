@@ -96,7 +96,7 @@ class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val e
   protected def sendStartAuthentication(request: ServletRequest, response: ServletResponse, chain: FilterChain,
     reason: AuthenticationException): Unit = {
     SecurityContext.session = null
-    entryPoint.commence(request.asInstanceOf, response.asInstanceOf, reason);
+    entryPoint.commence(request.asInstanceOf[HttpServletRequest], response.asInstanceOf[HttpServletResponse], reason);
   }
 
 }

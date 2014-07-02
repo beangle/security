@@ -27,7 +27,7 @@ class UserBean extends LongIdBean with CodedBean with NamedBean with UpdatedBean
   var email: String = _
   var creator: Option[User] = None
   var credentialExpiredAt: Option[ju.Date] = None
-  var members = new collection.mutable.ListBuffer[Member]
+  var members:collection.mutable.Seq[Member] = new collection.mutable.ListBuffer[Member]
   var credential: String = _
   var category: UserCategory = _
   var locked: Boolean = _
@@ -64,7 +64,7 @@ class UserProfileBean extends LongIdBean with UserProfile {
 class RoleBean extends IntIdBean with NamedBean with UpdatedBean with EnabledBean with HierarchicalBean[Role] with Profile with Role {
   var properties = new collection.mutable.HashMap[Field, String]
   var creator: Option[User] = None
-  var members = new collection.mutable.ListBuffer[Member]
+  var members:collection.mutable.Seq[Member] = new collection.mutable.ListBuffer[Member]
   var remark: String = _
   override def getName: String = {
     name

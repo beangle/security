@@ -60,8 +60,8 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
   private def doAuthenticate(request: HttpServletRequest, response: HttpServletResponse): Unit = {
     var authResult: AuthenticationInfo = null
     val token = getPreauthToken(request, response)
-    token.details ++= WebDetails.get(request)
     if (null != token) {
+      token.details ++= WebDetails.get(request)
       try {
         val httpSession = request.getSession(true)
         val session = securityManager.login(token, SessionId(httpSession.getId))

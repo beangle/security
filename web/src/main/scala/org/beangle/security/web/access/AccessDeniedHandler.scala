@@ -21,17 +21,15 @@ trait AccessDeniedHandler {
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit
 }
 
-class DefaultAccessDeniedHandler(val errorPage: String=null) extends AccessDeniedHandler with Logging {
+class DefaultAccessDeniedHandler(val errorPage: String) extends AccessDeniedHandler with Logging {
 
-  require(errorPage.startsWith("/"), "errorPage must begin with '/'")
-  //public static final String ACCESS_DENIED_EXCEPTION_KEY = "403_EXCEPTION";
-
-  var location: String = _
+  def this() {
+    this(null)
+  }
+  if (null != errorPage)
+    require(errorPage.startsWith("/"), "errorPage must begin with '/'")
 
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {
-    if (null != location) {
-
-    }
     if (errorPage != null) {
       // Put exception into request scope (perhaps of use to a view)
       request.asInstanceOf[HttpServletRequest].setAttribute("403_EXCEPTION", exception);

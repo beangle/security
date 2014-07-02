@@ -26,9 +26,7 @@ class TicketValidationException(message: String) extends Exception(message)
 
 trait TicketValidator {
 
-  /**
-   * @throws TicketValidationException
-   */
+  @throws(classOf[TicketValidationException])
   def validate(ticket: String, service: String): Assertion
 }
 

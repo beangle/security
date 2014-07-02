@@ -47,7 +47,7 @@ class CachedDaoAuthorizer(permissionService: FuncPermissionService, cacheManager
     rscOption.get.scope match {
       case Scope.Public => true
       case Scope.Protected => principal != SecurityContext.Anonymous
-      case _ => principal.asInstanceOf[Account].authorities.exists { role => isAuthorized(role, resourceName) }
+      case _ => principal != SecurityContext.Anonymous && principal.asInstanceOf[Account].authorities.exists { role => isAuthorized(role, resourceName) }
     }
   }
 

@@ -96,7 +96,7 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
     val realmIter = realms.iterator
     var info: AuthenticationInfo = null
     var lastException: Throwable = null
-    while (null != info && realmIter.hasNext) {
+    while (null == info && realmIter.hasNext) {
       val realm = realmIter.next()
       if (realm.supports(token)) {
         try {

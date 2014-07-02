@@ -3,6 +3,9 @@
   "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.beangle.security.blueprint.domain.model" default-access="org.beangle.hibernate.PropertyAccessor">
+
+  <typedef name="seq" class="org.beangle.hibernate.SeqType"/>
+  
   <class name="UserCategoryBean" abstract="true" entity-name="org.beangle.security.blueprint.domain.UserCategory">
     <id name="id" type="integer">
       <generator class="org.beangle.data.jpa.hibernate.TableSeqGenerator" />
@@ -24,7 +27,7 @@
     <property name="credential" />
     <property name="locked" />
     <many-to-one name="category"/>
-    <bag name="members" inverse="true" cascade="all-delete-orphan">
+    <bag name="members" inverse="true" cascade="all-delete-orphan" collection-type="seq">
       <key column="user_id" not-null="true"/>
       <one-to-many class="org.beangle.security.blueprint.domain.Member"/>
     </bag>
@@ -50,11 +53,11 @@
     <property name="enabled" />
     <property name="indexno" not-null="true"/>
     <many-to-one name="parent" class="org.beangle.security.blueprint.domain.Role"/>
-    <bag name="children" inverse="true" cascade="all-delete-orphan">
+    <bag name="children" inverse="true" cascade="all-delete-orphan"  collection-type="seq">
       <key column="parent_id"/>
       <one-to-many class="org.beangle.security.blueprint.domain.Role"/>
     </bag>
-    <bag name="members" inverse="true" cascade="all-delete-orphan">
+    <bag name="members" inverse="true" cascade="all-delete-orphan"  collection-type="seq">
       <key column="role_id" not-null="true"/>
       <one-to-many class="org.beangle.security.blueprint.domain.Member"/>
     </bag>

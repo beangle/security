@@ -59,13 +59,12 @@ trait Session {
 
 }
 
-class DefaultSession(val id: jSerializable, val principal: AuthenticationInfo, val loginAt: ju.Date, val os: String, val agent: String, val host: String)
+class DefaultSession(val id: jSerializable, val principal: AuthenticationInfo, val registry: SessionRegistry, val loginAt: ju.Date, val os: String, val agent: String, val host: String)
   extends Session {
   var server: String = _
   var expiredAt: ju.Date = _
   var remark: String = _
   var timeout: Short = Session.DefaultTimeOut
-  @transient var registry: SessionRegistry = _
   var lastAccessAt: ju.Date = _
   var lastAccessed: jSerializable = _
 
@@ -80,7 +79,7 @@ class DefaultSession(val id: jSerializable, val principal: AuthenticationInfo, v
     expiredAt = new ju.Date()
     registry.onExpire(this)
   }
-  
+
   def access(accessAt: ju.Date, accessed: String): Unit = {
     lastAccessAt = accessAt
     lastAccessed = accessed
@@ -90,13 +89,13 @@ class DefaultSession(val id: jSerializable, val principal: AuthenticationInfo, v
 }
 
 trait SessionBuilder {
-  def build(auth: AuthenticationInfo, key: SessionKey): Session
+  def build(key: SessionKey, auth: AuthenticationInfo, registry: SessionRegistry): Session
 }
 
 class DefaultSessionBuilder extends SessionBuilder {
 
-  def build(auth: AuthenticationInfo, key: SessionKey): Session = {
-    val session = new DefaultSession(key.sessionId, auth, new ju.Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
+  def build(key: SessionKey, auth: AuthenticationInfo, registry: SessionRegistry): Session = {
+    val session = new DefaultSession(key.sessionId, auth, registry, new ju.Date(), auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
     session.lastAccessAt = new ju.Date()
     session
   }

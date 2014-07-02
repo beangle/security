@@ -1,13 +1,13 @@
 package org.beangle.security.session.jdbc
 
-import java.io.{InputStream, ObjectInputStream, Serializable => jSerializable}
-import java.{util => ju}
+import java.io.{ InputStream, ObjectInputStream, Serializable => jSerializable }
+import java.{ util => ju }
 
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.JdbcExecutor
-import org.beangle.security.authc.{Account, AuthenticationInfo}
-import org.beangle.security.session.{AbstractSessionRegistry, DefaultSession, DefaultSessionProfile, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionKey, SessionProfile}
+import org.beangle.security.authc.{ Account, AuthenticationInfo }
+import org.beangle.security.session.{ AbstractSessionRegistry, DefaultSession, DefaultSessionProfile, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionKey, SessionProfile }
 
 class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
   extends AbstractSessionRegistry with EventPublisher {
@@ -22,7 +22,7 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
 
   private def convert(data: Seq[_]): Session = {
     val account = new ObjectInputStream(data(1).asInstanceOf[InputStream]).readObject().asInstanceOf[Account]
-    val session = new DefaultSession(data(0).asInstanceOf[jSerializable], account, data(2).asInstanceOf[ju.Date], data(3).toString, data(4).toString, data(5).toString)
+    val session = new DefaultSession(data(0).asInstanceOf[jSerializable], account, this, data(2).asInstanceOf[ju.Date], data(3).toString, data(4).toString, data(5).toString)
     session.server = data(6).toString
     session.expiredAt = if (null == data(7)) null else data(7).asInstanceOf[ju.Date]
     session.remark = if (null == data(8)) null else data(8).toString
@@ -46,11 +46,11 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
       existed
     } else {
       // 争取名额
-      tryAllocate(info, key)
+      tryAllocate(key, info)
       // 注销同会话的其它账户
       if (null != existed) remove(key, " expired with replacement.");
       // 新生
-      val session = builder.build(info, key)
+      val session = builder.build(key, info, this)
       save(session);
       publish(new LoginEvent(session))
       session

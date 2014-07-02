@@ -73,7 +73,7 @@ abstract class AbstractSessionRegistry extends SessionRegistry with Logging with
   /**
    * allocate a slot for user
    */
-  def tryAllocate(auth: AuthenticationInfo, key: SessionKey): Unit = {
+  def tryAllocate(key: SessionKey, auth: AuthenticationInfo): Unit = {
     val sessions = get(auth.getName, false)
     if (sessions.isEmpty) {
       if (!allocate(auth, key)) throw new OvermaxSessionException(getMaxSession(auth), auth)
@@ -148,15 +148,15 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
     val existed = get(key) match {
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
-          tryAllocate(auth, key)
+          tryAllocate(key, auth)
           existed.remark(" expired with replacement.")
           remove(key)
         }
       }
-      case None => tryAllocate(auth, key)
+      case None => tryAllocate(key, auth)
     }
 
-    val newSession = builder.build(auth, key)
+    val newSession = builder.build(key, auth, this)
     newSession.timeout = getTimeout(auth)
     sessionids.put(key.sessionId, newSession)
     principals.get(principal) match {

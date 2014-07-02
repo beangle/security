@@ -5,11 +5,12 @@ import org.beangle.security.blueprint.service.internal.FuncPermissionServiceImpl
 import org.beangle.security.blueprint.service.internal.CachedDaoAuthorizer
 import org.beangle.security.blueprint.service.internal.DaoUserRealm
 import org.beangle.security.blueprint.service.internal.UserServiceImpl
+import org.beangle.security.blueprint.service.internal.DaoUserStore
 
 class DefaultModule extends AbstractBindModule {
 
   protected override def binding(){
     bind(classOf[CachedDaoAuthorizer],classOf[FuncPermissionServiceImpl])
-    bind(classOf[DaoUserRealm],classOf[UserServiceImpl])
+    bind(classOf[DaoUserRealm],classOf[UserServiceImpl],classOf[DaoUserStore])
   }
 }

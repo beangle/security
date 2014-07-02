@@ -1,6 +1,6 @@
 package org.beangle.security.authc
 
-import org.beangle.commons.lang.{Objects, Strings}
+import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.text.i18n.TextResource
 import org.beangle.commons.text.i18n.impl.NullTextResource
@@ -34,7 +34,12 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
 
   import AccountStatusMask._
 
-  private def change(value: Boolean, mask: Int): Unit = if (value) status = status | mask else status = status ^ mask
+  private def change(value: Boolean, mask: Int): Unit = {
+    if (value) status = status | mask
+    else {
+      if ((status & mask) > 0) status = status ^ mask
+    }
+  }
 
   private def get(mask: Int): Boolean = (status & mask) > 0
 
@@ -55,7 +60,7 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
   def disabled_=(value: Boolean): Unit = change(value, Disabled)
 
   var status: Int = _
-  
+
   var category: Any = _
 
   var authorities: Seq[Authority] = List.empty
@@ -125,14 +130,15 @@ abstract class AbstractAccountRealm extends Realm with Logging {
       throw new AuthenticationException("cannot find username for " + token.principal, token)
     }
 
-    loadAccount(token.principal) match {
+    loadAccount(principal) match {
       case Some(account) =>
         if (null == merged) {
           merged = account
           credentialsCheck(token, account)
-        } else merged.merge(account)
+        } else {
+          merged.merge(account)
+        }
         additionalCheck(token, merged)
-
       case None =>
         if (null != merged) throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
     }

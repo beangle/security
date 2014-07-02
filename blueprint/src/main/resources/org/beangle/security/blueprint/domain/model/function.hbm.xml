@@ -15,6 +15,7 @@
     <property name="name" not-null="true"/>
     <property name="scope" type="scope"/>
     <property name="title" not-null="true"/>
+    <property name="enabled" not-null="true"/>
     <property name="actions"/>
     <property name="remark"/>
   </class>
