@@ -196,7 +196,7 @@ class ParameterUsernameSource extends UsernameSource with Logging {
     else {
       val full = cid + "," + ip + "," + t + "," + extra
       val digest = Digests.md5Hex(full)
-      if (isDebugEnabled) {
+      if (debugEnabled) {
         debug(s"user $cid at :$ip")
         debug(s"time:$t digest:$s ")
         debug(s"full:$full")
