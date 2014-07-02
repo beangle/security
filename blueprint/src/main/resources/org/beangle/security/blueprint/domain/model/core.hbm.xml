@@ -6,14 +6,14 @@
 
   <typedef name="seq" class="org.beangle.hibernate.SeqType"/>
   
-  <class name="UserCategoryBean" abstract="true" entity-name="org.beangle.security.blueprint.domain.UserCategory">
+  <class name="UserCategoryBean"  entity-name="org.beangle.security.blueprint.domain.UserCategory">
     <id name="id" type="integer">
       <generator class="org.beangle.data.jpa.hibernate.TableSeqGenerator" />
     </id>
     <property name="name" />
   </class>
 
-  <class name="UserBean" abstract="true" entity-name="org.beangle.security.blueprint.domain.User">
+  <class name="UserBean"  entity-name="org.beangle.security.blueprint.domain.User">
     <id name="id" type="long">
       <generator class="org.beangle.data.jpa.hibernate.TableSeqGenerator" />
     </id>
@@ -33,7 +33,7 @@
     </bag>
   </class>
   
-  <class name="MemberBean" abstract="true" entity-name="org.beangle.security.blueprint.domain.Member">
+  <class name="MemberBean"  entity-name="org.beangle.security.blueprint.domain.Member">
     <id name="id" type="long">
       <generator class="org.beangle.data.jpa.hibernate.TableSeqGenerator" />
     </id>
@@ -44,7 +44,7 @@
     <property name="manager" not-null="true"/>
   </class>
 
-  <class name="RoleBean" abstract="true" entity-name="org.beangle.security.blueprint.domain.Role">
+  <class name="RoleBean"  entity-name="org.beangle.security.blueprint.domain.Role">
     <id name="id" type="integer">
       <generator class="org.beangle.data.jpa.hibernate.TableSeqGenerator" />
     </id>
@@ -68,7 +68,7 @@
     -->
   </class>
 
-  <class name="FieldBean" abstract="true" entity-name="org.beangle.security.blueprint.domain.Field">
+  <class name="FieldBean"  entity-name="org.beangle.security.blueprint.domain.Field">
     <id name="id" type="integer">
       <generator class="org.beangle.data.jpa.hibernate.TableSeqGenerator" />
     </id>

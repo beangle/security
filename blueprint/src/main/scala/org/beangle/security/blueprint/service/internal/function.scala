@@ -51,6 +51,7 @@ class CachedDaoAuthorizer(permissionService: FuncPermissionService, cacheManager
     }
   }
 
+  //FIXME change resource name to id
   private def isAuthorized(authority: Authority, resource: String): Boolean = {
     cache.get(authority) match {
       case Some(actions) => actions.contains(resource)
