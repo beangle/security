@@ -69,6 +69,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
         httpSession.setMaxInactiveInterval(session.timeout)
       } catch {
         case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
+        case e: Throwable => throw e
       }
     }
   }
@@ -105,11 +106,10 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
    */
   protected def unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
     failed: AuthenticationException) {
+    debug("Cleared security context due to exception", failed)
     SecurityContext.session = null
-    if (null != failed) {
-      debug("Cleared security context due to exception", failed)
-      if (failed.isInstanceOf[UsernameNotFoundException] || failed.isInstanceOf[AccountStatusException]) throw failed
-    }
+    if (null != failed) throw failed
+    //if (failed.isInstanceOf[UsernameNotFoundException] || failed.isInstanceOf[AccountStatusException]) throw failed
   }
 }
 

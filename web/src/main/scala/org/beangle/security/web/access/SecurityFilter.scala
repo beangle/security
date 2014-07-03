@@ -73,9 +73,8 @@ class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val e
       }
       if (!breakChain) new VirtualFilterChain(chain, getFilters(req)).doFilter(req, res)
     } catch {
-      case ioe: IOException => throw ioe
       case bse: SecurityException => handleException(req, res, chain, bse)
-      case ex: Exception => throw ex
+      case ex: Throwable => throw ex
     } finally {
       SecurityContext.session = null
     }
