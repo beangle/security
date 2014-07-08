@@ -62,9 +62,8 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
  * How we authenticate user within multiple realms
  */
 trait RealmAuthenticationStrategy {
-  /**
-   * @throws AuthenticationException
-   */
+
+  @throws(classOf[AuthenticationException])
   def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo
 
   protected def merge(info: AuthenticationInfo, aggregate: AuthenticationInfo): AuthenticationInfo = {

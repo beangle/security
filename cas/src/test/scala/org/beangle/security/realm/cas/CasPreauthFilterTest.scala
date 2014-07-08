@@ -12,13 +12,13 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
- 
-  val authenticator= new Authenticator() {
+
+  val authenticator = new Authenticator() {
     def authenticate(token: AuthenticationToken): AuthenticationInfo = {
       throw new BadCredentialsException("Rejected", token, null)
     }
   }
-  val securityManager = new DefaultSecurityManager(authenticator,null,null)
+  val securityManager = new DefaultSecurityManager(authenticator, null, null)
 
   val filter = new CasPreauthFilter(securityManager, new CasConfig("http://localhost/cas"))
 
@@ -28,7 +28,11 @@ class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
     }
 
     it("Null Service Ticket Handled Gracefully") {
-      filter.doFilter(mockRequest(), mock(classOf[HttpServletResponse]), mock(classOf[FilterChain]))
+      try {
+        filter.doFilter(mockRequest(), mock(classOf[HttpServletResponse]), mock(classOf[FilterChain]))
+      } catch {
+        case e: Throwable => assert(e.getClass == classOf[BadCredentialsException])
+      }
     }
   }
 
