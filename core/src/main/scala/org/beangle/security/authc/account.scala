@@ -1,12 +1,10 @@
 package org.beangle.security.authc
 
-import org.beangle.commons.lang.{ Objects, Strings }
+import org.beangle.commons.lang.{Objects, Strings}
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.text.i18n.TextResource
-import org.beangle.commons.text.i18n.impl.NullTextResource
-import org.beangle.security.authz.AuthorizationInfo
+import org.beangle.commons.text.i18n.{NullTextResource, TextResource}
+import org.beangle.security.authz.{Authority, AuthorizationInfo}
 import org.beangle.security.realm.Realm
-import org.beangle.security.authz.Authority
 
 trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable with Serializable {
 

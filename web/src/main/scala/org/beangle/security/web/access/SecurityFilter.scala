@@ -20,7 +20,6 @@ package org.beangle.security.web.access
 
 import java.io.IOException
 
-import org.beangle.commons.inject.{ Container, ContainerHook }
 import org.beangle.commons.web.filter.MatchedCompositeFilter
 import org.beangle.commons.web.util.{ RedirectUtils, RequestUtils }
 import org.beangle.security.SecurityException
