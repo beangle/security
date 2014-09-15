@@ -13,4 +13,11 @@
     <bundle.symbolicName>org.beangle.security</bundle.symbolicName>
     <bundle.namespace>org.beangle.security</bundle.namespace>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.openurp.kernel</groupId>
+      <artifactId>openurp-kernel-api</artifactId>
+    </dependency>
+  </dependencies>
 </project>
