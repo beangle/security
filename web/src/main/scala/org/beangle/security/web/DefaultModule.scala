@@ -15,6 +15,6 @@ class DefaultModule extends AbstractBindModule {
 
     bind(classOf[UrlEntryPoint]).constructor($("security.login.url"))
     bind(classOf[RealmAuthenticator],classOf[SecurityFilter])
-    bind(classOf[DefaultAccessDeniedHandler]).constructor($("security.access.errorPage"))
+    bind(classOf[DefaultAccessDeniedHandler]).constructor($("security.access.errorPage","/503.html"))
   }
 }

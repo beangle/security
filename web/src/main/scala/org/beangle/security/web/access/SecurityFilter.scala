@@ -49,11 +49,12 @@ class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val e
 
   override def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain): Unit = {
     try {
+      SecurityContext.session = null
       val request = req.asInstanceOf[HttpServletRequest]
       val hs = request.getSession(true)
       val sid = SessionId(hs.getId)
       var breakChain = false
-      if (null != hs) registry.get(sid).foreach { s =>
+      registry.get(sid).foreach { s =>
         if (s.expired) {
           breakChain = true
           registry.remove(sid)
@@ -74,8 +75,6 @@ class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val e
     } catch {
       case bse: SecurityException => handleException(req, res, chain, bse)
       case ex: Throwable => throw ex
-    } finally {
-      SecurityContext.session = null
     }
   }
 
