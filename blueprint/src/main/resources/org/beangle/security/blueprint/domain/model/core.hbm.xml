@@ -8,14 +8,14 @@
   
   <class name="UserCategoryBean"  entity-name="org.beangle.security.blueprint.domain.UserCategory">
     <id name="id" type="integer">
-      <generator class="org.beangle.data.jpa.hibernate.CodedIdGenerator" />
+      <generator class="org.beangle.data.jpa.hibernate.CodeStyleGenerator" />
     </id>
     <property name="name" />
   </class>
 
   <class name="UserBean"  entity-name="org.beangle.security.blueprint.domain.User">
     <id name="id" type="long">
-      <generator class="org.beangle.data.jpa.hibernate.CodedIdGenerator" />
+      <generator class="org.beangle.data.jpa.hibernate.CodeStyleGenerator" />
     </id>
     <property name="code" />
     <property name="name" />
@@ -35,7 +35,7 @@
   
   <class name="MemberBean"  entity-name="org.beangle.security.blueprint.domain.Member">
     <id name="id" type="long">
-      <generator class="org.beangle.data.jpa.hibernate.DateIdGenerator" />
+      <generator class="org.beangle.data.jpa.hibernate.DateStyleGenerator" />
     </id>
     <many-to-one name="user" not-null="true"/>
     <many-to-one name="role" not-null="true"/>
@@ -46,7 +46,7 @@
 
   <class name="RoleBean"  entity-name="org.beangle.security.blueprint.domain.Role">
     <id name="id" type="integer">
-      <generator class="org.beangle.data.jpa.hibernate.DateIdGenerator" />
+      <generator class="org.beangle.data.jpa.hibernate.DateStyleGenerator" />
     </id>
      <property name="name" />
     <property name="updatedAt" />
@@ -70,7 +70,7 @@
 
   <class name="FieldBean"  entity-name="org.beangle.security.blueprint.domain.Field">
     <id name="id" type="integer">
-      <generator class="org.beangle.data.jpa.hibernate.DateIdGenerator" />
+      <generator class="org.beangle.data.jpa.hibernate.DateStyleGenerator" />
     </id>
     <property name="title" not-null="true"/>
     <property name="source" not-null="true"/>
