@@ -48,9 +48,9 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
       }
       if (breakChain) false
       else {
-        val resultChain = new ResultChain
-        new VirtualFilterChain(resultChain, filters.iterator).doFilter(req, res)
-        resultChain.result
+        val chain = new ResultChain(filters.iterator)
+        chain.doFilter(req, res)
+        chain.result
       }
     } catch {
       case bse: SecurityException =>
@@ -79,8 +79,9 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
   }
 }
 
-class ResultChain(var result: Boolean = false) extends FilterChain {
+class ResultChain(val filterIter: Iterator[_ <: Filter], var result: Boolean = false) extends FilterChain {
   override def doFilter(request: ServletRequest, response: ServletResponse): Unit = {
-    result = true
+    if (filterIter.hasNext) filterIter.next.doFilter(request, response, this)
+    else result = true
   }
 }
