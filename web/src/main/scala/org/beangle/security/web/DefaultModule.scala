@@ -3,8 +3,9 @@ package org.beangle.security.web
 import org.beangle.commons.inject.bind.AbstractBindModule
 import org.beangle.security.authc.RealmAuthenticator
 import org.beangle.security.mgt.DefaultSecurityManager
-import org.beangle.security.session.{DefaultSessionBuilder, MemSessionRegistry}
-import org.beangle.security.web.access.{DefaultAccessDeniedHandler, HttpMethodPermissionFilter, SecurityFilter}
+import org.beangle.security.session.{ DefaultSessionBuilder, MemSessionRegistry }
+import org.beangle.security.web.access.{ DefaultAccessDeniedHandler, HttpMethodPermissionFilter, SecurityFilter }
+import org.beangle.security.web.access.SecurityInterceptor
 
 class DefaultModule extends AbstractBindModule {
 
@@ -14,7 +15,9 @@ class DefaultModule extends AbstractBindModule {
     bind(classOf[HttpMethodPermissionFilter])
 
     bind(classOf[UrlEntryPoint]).constructor($("security.login.url"))
-    bind(classOf[RealmAuthenticator],classOf[SecurityFilter])
-    bind(classOf[DefaultAccessDeniedHandler]).constructor($("security.access.errorPage","/503.html"))
+    bind(classOf[RealmAuthenticator], classOf[SecurityFilter])
+    bind(classOf[DefaultAccessDeniedHandler]).constructor($("security.access.errorPage", "/503.html"))
+
+    bind("web.Interceptor.security", classOf[SecurityInterceptor])
   }
 }
