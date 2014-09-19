@@ -25,10 +25,5 @@
       <artifactId>beangle-data-jpa</artifactId>
       <version>${beangle.data.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.beangle.hibernate</groupId>
-      <artifactId>beangle-hibernate-scala</artifactId>
-      <version>0.0.1</version>
-    </dependency>
   </dependencies>
 </project>

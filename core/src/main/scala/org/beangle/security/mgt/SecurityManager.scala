@@ -1,9 +1,9 @@
 package org.beangle.security.mgt
 
-import org.beangle.security.authc.{ AuthenticationToken, Authenticator }
+import org.beangle.commons.security.Request
+import org.beangle.security.authc.{ AuthenticationException, AuthenticationToken, Authenticator }
 import org.beangle.security.authz.Authorizer
-import org.beangle.security.session.{ Session, SessionRegistry }
-import org.beangle.security.session.SessionKey
+import org.beangle.security.session.{ Session, SessionKey, SessionRegistry }
 
 trait SecurityManager {
 
@@ -13,7 +13,9 @@ trait SecurityManager {
 
   def sessionRegistry: SessionRegistry
 
-  def isPermitted(principal: Any, resource: Any, operation: Any): Boolean = authorizer.isPermitted(principal, resource, operation)
+  def isPermitted(principal: Any, request: Request): Boolean = {
+    authorizer.isPermitted(principal, request)
+  }
 
   //@throw(classOfAuthenticationException])
   def login(token: AuthenticationToken, key: SessionKey): Session
@@ -21,7 +23,8 @@ trait SecurityManager {
   def logout(session: Session): Unit = session.stop()
 }
 
-class DefaultSecurityManager(val authenticator: Authenticator, val authorizer: Authorizer, val sessionRegistry: SessionRegistry) extends SecurityManager {
+class DefaultSecurityManager(val authenticator: Authenticator, val authorizer: Authorizer,
+  val sessionRegistry: SessionRegistry) extends SecurityManager {
 
   def login(token: AuthenticationToken, key: SessionKey): Session = {
     sessionRegistry.register(authenticator.authenticate(token), key)

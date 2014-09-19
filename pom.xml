@@ -21,6 +21,7 @@
     <module>cas</module>
     <module>web</module>
     <module>session</module>
+    <module>blueprint</module>
   </modules>
 
   <dependencyManagement>

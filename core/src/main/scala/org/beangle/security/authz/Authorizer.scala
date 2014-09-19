@@ -20,8 +20,9 @@ package org.beangle.security.authz
 
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationInfo
+import org.beangle.commons.security.Request
 
 trait Authorizer {
 
-  def isPermitted(principal: Any, resource: Any, operation: Any): Boolean
+  def isPermitted(principal: Any, request:Request): Boolean
 }

@@ -1,23 +1,14 @@
 package org.beangle.security.blueprint.service.internal
 
-import org.beangle.security.blueprint.service.FuncPermissionService
-import org.beangle.data.model.dao.GeneralDao
-import org.beangle.security.blueprint.domain.FuncResource
+import org.beangle.commons.cache.{ Cache, CacheManager }
+import org.beangle.commons.security.Request
 import org.beangle.data.jpa.dao.OqlBuilder
-import org.beangle.security.authz.GrantedAuthority
-import org.beangle.security.authz.Authorizer
-import org.beangle.security.blueprint.service.FuncPermissionService
-import org.beangle.security.authz.GrantedAuthority
-import org.beangle.security.blueprint.service.FuncPermissionService
-import org.beangle.security.authz.GrantedAuthority
-import org.beangle.security.context.SecurityContext
-import org.beangle.security.blueprint.service.FuncPermissionService
+import org.beangle.data.model.dao.GeneralDao
 import org.beangle.security.authc.Account
-import org.beangle.commons.cache.Cache
-import org.beangle.security.blueprint.domain.Scope
-import org.beangle.security.authz.Authority
-import org.beangle.commons.cache.CacheManager
-import org.beangle.security.blueprint.domain.FuncPermission
+import org.beangle.security.authz.{ Authority, Authorizer }
+import org.beangle.security.blueprint.domain.{ FuncPermission, FuncResource, Scope }
+import org.beangle.security.blueprint.service.FuncPermissionService
+import org.beangle.security.context.SecurityContext
 
 class FuncPermissionServiceImpl(val entityDao: GeneralDao) extends FuncPermissionService {
   def getResource(name: String): Option[FuncResource] = {
@@ -40,8 +31,8 @@ class CachedDaoAuthorizer(permissionService: FuncPermissionService, cacheManager
 
   var cache: Cache[Authority, Set[String]] = cacheManager.getCache("dao-authorizer-cache")
 
-  def isPermitted(principal: Any, resource: Any, operation: Any): Boolean = {
-    val resourceName = resource.toString
+  override def isPermitted(principal: Any, request: Request): Boolean = {
+    val resourceName = request.resource.toString
     val rscOption = permissionService.getResource(resourceName)
     if (rscOption.isEmpty) return unknownIsPublic
     rscOption.get.scope match {
