@@ -3,12 +3,12 @@ package org.beangle.security.blueprint.service.internal
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.Strings
 import org.beangle.data.jpa.dao.OqlBuilder
-import org.beangle.data.model.dao.GeneralDao
+import org.beangle.data.model.dao.EntityDao
 import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationToken, BadCredentialsException, DefaultAccount }
 import org.beangle.security.blueprint.domain.{ Member, User }
 import org.beangle.security.blueprint.service.UserService
 
-class UserServiceImpl(entityDao: GeneralDao) extends UserService {
+class UserServiceImpl(entityDao: EntityDao) extends UserService {
   def get(code: String): Option[User] = {
     if (Strings.isEmpty(code)) return null;
     val query = OqlBuilder.from(classOf[User], "user")
@@ -18,7 +18,7 @@ class UserServiceImpl(entityDao: GeneralDao) extends UserService {
   }
 
   def get(id: Long): Option[User] = {
-    entityDao.find(classOf[User], id)
+    entityDao.find(classOf[User], java.lang.Long.valueOf(id))
   }
 
   def saveOrUpdate(user: User): Unit = {
