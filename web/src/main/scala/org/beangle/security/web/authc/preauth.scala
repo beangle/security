@@ -63,7 +63,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
     if (null != token) {
       token.details ++= WebDetails.get(request)
       try {
-        val httpSession = request.getSession(true)
+        val httpSession = request.getSession(false)
         val session = securityManager.login(token, SessionId(httpSession.getId))
         SecurityContext.session = session
         httpSession.setMaxInactiveInterval(session.timeout)

@@ -42,7 +42,7 @@ class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
     when(request.getMethod) thenReturn ("GET")
     val session = mock(classOf[HttpSession])
     when(session.getId) thenReturn ("1")
-    when(request.getSession(true)) thenReturn (session)
+    when(request.getSession(false)) thenReturn (session)
     request
   }
 }

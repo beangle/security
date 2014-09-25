@@ -3,14 +3,14 @@ package org.beangle.security.blueprint.service.internal
 import org.beangle.commons.cache.{ Cache, CacheManager }
 import org.beangle.commons.security.Request
 import org.beangle.data.jpa.dao.OqlBuilder
-import org.beangle.data.model.dao.GeneralDao
+import org.beangle.data.model.dao.EntityDao
 import org.beangle.security.authc.Account
 import org.beangle.security.authz.{ Authority, Authorizer }
 import org.beangle.security.blueprint.domain.{ FuncPermission, FuncResource, Scope }
 import org.beangle.security.blueprint.service.FuncPermissionService
 import org.beangle.security.context.SecurityContext
 
-class FuncPermissionServiceImpl(val entityDao: GeneralDao) extends FuncPermissionService {
+class FuncPermissionServiceImpl(val entityDao: EntityDao) extends FuncPermissionService {
   def getResource(name: String): Option[FuncResource] = {
     val query = OqlBuilder.from(classOf[FuncResource], "r")
     query.where("r.name=:name", name).cacheable()
@@ -21,7 +21,7 @@ class FuncPermissionServiceImpl(val entityDao: GeneralDao) extends FuncPermissio
   def getResourceNamesByRole(roleId: Integer): Set[String] = {
     val hql = "select a.resource.name from " + classOf[FuncPermission].getName() +
       " as a where a.role.id= :roleId and a.resource.enabled = true"
-    val query = OqlBuilder.hql(hql).param("roleId", roleId).cacheable()
+    val query = OqlBuilder.oql[FuncPermission](hql).param("roleId", roleId).cacheable()
     entityDao.search(query).toSet.asInstanceOf[Set[String]]
   }
 }

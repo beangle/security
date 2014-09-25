@@ -51,7 +51,7 @@ class SecurityFilter(filters: List[Filter], val registry: SessionRegistry, val e
     try {
       SecurityContext.session = null
       val request = req.asInstanceOf[HttpServletRequest]
-      val hs = request.getSession(true)
+      val hs = request.getSession(false)
       val sid = SessionId(hs.getId)
       var breakChain = false
       registry.get(sid).foreach { s =>
