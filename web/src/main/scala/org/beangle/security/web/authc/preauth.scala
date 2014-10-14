@@ -77,7 +77,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
   protected def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken
 
   protected def requiresAuthentication(request: HttpServletRequest, response: HttpServletResponse): Boolean = {
-    SecurityContext.session match {
+    SecurityContext.getSession match {
       case None => true
       case Some(s) => {
         if (null != aliveChecker && !aliveChecker.check(s, request)) {

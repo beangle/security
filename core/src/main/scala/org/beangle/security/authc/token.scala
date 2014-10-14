@@ -17,6 +17,8 @@ object DetailNames {
  */
 trait AuthenticationInfo extends Principal with Serializable {
 
+  def id: Any
+
   def principal: Any
 
   def details: Map[String, Any]

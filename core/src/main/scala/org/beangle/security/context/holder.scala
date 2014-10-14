@@ -49,13 +49,24 @@ object SecurityContext {
   }
   private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
 
-  def session_=(session: Session): Unit = holder.session = session
+  def session_=(session: Session): Unit = {
+    holder.session = session
+  }
 
-  def session: Option[Session] = if (null == holder.session) None else Some(holder.session)
+  def getSession: Option[Session] = {
+    if (null == holder.session) None else Some(holder.session)
+  }
 
-  def hasValidContext: Boolean = !session.isEmpty && Anonymous != session.get.principal
+  def session: Session = {
+    if (null == holder.session) throw new SecurityException("Not Login") else holder.session
+  }
 
-  def principal: Any = session match {
+  def hasValidContext: Boolean = {
+    val sess = getSession
+    !sess.isEmpty && Anonymous != sess.get.principal
+  }
+
+  def principal: Any = getSession match {
     case None => SecurityContext.Anonymous
     case Some(session) => session.principal
   }
