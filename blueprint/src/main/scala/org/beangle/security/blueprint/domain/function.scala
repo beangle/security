@@ -1,7 +1,7 @@
 package org.beangle.security.blueprint.domain
 
 import org.beangle.data.model.TemporalOn
-import org.beangle.data.model.IdGrowSlow
+import org.beangle.data.model.SlowId
 
 object Scope extends Enumeration(0) {
   type Scope = Value

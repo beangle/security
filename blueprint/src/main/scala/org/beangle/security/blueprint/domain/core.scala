@@ -3,14 +3,14 @@ package org.beangle.security.blueprint.domain
 import java.security.Principal
 
 import org.beangle.commons.lang.Strings
-import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, IdGrowSlow, IntIdEntity, LongIdEntity, Named, TemporalAt, TemporalOn, Updated }
+import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, SlowId, IntIdEntity, LongIdEntity, Named, TemporalAt, TemporalOn, Updated }
 import org.beangle.security.authz.Authority
 
 object Property {
   val All = "*"
 }
 
-trait Field extends IntIdEntity with Named with IdGrowSlow {
+trait Field extends IntIdEntity with Named with SlowId {
   def title: String
   def source: String
   def multiple: Boolean
@@ -51,7 +51,7 @@ trait Profile {
     }
   }
 }
-trait UserCategory extends IntIdEntity with Named with IdGrowSlow {
+trait UserCategory extends IntIdEntity with Named with SlowId {
 
 }
 
@@ -104,7 +104,7 @@ trait Member extends LongIdEntity {
   def manager: Boolean
 }
 
-trait Role extends Entity[Integer] with Named with Updated with Enabled with Hierarchical[Role] with Profile with Principal with IdGrowSlow {
+trait Role extends Entity[Integer] with Named with Updated with Enabled with Hierarchical[Role] with Profile with Principal with SlowId {
 
   def members: Seq[Member]
 
@@ -121,13 +121,13 @@ object Resource {
   final val AllActions = "*";
 }
 
-trait Resource extends IntIdEntity with Named with Enabled with IdGrowSlow {
+trait Resource extends IntIdEntity with Named with Enabled with SlowId {
   def title: String
   def actions: String
   def remark: String
 }
 
-trait Permission extends IntIdEntity with Cloneable with TemporalAt with IdGrowSlow {
+trait Permission extends IntIdEntity with Cloneable with TemporalAt with SlowId {
   def resource: Resource
   def principal: Principal
   def actions: String
