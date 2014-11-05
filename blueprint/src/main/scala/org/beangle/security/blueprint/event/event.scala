@@ -1,8 +1,8 @@
-package org.beangle.security.blueprint.domain.event
+package org.beangle.security.blueprint.event
 
 import org.beangle.commons.event.Event
-import org.beangle.security.blueprint.domain.Role
-import org.beangle.security.blueprint.domain.User
+import org.beangle.security.blueprint.Role
+import org.beangle.security.blueprint.User
 
 class RoleEvent(role: Role) extends Event(role) {
   def role = getSource.asInstanceOf[Role]

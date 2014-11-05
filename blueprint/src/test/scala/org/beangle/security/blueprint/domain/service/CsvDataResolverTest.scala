@@ -1,10 +1,12 @@
 package org.beangle.security.blueprint.domain.service
 
-import org.beangle.security.blueprint.domain.model.{ FieldBean, RoleBean }
 import org.junit.runner.RunWith
 import org.scalatest.{ FunSpec, Matchers }
 import org.scalatest.junit.JUnitRunner
 import org.beangle.commons.lang.reflect.BeanManifest
+import org.beangle.security.blueprint.service.CsvDataResolver
+import org.beangle.security.blueprint.domain.RoleBean
+import org.beangle.security.blueprint.domain.FieldBean
 
 @RunWith(classOf[JUnitRunner])
 class CsvDataResolverTest extends FunSpec with Matchers {

@@ -1,10 +1,9 @@
-package org.beangle.security.blueprint.domain
+package org.beangle.security.blueprint
 
 import java.security.Principal
 
 import org.beangle.commons.lang.Strings
-import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, SlowId, IntIdEntity, LongIdEntity, Named, TemporalAt, TemporalOn, Updated }
-import org.beangle.security.authz.Authority
+import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, IntIdEntity, LongIdEntity, Named, SlowId, TemporalAt, TemporalOn, Updated }
 
 object Property {
   val All = "*"
@@ -51,64 +50,31 @@ trait Profile {
     }
   }
 }
-trait UserCategory extends IntIdEntity with Named with SlowId {
-
-}
 
 trait User extends LongIdEntity with Coded with Named with Updated with TemporalOn with Enabled with Principal {
 
   def email: String
 
-  def credential: String
-
-  def members: Seq[Member]
-
   def roles: Seq[Role]
 
-  def authorities: Seq[Authority]
-
-  def creator: Option[User]
+  def credential: Any
 
   def accountExpired: Boolean
 
   def credentialExpired: Boolean
 
-  def category: UserCategory
-
   def locked: Boolean
-}
 
-trait UserProfile extends LongIdEntity with Profile {
-  def user: User
-}
+  def remark: String
 
-object Member {
-  object Ship extends Enumeration(1) {
-    type Ship = Value
-    val IsMember = Value("Member")
-    val IsGranter = Value("Granter")
-    val IsManager = Value("Manager")
-  }
-}
-
-trait Member extends LongIdEntity {
-
-  def user: User
-
-  def role: Role
-
-  def member: Boolean
-
-  def granter: Boolean
-
-  def manager: Boolean
+  def profiles: Seq[Profile]
+  
+  def category:Any
 }
 
 trait Role extends Entity[Integer] with Named with Updated with Enabled with Hierarchical[Role] with Profile with Principal with SlowId {
 
-  def members: Seq[Member]
-
-  def creator: Option[User]
+  def creator: User
 
   def remark: String
 }

@@ -1,6 +1,6 @@
 package org.beangle.security.blueprint.service
 
-import org.beangle.security.blueprint.domain.FuncResource
+import org.beangle.security.blueprint.FuncResource
 
 trait FuncPermissionService {
 

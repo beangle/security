@@ -53,30 +53,30 @@ trait Authority extends Serializable with Ordered[Authority] {
 
 /** Basic concrete implementation of a {@link Authority}. */
 @SerialVersionUID(1L)
-class GrantedAuthority(val role: Any) extends Authority with Serializable {
+class Role(val name: Any) extends Authority with Serializable {
 
-  Assert.notNull(role, "A granted authority textual representation is required")
+  Assert.notNull(name, "A granted authority textual representation is required")
 
-  def authority: Any = role
+  def authority: Any = name
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case ga: GrantedAuthority => ga.role == this.role
+      case ga: Role => ga.name == this.name
       case _ => false
     }
   }
 
-  override def hashCode(): Int = role.hashCode
+  override def hashCode(): Int = name.hashCode
 
-  override def toString(): String = role.toString
+  override def toString(): String = name.toString
 
   def compare(o: Authority): Int = {
     if (o != null) {
       o.authority match {
-        case or: Ordered[_] => or.asInstanceOf[Ordered[Any]] compare role
-        case comp: jl.Comparable[_] => comp.asInstanceOf[jl.Comparable[Any]] compareTo role
+        case or: Ordered[_] => or.asInstanceOf[Ordered[Any]] compare name
+        case comp: jl.Comparable[_] => comp.asInstanceOf[jl.Comparable[Any]] compareTo name
         case _ =>
-          throw new RuntimeException("Cannot compare GrantedAuthority using role:" + role)
+          throw new RuntimeException("Cannot compare GrantedAuthority using role:" + name)
       }
     } else -1
   }

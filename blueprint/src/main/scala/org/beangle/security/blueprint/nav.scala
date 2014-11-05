@@ -1,4 +1,4 @@
-package org.beangle.security.blueprint.domain
+package org.beangle.security.blueprint
 
 import org.beangle.data.model.{ Enabled, Hierarchical, IntIdEntity, Named }
 import org.beangle.data.model.SlowId

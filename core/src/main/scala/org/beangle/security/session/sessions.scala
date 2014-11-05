@@ -3,9 +3,9 @@ package org.beangle.security.session
 import java.io.{ Serializable => jSerializable }
 import java.security.Principal
 import java.{ util => ju }
-
 import org.beangle.security.authc.AuthenticationInfo
 import org.beangle.security.authc.DetailNames.{ Agent, Host, Os }
+import org.beangle.security.context.SecurityContext
 
 trait SessionKey {
   def sessionId: jSerializable
@@ -15,7 +15,16 @@ case class SessionId(val sessionId: jSerializable) extends SessionKey
 
 object Session {
   val DefaultTimeOut: Short = 30 * 60
+
+  def userName: String = {
+    SecurityContext.session.principal.getName
+  }
+
+  def userId: Any = {
+    SecurityContext.session.principal.id
+  }
 }
+
 trait Session {
 
   def id: jSerializable
