@@ -12,8 +12,8 @@
   <version>4.0.3-SNAPSHOT</version>
 
   <properties>
-    <commons.version>4.1.4-SNAPSHOT</commons.version>
-    <data.version>4.1.2-SNAPSHOT</data.version>
+    <commons.version>4.1.4</commons.version>
+    <data.version>4.1.2</data.version>
     <hibernate.version>4.3.1.Final</hibernate.version>
     <ehcache.version>2.5.2</ehcache.version>
   </properties>
