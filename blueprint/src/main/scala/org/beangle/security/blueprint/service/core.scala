@@ -12,7 +12,7 @@ trait UserService {
 
   def get(id: java.lang.Long): User
 
-  def getUsers(id:  java.lang.Long*): Seq[User]
+  def getUsers(id: java.lang.Long*): Seq[User]
 
   def isRoot(user: User): Boolean
 }
@@ -21,11 +21,6 @@ trait RoleService {
 
   def get(id: Integer): Role
 
-  def create(creator: User, role: Role): Unit
-
-  def isManagedBy(manager: User, role: Role): Boolean
-
-  def orphans: Seq[Role]
 }
 
 trait ProfileService {
@@ -36,6 +31,6 @@ trait ProfileService {
 
   def getField(fieldName: String): Field
 
-  def get(id:  java.lang.Long): Profile
+  def get(id: java.lang.Long): Profile
 
 }

@@ -1,18 +1,20 @@
 package org.beangle.security.blueprint
 
 import org.beangle.data.model.{ Enabled, Hierarchical, IntIdEntity, Named }
-import org.beangle.data.model.SlowId
 
-trait MenuProfile extends IntIdEntity with Named with Enabled with SlowId {
+trait MenuProfile extends IntIdEntity with Named with Enabled {
   def menus: Seq[Menu]
-  def role: Role
 }
 
-trait Menu extends IntIdEntity with Named with Enabled with Hierarchical[Menu] with SlowId {
-
+trait Menu extends IntIdEntity with Named with Enabled with Hierarchical[Menu] with Ordered[Menu] {
+  def profile: MenuProfile
   def title: String
-  def entry: Option[FuncResource]
+  def entry: FuncResource
   def params: String
   def remark: String
-  def resources: Seq[FuncResource]
+  def resources: collection.Set[FuncResource]
+
+  override def compare(other: Menu): Int = {
+    indexno.compareTo(other.indexno)
+  }
 }
