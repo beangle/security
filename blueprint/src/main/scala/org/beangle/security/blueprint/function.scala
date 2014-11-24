@@ -1,7 +1,6 @@
 package org.beangle.security.blueprint
 
 import org.beangle.data.model.TemporalOn
-import org.beangle.data.model.SlowId
 
 object Scope extends Enumeration(0) {
   class Scope(name: String) extends super.Val(name)

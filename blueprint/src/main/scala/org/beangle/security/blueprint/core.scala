@@ -3,13 +3,13 @@ package org.beangle.security.blueprint
 import java.security.Principal
 
 import org.beangle.commons.lang.Strings
-import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, IntIdEntity, LongIdEntity, Named, SlowId, TemporalAt, TemporalOn, Updated }
+import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, IntIdEntity, LongIdEntity, Named, TemporalAt, TemporalOn, Updated }
 
 object Property {
   val All = "*"
 }
 
-trait Field extends IntIdEntity with Named with SlowId {
+trait Field extends IntIdEntity with Named {
   def title: String
   def source: String
   def multiple: Boolean
@@ -53,8 +53,6 @@ trait Profile {
 
 trait User extends LongIdEntity with Coded with Named with Updated with TemporalOn with Enabled with Principal {
 
-  def email: String
-
   def roles: Seq[Role]
 
   def credential: Any
@@ -72,7 +70,7 @@ trait User extends LongIdEntity with Coded with Named with Updated with Temporal
   def category:Any
 }
 
-trait Role extends Entity[Integer] with Named with Updated with Enabled with Hierarchical[Role] with Profile with Principal with SlowId {
+trait Role extends Entity[Integer] with Named with Updated with Enabled with Hierarchical[Role] with Profile with Principal {
 
   def creator: User
 
@@ -87,13 +85,13 @@ object Resource {
   final val AllActions = "*";
 }
 
-trait Resource extends IntIdEntity with Named with Enabled with SlowId {
+trait Resource extends IntIdEntity with Named with Enabled {
   def title: String
   def actions: String
   def remark: String
 }
 
-trait Permission extends IntIdEntity with Cloneable with TemporalAt with SlowId {
+trait Permission extends IntIdEntity with Cloneable with TemporalAt {
   def resource: Resource
   def principal: Principal
   def actions: String
