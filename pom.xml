@@ -9,7 +9,7 @@
   <artifactId>beangle-security-parent</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.0.4-SNAPSHOT</version>
+  <version>4.0.4</version>
 
   <properties>
     <commons.version>4.1.5</commons.version>
