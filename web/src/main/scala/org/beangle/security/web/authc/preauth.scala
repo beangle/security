@@ -1,7 +1,6 @@
 package org.beangle.security.web
 
 import java.util.Date
-
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
@@ -12,9 +11,10 @@ import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.{ Session, SessionId }
 import org.beangle.security.web.authc.WebDetails
-
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.web.session.SessionIdPolicy
+import org.beangle.security.web.session.DefaultSessionIdPolicy
 
 trait PreauthAliveChecker {
   def check(session: Session, request: HttpServletRequest): Boolean
@@ -44,6 +44,7 @@ class PreauthToken(val principal: Any) extends AuthenticationToken {
 abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter {
 
   var aliveChecker: PreauthAliveChecker = _
+  var sessionIdPolicy: SessionIdPolicy = new DefaultSessionIdPolicy
   /**
    * Try to authenticate a pre-authenticated user if the
    * user has not yet been authenticated.
@@ -63,10 +64,10 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
     if (null != token) {
       token.details ++= WebDetails.get(request)
       try {
-        val httpSession = request.getSession(false)
-        val session = securityManager.login(token, SessionId(httpSession.getId))
+        val session = securityManager.login(token, sessionIdPolicy.getSessionId(request))
         SecurityContext.session = session
-        httpSession.setMaxInactiveInterval(session.timeout)
+        val httpSession = request.getSession(false)
+        if (null != httpSession) httpSession.setMaxInactiveInterval(session.timeout)
       } catch {
         case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
         case e: Throwable => throw e

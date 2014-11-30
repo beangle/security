@@ -1,10 +1,11 @@
 package org.beangle.security.authc
 
-import org.beangle.commons.lang.{Objects, Strings}
+import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.text.i18n.{NullTextResource, TextResource}
-import org.beangle.security.authz.{Authority, AuthorizationInfo}
+import org.beangle.commons.text.i18n.{ NullTextResource, TextResource }
+import org.beangle.security.authz.{ Authority, AuthorizationInfo }
 import org.beangle.security.realm.Realm
+import org.beangle.commons.bean.Initializing
 
 trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable with Serializable {
 
@@ -110,12 +111,19 @@ trait AccountStore {
   def load(principal: Any): Option[Account]
 }
 
-abstract class AbstractAccountRealm extends Realm with Logging {
+abstract class AbstractAccountRealm extends Realm with Logging with Initializing {
 
   var parent: AbstractAccountRealm = _
 
   var tr: TextResource = new NullTextResource()
 
+  override def init(): Unit = {
+    var parentRealm = parent
+    while (null != parentRealm && parent != null) {
+      if (parent == this) parent = null
+      else parentRealm = parent.parent
+    }
+  }
   protected def determinePrincipal(token: AuthenticationToken): String = {
     if (token == null) "NONE_PROVIDED" else token.getName()
   }

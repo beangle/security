@@ -20,8 +20,8 @@ package org.beangle.security.web.access
 
 import org.beangle.commons.web.access.DefaultAccessRequestBuilder
 import org.beangle.security.session.{ SessionId, SessionRegistry }
-
 import javax.servlet.http.HttpServletRequest
+import org.beangle.security.web.session.SessionIdPolicy
 
 /**
  * Security access request
@@ -31,11 +31,13 @@ import javax.servlet.http.HttpServletRequest
  */
 class SecurityAccessRequestBuilder(val registry: SessionRegistry) extends DefaultAccessRequestBuilder {
 
+  var sessionIdPolicy: SessionIdPolicy = _
+
   protected override def abtainUsername(request: HttpServletRequest): String = {
     val session = request.getSession(false)
     if (null == session) null
     else {
-      registry.get(SessionId(session.getId())) match {
+      registry.get(sessionIdPolicy.getSessionId(request)) match {
         case Some(s) => s.principal.getName
         case None => null
       }

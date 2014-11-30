@@ -141,7 +141,10 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
     expired
   }
 
-  override def get(key: SessionKey): Option[Session] = sessionids.get(key.sessionId)
+  override def get(key: SessionKey): Option[Session] = {
+    if (null == key) None
+    else sessionids.get(key.sessionId)
+  }
 
   override def register(auth: AuthenticationInfo, key: SessionKey): Session = {
     val principal = auth.getName

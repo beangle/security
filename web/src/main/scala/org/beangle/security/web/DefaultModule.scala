@@ -4,19 +4,21 @@ import org.beangle.commons.inject.bind.AbstractBindModule
 import org.beangle.security.authc.RealmAuthenticator
 import org.beangle.security.mgt.DefaultSecurityManager
 import org.beangle.security.session.{ DefaultSessionBuilder, MemSessionRegistry }
-import org.beangle.security.web.access.{ AuthorizationFilter, DefaultAccessDeniedHandler, SecurityFilter, SecurityInterceptor }
+import org.beangle.security.web.access.{ AuthorizationFilter, DefaultAccessDeniedHandler, SecurityInterceptor }
+import org.beangle.security.web.session.DefaultSessionIdPolicy
 
 class DefaultModule extends AbstractBindModule {
 
   protected override def binding() {
-    bind(classOf[DefaultSecurityManager])
+    bind("security.SecurityManager.default", classOf[DefaultSecurityManager])
     bind(classOf[MemSessionRegistry], classOf[DefaultSessionBuilder])
-    bind(classOf[AuthorizationFilter])
+    bind("security.Filter.authorization", classOf[AuthorizationFilter])
 
-    bind(classOf[UrlEntryPoint]).constructor($("security.login.url"))
-    bind(classOf[RealmAuthenticator], classOf[SecurityFilter])
+    bind("security.EntryPoint.url", classOf[UrlEntryPoint]).constructor($("security.login.url"))
+    bind("security.Authenticator.realm", classOf[RealmAuthenticator])
     bind(classOf[DefaultAccessDeniedHandler]).constructor($("security.access.errorPage", "/503.html"))
 
     bind("web.Interceptor.security", classOf[SecurityInterceptor])
+    bind("security.SessionIdPolicy.default", classOf[DefaultSessionIdPolicy])
   }
 }

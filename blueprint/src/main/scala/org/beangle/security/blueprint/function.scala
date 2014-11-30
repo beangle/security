@@ -2,7 +2,7 @@ package org.beangle.security.blueprint
 
 import org.beangle.data.model.TemporalOn
 
-object Scope extends Enumeration(0) {
+object Scopes extends Enumeration(0) {
   class Scope(name: String) extends super.Val(name)
 
   /** 不受保护的公共资源 */
@@ -18,7 +18,7 @@ object Scope extends Enumeration(0) {
 }
 
 trait FuncResource extends Resource {
-  import Scope._
+  import Scopes._
   def scope: Scope
 }
 
