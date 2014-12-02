@@ -1,7 +1,6 @@
 package org.beangle.security.web.access
 
 import java.{ util => ju }
-
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.VirtualFilterChain
 import org.beangle.commons.web.intercept.Interceptor
@@ -13,9 +12,9 @@ import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.{ SessionId, SessionRegistry }
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.authc.LogoutHandler
-
 import javax.servlet.{ Filter, FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.web.session.SessionIdPolicy
 
 class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegistry, val entryPoint: EntryPoint,
   val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
@@ -23,17 +22,20 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
   var expiredUrl: String = _
   var logoutHandler: LogoutHandler = _
 
+  var sessionIdPolicy: SessionIdPolicy = _
+
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
+      val sid = sessionIdPolicy.getSessionId(req)
       SecurityContext.session = null
-      val hs = req.getSession(true)
-      val sid = SessionId(hs.getId)
       var breakChain = false
       registry.get(sid).foreach { s =>
         if (s.expired) {
           breakChain = true
           registry.remove(sid)
-          hs.invalidate()
+          val hs = req.getSession(false)
+          if (null != hs)
+            hs.invalidate()
           if (null != logoutHandler) logoutHandler.logout(req, res, s)
           if (null != expiredUrl) RedirectUtils.sendRedirect(req, res, expiredUrl)
           else {

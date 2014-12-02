@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.RequestDispatcher
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.bean.Initializing
+import org.beangle.commons.web.context.ServletContextHolder
+import java.io.File
 
 /**
  * @author chaostone
@@ -21,13 +23,16 @@ trait AccessDeniedHandler {
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit
 }
 
-class DefaultAccessDeniedHandler(val errorPage: String) extends AccessDeniedHandler with Logging {
+class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHandler with Logging {
 
   def this() {
     this(null)
   }
-  if (null != errorPage)
+  if (null != errorPage) {
     require(errorPage.startsWith("/"), "errorPage must begin with '/'")
+    val file = ServletContextHolder.context.getRealPath(errorPage)
+    if (!new File(file).exists) errorPage = null
+  }
 
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {
     if (errorPage != null) {
