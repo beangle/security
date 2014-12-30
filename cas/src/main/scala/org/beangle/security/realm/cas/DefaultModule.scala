@@ -7,8 +7,10 @@ class DefaultModule extends AbstractBindModule {
 
   protected override def binding() {
     bind(classOf[CasConfig]).constructor($("security.cas.server"))
-    bind(classOf[CasEntryPoint])
-    bind(classOf[DefaultCasRealm], classOf[CasPreauthFilter])
-    bind(classOf[Cas20ServiceTicketValidator], classOf[NeusoftCasTicketValidator])
+    bind("security.EntryPoint.cas", classOf[CasEntryPoint])
+    bind("security.Realm.cas", classOf[DefaultCasRealm])
+    bind("security.Filter.cas", classOf[CasPreauthFilter])
+    bind("security.TicketValidator.cas20", classOf[Cas20ServiceTicketValidator])
+    bind("security.TicketValidator.neusoft", classOf[NeusoftCasTicketValidator])
   }
 }
