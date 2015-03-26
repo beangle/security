@@ -1,6 +1,5 @@
 package org.beangle.security.blueprint.service
 
-import org.beangle.commons.bean.PropertyUtils
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.conversion.impl.DefaultConversion
 import org.beangle.security.blueprint.Field

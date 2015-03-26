@@ -1,20 +1,21 @@
 package org.beangle.security.web
 
 import java.util.Date
+
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
 import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStatusException, AccountStore, AuthenticationException, AuthenticationInfo, AuthenticationToken, UsernameNotFoundException }
+import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationException, AuthenticationInfo, AuthenticationToken }
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
-import org.beangle.security.session.{ Session, SessionId }
+import org.beangle.security.session.Session
 import org.beangle.security.web.authc.WebDetails
+import org.beangle.security.web.session.{ DefaultSessionIdPolicy, SessionIdPolicy }
+
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.security.web.session.SessionIdPolicy
-import org.beangle.security.web.session.DefaultSessionIdPolicy
 
 trait PreauthAliveChecker {
   def check(session: Session, request: HttpServletRequest): Boolean
@@ -32,7 +33,7 @@ class PreauthToken(val principal: Any) extends AuthenticationToken {
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: PreauthToken =>
-        Objects.equalsBuilder().add(principal, test.principal)
+        Objects.equalsBuilder.add(principal, test.principal)
           .add(details, test.details)
           .isEquals
       case _ => false
@@ -41,7 +42,7 @@ class PreauthToken(val principal: Any) extends AuthenticationToken {
 
 }
 
-abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter {
+abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter with Logging {
 
   var aliveChecker: PreauthAliveChecker = _
   var sessionIdPolicy: SessionIdPolicy = new DefaultSessionIdPolicy

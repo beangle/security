@@ -71,7 +71,7 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: DefaultAccount =>
-        Objects.equalsBuilder().add(principal, test.principal).add(id, test.id).isEquals
+        Objects.equalsBuilder.add(principal, test.principal).add(id, test.id).isEquals
       case _ => false
     }
   }
