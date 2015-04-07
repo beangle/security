@@ -66,7 +66,7 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
       results.close()
       results = null
     } catch {
-      case e: Throwable => error("Ldap search error,uid=" + uid, e)
+      case e: Throwable => logger.error("Ldap search error,uid=" + uid, e)
     }
     return result
   }
@@ -83,7 +83,7 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
     if (ctx != null) {
       try {
         val dn = getUserDN(uid)
-        if (dn == null) debug(s"User $uid not found")
+        if (dn == null) logger.debug(s"User $uid not found")
         else {
           val userID = new CompositeName(dn)
           var attrs: Attributes = null
@@ -120,9 +120,9 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
       env.putAll(properties)
       try {
         ctx = new InitialDirContext(env)
-        debug("Ldap server connect success.")
+        logger.debug("Ldap server connect success.")
       } catch {
-        case e: Exception => error("Ldap server connect failure", e)
+        case e: Exception => logger.error("Ldap server connect failure", e)
       }
       ctx
     }
@@ -133,9 +133,9 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
       if (ctx != null) try {
         ctx.close()
         ctx = null
-        debug("Ldap connect closed.")
+        logger.debug("Ldap connect closed.")
       } catch {
-        case e: Exception => error("Failure to close ldap connection.", e)
+        case e: Exception => logger.error("Failure to close ldap connection.", e)
       }
     }
   }

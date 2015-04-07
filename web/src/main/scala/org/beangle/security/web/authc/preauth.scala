@@ -96,7 +96,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
    */
   protected def successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
     session: Session): Unit = {
-    debug(s"PreAuthentication success: $session")
+    logger.debug(s"PreAuthentication success: $session")
     SecurityContext.session = session
   }
 
@@ -108,7 +108,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
    */
   protected def unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
     failed: AuthenticationException) {
-    debug("Cleared security context due to exception", failed)
+    logger.debug("Cleared security context due to exception", failed)
     SecurityContext.session = null
     if (null != failed) throw failed
     //if (failed.isInstanceOf[UsernameNotFoundException] || failed.isInstanceOf[AccountStatusException]) throw failed
@@ -161,7 +161,7 @@ class RemoteUsernameSource extends UsernameSource with Logging {
     if (null != p) username = p.getName()
     if (Strings.isEmpty(username)) username = request.getRemoteUser()
     if (null != username && stripPrefix) username = stripPrefix(username)
-    if (null != username) debug(s"Obtained username=[${username}] from remote user")
+    if (null != username) logger.debug(s"Obtained username=[${username}] from remote user")
     if (null == username) None else Some(username)
   }
 
@@ -198,20 +198,20 @@ class ParameterUsernameSource extends UsernameSource with Logging {
     else {
       val full = cid + "," + ip + "," + t + "," + extra
       val digest = Digests.md5Hex(full)
-      if (debugEnabled) {
-        debug(s"user $cid at :$ip")
-        debug(s"time:$t digest:$s ")
-        debug(s"full:$full")
-        debug(s"my_digest:$digest")
+      if (logger.isDebugEnabled) {
+        logger.debug(s"user $cid at :$ip")
+        logger.debug(s"time:$t digest:$s ")
+        logger.debug(s"full:$full")
+        logger.debug(s"my_digest:$digest")
       }
       if (digest.equals(s)) {
         val time = t * 1000
         val now = new Date()
         if (enableExpired && (Math.abs(now.getTime() - time) > (expiredTime * 1000))) {
-          debug(s"user $cid time expired:server time:${now} and given time :${new java.util.Date(time)}")
+          logger.debug(s"user $cid time expired:server time:${now} and given time :${new java.util.Date(time)}")
           None
         } else {
-          debug(s"user $cid login at server time:$now")
+          logger.debug(s"user $cid login at server time:$now")
           Some(cid)
         }
       } else None

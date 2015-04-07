@@ -100,12 +100,12 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
   def validate(ticket: String, service: String): Assertion = {
     val validationUrl = constructValidationUrl(ticket, service)
-    debug(s"Constructing validation url: $validationUrl")
+    logger.debug(s"Constructing validation url: $validationUrl")
     try {
-      debug("Retrieving response from server.")
+      logger.debug("Retrieving response from server.")
       val serverResponse = retrieveResponse(new URL(validationUrl), ticket)
       if (serverResponse == null) throw new TicketValidationException("The CAS server returned no response.")
-      debug(s"Server response: $serverResponse")
+      logger.debug(s"Server response: $serverResponse")
       parseResponse(ticket, serverResponse)
     } catch {
       case e: MalformedURLException => throw new TicketValidationException(e.getMessage())
@@ -154,7 +154,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
       elements.toList
     } catch {
       case e: Exception => {
-        error("parse error", e)
+        logger.error("parse error", e)
         null
       }
     }
@@ -185,7 +185,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
       builder.toString()
     } catch {
       case e: Exception => {
-        error("parse error", e)
+        logger.error("parse error", e)
         null
       }
     }

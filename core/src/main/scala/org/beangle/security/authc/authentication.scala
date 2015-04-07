@@ -36,7 +36,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
           notifyFailure(token, ae)
         } catch {
           case e2: Throwable =>
-            warn("Unable to send notification for failed authentication attempt - listener error?.  " +
+            logger.warn("Unable to send notification for failed authentication attempt - listener error?.  " +
               "Please check your AuthenticationListener implementation(s).  Logging sending exception " +
               "and propagating original AuthenticationException instead...", e2)
         }
@@ -103,7 +103,7 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
         } catch {
           case t: Throwable => {
             lastException = t
-            debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
+            logger.debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
           }
         }
       }
@@ -128,7 +128,7 @@ object AtLeastOneSuccessfulStrategy extends RealmAuthenticationStrategy with Log
         } catch {
           case t: Throwable => {
             lastException = t
-            debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
+            logger.debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
           }
         }
       }
