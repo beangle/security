@@ -3,13 +3,13 @@ package org.beangle.security.blueprint
 import java.security.Principal
 
 import org.beangle.commons.lang.Strings
-import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, IntIdEntity, LongIdEntity, Named, TemporalAt, TemporalOn, Updated }
+import org.beangle.data.model.{ Coded, Enabled, Entity, Hierarchical, IntId, LongId, Named, TemporalAt, TemporalOn, Updated }
 
 object Property {
   val All = "*"
 }
 
-trait Field extends IntIdEntity with Named {
+trait Field extends IntId with Named {
   def title: String
   def source: String
   def multiple: Boolean
@@ -51,7 +51,7 @@ trait Profile {
   }
 }
 
-trait User extends LongIdEntity with Coded with Named with Updated with TemporalOn with Enabled with Principal {
+trait User extends LongId with Coded with Named with Updated with TemporalOn with Enabled with Principal {
 
   def roles: Seq[Role]
 
@@ -85,13 +85,13 @@ object Resource {
   final val AllActions = "*";
 }
 
-trait Resource extends IntIdEntity with Named with Enabled {
+trait Resource extends IntId with Named with Enabled {
   def title: String
   def actions: String
   def remark: String
 }
 
-trait Permission extends IntIdEntity with Cloneable with TemporalAt {
+trait Permission extends IntId with Cloneable with TemporalAt {
   def resource: Resource
   def principal: Principal
   def actions: String
