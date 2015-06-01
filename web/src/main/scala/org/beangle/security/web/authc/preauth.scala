@@ -1,20 +1,21 @@
 package org.beangle.security.web
 
 import java.util.Date
+
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
 import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStatusException, AccountStore, AuthenticationException, AuthenticationInfo, AuthenticationToken, UsernameNotFoundException }
+import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationException, AuthenticationInfo, AuthenticationToken }
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
-import org.beangle.security.session.{ Session, SessionId }
+import org.beangle.security.session.Session
 import org.beangle.security.web.authc.WebDetails
+import org.beangle.security.web.session.{ DefaultSessionIdPolicy, SessionIdPolicy }
+
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.security.web.session.SessionIdPolicy
-import org.beangle.security.web.session.DefaultSessionIdPolicy
 
 trait PreauthAliveChecker {
   def check(session: Session, request: HttpServletRequest): Boolean
@@ -32,7 +33,7 @@ class PreauthToken(val principal: Any) extends AuthenticationToken {
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: PreauthToken =>
-        Objects.equalsBuilder().add(principal, test.principal)
+        Objects.equalsBuilder.add(principal, test.principal)
           .add(details, test.details)
           .isEquals
       case _ => false
@@ -41,7 +42,7 @@ class PreauthToken(val principal: Any) extends AuthenticationToken {
 
 }
 
-abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter {
+abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter with Logging {
 
   var aliveChecker: PreauthAliveChecker = _
   var sessionIdPolicy: SessionIdPolicy = new DefaultSessionIdPolicy
@@ -95,7 +96,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
    */
   protected def successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
     session: Session): Unit = {
-    debug(s"PreAuthentication success: $session")
+    logger.debug(s"PreAuthentication success: $session")
     SecurityContext.session = session
   }
 
@@ -107,7 +108,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
    */
   protected def unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
     failed: AuthenticationException) {
-    debug("Cleared security context due to exception", failed)
+    logger.debug("Cleared security context due to exception", failed)
     SecurityContext.session = null
     if (null != failed) throw failed
     //if (failed.isInstanceOf[UsernameNotFoundException] || failed.isInstanceOf[AccountStatusException]) throw failed
@@ -160,7 +161,7 @@ class RemoteUsernameSource extends UsernameSource with Logging {
     if (null != p) username = p.getName()
     if (Strings.isEmpty(username)) username = request.getRemoteUser()
     if (null != username && stripPrefix) username = stripPrefix(username)
-    if (null != username) debug(s"Obtained username=[${username}] from remote user")
+    if (null != username) logger.debug(s"Obtained username=[${username}] from remote user")
     if (null == username) None else Some(username)
   }
 
@@ -197,20 +198,20 @@ class ParameterUsernameSource extends UsernameSource with Logging {
     else {
       val full = cid + "," + ip + "," + t + "," + extra
       val digest = Digests.md5Hex(full)
-      if (debugEnabled) {
-        debug(s"user $cid at :$ip")
-        debug(s"time:$t digest:$s ")
-        debug(s"full:$full")
-        debug(s"my_digest:$digest")
+      if (logger.isDebugEnabled) {
+        logger.debug(s"user $cid at :$ip")
+        logger.debug(s"time:$t digest:$s ")
+        logger.debug(s"full:$full")
+        logger.debug(s"my_digest:$digest")
       }
       if (digest.equals(s)) {
         val time = t * 1000
         val now = new Date()
         if (enableExpired && (Math.abs(now.getTime() - time) > (expiredTime * 1000))) {
-          debug(s"user $cid time expired:server time:${now} and given time :${new java.util.Date(time)}")
+          logger.debug(s"user $cid time expired:server time:${now} and given time :${new java.util.Date(time)}")
           None
         } else {
-          debug(s"user $cid login at server time:$now")
+          logger.debug(s"user $cid login at server time:$now")
           Some(cid)
         }
       } else None

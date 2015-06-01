@@ -69,7 +69,7 @@ class UsernamePasswordAuthenticationToken(val principal: Any, val credentials: A
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: UsernamePasswordAuthenticationToken =>
-        Objects.equalsBuilder().add(principal, test.principal)
+        Objects.equalsBuilder.add(principal, test.principal)
           .add(credentials, test.credentials).add(details, test.details)
           .isEquals
       case _ => false

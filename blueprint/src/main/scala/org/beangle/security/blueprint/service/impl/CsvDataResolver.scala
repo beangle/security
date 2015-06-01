@@ -1,6 +1,6 @@
 package org.beangle.security.blueprint.service.impl
 
-import org.beangle.commons.bean.PropertyUtils
+import org.beangle.commons.bean.Properties
 import org.beangle.commons.conversion.impl.DefaultConversion
 import org.beangle.commons.lang.Strings
 import org.beangle.security.blueprint.Field
@@ -23,7 +23,7 @@ object CsvDataResolver extends DataResolver {
       for (obj <- items) {
         for (prop <- properties) {
           try {
-            val value: Any = PropertyUtils.getProperty(obj, prop);
+            val value: Any = Properties.get(obj, prop);
             sb.append(String.valueOf(value)).append(';')
           } catch {
             case e: Exception => e.printStackTrace()
@@ -64,7 +64,7 @@ object CsvDataResolver extends DataResolver {
         val obj = clazz.newInstance().asInstanceOf[AnyRef]
         val dataItems = Strings.split(datas(i), ";")
         (0 until properties.size) foreach { j =>
-          PropertyUtils.copyProperty(obj, properties(j), dataItems(j))
+          Properties.copy(obj, properties(j), dataItems(j))
         }
         rs += obj.asInstanceOf[T]
       }

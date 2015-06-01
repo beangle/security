@@ -1,10 +1,10 @@
 package org.beangle.security.blueprint
 
-import org.beangle.data.model.{ IntIdEntity, Named }
+import org.beangle.data.model.{ IntId, Named }
 
 trait DataResource extends Resource
 
-trait DataField extends IntIdEntity with Named {
+trait DataField extends IntId with Named {
   def title: String
   def resource: DataResource
   def typeName: String

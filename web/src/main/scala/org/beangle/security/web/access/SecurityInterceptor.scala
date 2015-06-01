@@ -64,7 +64,7 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
   private def handleException(request: ServletRequest, response: ServletResponse, exception: SecurityException): Unit = {
     exception match {
       case ae: AuthenticationException =>
-        debug("Authentication exception occurred", ae);
+        logger.debug("Authentication exception occurred", ae);
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
         if (SecurityContext.hasValidContext) accessDeniedHandler.handle(request, response, ade)

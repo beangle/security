@@ -175,7 +175,7 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
       case Some(s) => {
         sessionids.remove(key.sessionId)
         val principal = s.principal
-        debug(s"Remove session $key for $principal")
+        logger.debug(s"Remove session $key for $principal")
         val sids = principals.get(principal) foreach { sids =>
           sids.remove(key.sessionId)
           if (sids.isEmpty) principals.remove(principal)
@@ -215,17 +215,17 @@ class SessionCleaner(val registry: SessionRegistry) extends Logging {
   var expiredTime = 30
   def cleanup() {
     val watch = new Stopwatch(true)
-    debug("clean up expired or over expired time session start ...")
+    logger.debug("clean up expired or over expired time session start ...")
     val calendar = Calendar.getInstance()
     try {
       var removed = 0
       registry.getExpired(Dates.rollMinutes(calendar.getTime(), -expiredTime)) foreach { s =>
         registry.remove(SessionId(s.id)) foreach (olds => removed += 1)
       }
-      if (removed > 0) info(s"removed $removed expired sessions in $watch")
+      if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")
       registry.stat()
     } catch {
-      case e: Exception => error("Beangle session cleanup failure.", e)
+      case e: Exception => logger.error("Beangle session cleanup failure.", e)
     }
   }
 }

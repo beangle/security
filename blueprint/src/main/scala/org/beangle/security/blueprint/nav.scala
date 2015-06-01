@@ -1,12 +1,12 @@
 package org.beangle.security.blueprint
 
-import org.beangle.data.model.{ Enabled, Hierarchical, IntIdEntity, Named }
+import org.beangle.data.model.{ Enabled, Hierarchical, IntId, Named }
 
-trait MenuProfile extends IntIdEntity with Named with Enabled {
+trait MenuProfile extends IntId with Named with Enabled {
   def menus: Seq[Menu]
 }
 
-trait Menu extends IntIdEntity with Named with Enabled with Hierarchical[Menu] with Ordered[Menu] {
+trait Menu extends IntId with Named with Enabled with Hierarchical[Menu] with Ordered[Menu] {
   def profile: MenuProfile
   def title: String
   def entry: FuncResource

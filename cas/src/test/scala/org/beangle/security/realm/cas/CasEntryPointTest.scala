@@ -69,11 +69,11 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       val response = mock(classOf[HttpServletResponse])
       val urlEncodedService = CasEntryPoint.constructServiceUrl(request, response, null,
         CasConfig.getLocalServer(request), "ticket", config.encode)
-      debug(urlEncodedService)
+      logger.debug(urlEncodedService)
 
       val urlEncodedService2 = CasEntryPoint.constructServiceUrl(request, response, null,
         "localhost:8080", "ticket", config.encode)
-      debug(urlEncodedService2)
+      logger.debug(urlEncodedService2)
     }
   }
 
