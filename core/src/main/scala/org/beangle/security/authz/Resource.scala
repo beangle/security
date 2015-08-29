@@ -1,6 +1,20 @@
-package org.beangle.security.blueprint
+package org.beangle.security.authz
 
-import org.beangle.data.model.TemporalOn
+object Resource {
+  /** 资源的所有部分 */
+  final val AllParts = "*";
+
+  /** 允许所有操作 */
+  final val AllActions = "*";
+}
+
+trait Resource extends Serializable {
+  def title: String
+  def actions: String
+  def remark: String
+  def name: String
+  def enabled: Boolean
+}
 
 object Scopes extends Enumeration(0) {
   class Scope(name: String) extends super.Val(name)
@@ -15,13 +29,4 @@ object Scopes extends Enumeration(0) {
   private def ScopeValue(name: String): Scope = {
     new Scope(name)
   }
-}
-
-trait FuncResource extends Resource {
-  import Scopes._
-  def scope: Scope
-}
-
-trait FuncPermission extends Permission {
-  override def resource: FuncResource
 }

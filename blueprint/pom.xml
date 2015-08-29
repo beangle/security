@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>org.beangle.security</groupId>
-    <artifactId>beangle-security-parent</artifactId>
+    <artifactId>beangle-security-parent_2.11</artifactId>
     <version>4.0.8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>beangle-security-blueprint</artifactId>
+  <artifactId>beangle-security-blueprint_2.11</artifactId>
   <packaging>jar</packaging>
   <name>Beangle Security Blueprint</name>
 
@@ -17,11 +17,11 @@
   <dependencies>
     <dependency>
       <groupId>org.beangle.security</groupId>
-      <artifactId>beangle-security-core</artifactId>
+      <artifactId>beangle-security-core_2.11</artifactId>
     </dependency>
     <dependency>
       <groupId>org.beangle.data</groupId>
-      <artifactId>beangle-data-jpa</artifactId>
+      <artifactId>beangle-data-jpa_2.11</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
