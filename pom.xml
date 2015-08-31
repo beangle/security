@@ -2,18 +2,18 @@
   <parent>
     <groupId>org.beangle</groupId>
     <artifactId>beangle-scala</artifactId>
-    <version>22.2</version>
+    <version>22.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.beangle.security</groupId>
-  <artifactId>beangle-security-parent</artifactId>
+  <artifactId>beangle-security-parent_2.11</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
   <version>4.0.8-SNAPSHOT</version>
 
   <properties>
-    <beangle.commons.version>4.2.5</beangle.commons.version>
-    <beangle.data.version>4.2.2</beangle.data.version>
+    <beangle.commons.version>4.3.0</beangle.commons.version>
+    <beangle.data.version>4.2.3-SNAPSHOT</beangle.data.version>
     <hibernate.version>4.3.1.Final</hibernate.version>
     <ehcache.version>2.5.2</ehcache.version>
   </properties>
@@ -23,34 +23,38 @@
     <module>cas</module>
     <module>web</module>
     <module>session</module>
-    <module>blueprint</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.beangle.commons</groupId>
-        <artifactId>beangle-commons-core</artifactId>
+        <artifactId>beangle-commons-core_2.11</artifactId>
         <version>${beangle.commons.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.commons</groupId>
-        <artifactId>beangle-commons-web</artifactId>
+        <artifactId>beangle-commons-web_2.11</artifactId>
         <version>${beangle.commons.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.data</groupId>
-        <artifactId>beangle-data-jpa</artifactId>
+        <artifactId>beangle-data-jpa_2.11</artifactId>
         <version>${beangle.data.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.security</groupId>
-        <artifactId>beangle-security-core</artifactId>
+        <artifactId>beangle-security-core_2.11</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.security</groupId>
-        <artifactId>beangle-security-web</artifactId>
+        <artifactId>beangle-security-web_2.11</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.beangle.security</groupId>
+        <artifactId>beangle-security-session_2.11</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
@@ -59,7 +63,7 @@
   <dependencies>
     <dependency>
       <groupId>org.beangle.commons</groupId>
-      <artifactId>beangle-commons-core</artifactId>
+      <artifactId>beangle-commons-core_2.11</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

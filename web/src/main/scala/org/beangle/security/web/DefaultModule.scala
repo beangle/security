@@ -3,9 +3,10 @@ package org.beangle.security.web
 import org.beangle.commons.inject.bind.AbstractBindModule
 import org.beangle.security.authc.RealmAuthenticator
 import org.beangle.security.mgt.DefaultSecurityManager
-import org.beangle.security.session.{ DefaultSessionBuilder, MemSessionRegistry }
 import org.beangle.security.web.access.{ AuthorizationFilter, DefaultAccessDeniedHandler, SecurityInterceptor }
 import org.beangle.security.web.session.DefaultSessionIdPolicy
+import org.beangle.security.session.DefaultSessionBuilder
+import org.beangle.security.session.mem.MemSessionRegistry
 
 class DefaultModule extends AbstractBindModule {
 

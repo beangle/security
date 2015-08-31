@@ -14,7 +14,7 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
 
   val columns = "id,account,principal,login_at,os,agent,host,server,expired_at,remark,timeout,last_access_at,last_accessed,category"
 
-  val table = "se_sessoin_infoes"
+  val table = "session_infoes"
 
   private def convert(datas: Seq[Seq[_]]): Seq[Session] = {
     for (data <- datas) yield convert(data)
