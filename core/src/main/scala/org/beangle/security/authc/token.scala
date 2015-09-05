@@ -11,30 +11,6 @@ object DetailNames {
   val Host = "host"
   val Timeout = "timeout"
 }
-/**
- * Authentication Information
- * @author chaostone
- */
-trait AuthenticationInfo extends Principal with Serializable {
-
-  def id: Any
-
-  def principal: Any
-
-  def details: Map[String, Any]
-
-  def getName = principal.toString
-
-  override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
-}
-
-/**
- * Authentication Info can merge with others
- */
-trait Mergable extends AuthenticationInfo {
-  def details_=(data: Map[String, Any])
-  def merge(info: AuthenticationInfo): this.type
-}
 
 /**
  * Authentication Token used before authentication

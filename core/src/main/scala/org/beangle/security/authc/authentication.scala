@@ -9,11 +9,11 @@ import org.beangle.security.realm.Realm
 trait Authenticator {
 
   @throws(classOf[AuthenticationException])
-  def authenticate(token: AuthenticationToken): AuthenticationInfo
+  def authenticate(token: AuthenticationToken): Account
 }
 
 trait AuthenticationListener {
-  def onSuccess(token: AuthenticationToken, info: AuthenticationInfo)
+  def onSuccess(token: AuthenticationToken, info: Account)
   def onFailure(token: AuthenticationToken, cause: AuthenticationException)
   def onLogout(info: Session)
 }
@@ -22,7 +22,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
 
   var listeners: List[AuthenticationListener] = List.empty
 
-  override def authenticate(token: AuthenticationToken): AuthenticationInfo = {
+  override def authenticate(token: AuthenticationToken): Account = {
     try {
       val info = doAuthenticate(token);
       if (info == null) throw new AuthenticationException(s"No account information found for authentication token [$token]", token)
@@ -44,10 +44,10 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
     }
   }
 
-  def doAuthenticate(token: AuthenticationToken): AuthenticationInfo
+  def doAuthenticate(token: AuthenticationToken): Account
 
   @inline
-  protected final def notifySuccess(token: AuthenticationToken, info: AuthenticationInfo): Unit = {
+  protected final def notifySuccess(token: AuthenticationToken, info: Account): Unit = {
     listeners.foreach(listener => listener.onSuccess(token, info))
   }
 
@@ -64,23 +64,17 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
 trait RealmAuthenticationStrategy {
 
   @throws(classOf[AuthenticationException])
-  def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo
+  def authenticate(realms: List[Realm], token: AuthenticationToken): Account
 
-  protected def merge(info: AuthenticationInfo, aggregate: AuthenticationInfo): AuthenticationInfo = {
+  protected def merge(info: Account, aggregate: Account): Account = {
     if (null == aggregate) info
-    else {
-      if (aggregate.isInstanceOf[Mergable]) {
-        aggregate.asInstanceOf[Mergable].merge(info)
-      } else {
-        throw new IllegalArgumentException("AuthenticationInfo is not of type MergableAuthenticationInfo.");
-      }
-    }
+    else aggregate.merge(info)
   }
 
-  protected def returnOrRaise(info: AuthenticationInfo, token: AuthenticationToken, t: Throwable): AuthenticationInfo = {
+  protected def returnOrRaise(info: Account, token: AuthenticationToken, t: Throwable): Account = {
     if (null == info) throw if (null == t) new RuntimeException(s"Realm not found for $token") else t
     else {
-      if (info.isInstanceOf[Mergable]) info.asInstanceOf[Mergable].details = info.details ++ token.details
+      info.details = info.details ++ token.details
       info
     }
   }
@@ -91,15 +85,15 @@ trait RealmAuthenticationStrategy {
  */
 object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
 
-  override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
+  override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
     val realmIter = realms.iterator
-    var info: AuthenticationInfo = null
+    var info: Account = null
     var lastException: Throwable = null
     while (null == info && realmIter.hasNext) {
       val realm = realmIter.next()
       if (realm.supports(token)) {
         try {
-          info = realm.getAuthenticationInfo(token)
+          info = realm.getAccount(token)
         } catch {
           case t: Throwable => {
             lastException = t
@@ -115,15 +109,15 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
  * Pass Through all possible realm and aggregate authentication info
  */
 object AtLeastOneSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
-  override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
+  override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
     val realmIter = realms.iterator
-    var aggregate: AuthenticationInfo = null
+    var aggregate: Account = null
     var lastException: Throwable = null
     while (realmIter.hasNext) {
       val realm = realmIter.next()
       if (realm.supports(token)) {
         try {
-          val info = realm.getAuthenticationInfo(token)
+          val info = realm.getAccount(token)
           if (null != info) aggregate = merge(info, aggregate)
         } catch {
           case t: Throwable => {
@@ -141,14 +135,14 @@ object AtLeastOneSuccessfulStrategy extends RealmAuthenticationStrategy with Log
  */
 object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
 
-  override def authenticate(realms: List[Realm], token: AuthenticationToken): AuthenticationInfo = {
+  override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
     val realmIter = realms.iterator
-    var aggregate: AuthenticationInfo = null
+    var aggregate: Account = null
     while (realmIter.hasNext) {
       val realm = realmIter.next()
       if (realm.supports(token)) {
         try {
-          val info = realm.getAuthenticationInfo(token)
+          val info = realm.getAccount(token)
           if (null == info) throw new AuthenticationException(s"Realm [$realm] could not find account data for [$token].", token)
           else aggregate = merge(info, aggregate)
         } catch {
@@ -165,7 +159,7 @@ object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
  */
 class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator with Logging {
   var strategy: RealmAuthenticationStrategy = FirstSuccessfulStrategy
-  override def doAuthenticate(token: AuthenticationToken): AuthenticationInfo = {
+  override def doAuthenticate(token: AuthenticationToken): Account = {
     strategy.authenticate(reams, token)
   }
 }

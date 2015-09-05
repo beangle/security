@@ -1,20 +1,18 @@
 package org.beangle.security.session.mem
 
-import java.io.{ Serializable => jSerializable }
 import java.{ util => ju }
 
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.AuthenticationInfo
-import org.beangle.security.session.{ AbstractSessionRegistry, DefaultSessionProfile, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionId, SessionKey, SessionProfile }
+import org.beangle.security.authc.Account
+import org.beangle.security.session.{ LoginEvent, LogoutEvent, Session, SessionBuilder, SessionId, SessionKey }
+import org.beangle.security.session.profile.{ DefaultSessionProfile, ProfiledSessionRegistry, SessionProfile }
 
-class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionRegistry with Logging with EventPublisher {
+class MemSessionRegistry(val builder: SessionBuilder) extends ProfiledSessionRegistry with Logging with EventPublisher {
 
-  protected val principals = new collection.concurrent.TrieMap[Any, collection.mutable.HashSet[jSerializable]]
+  protected val principals = new collection.concurrent.TrieMap[Any, collection.mutable.HashSet[String]]
 
-  protected val sessionids = new collection.concurrent.TrieMap[jSerializable, Session]
-
-  private val defaultProfile = new DefaultSessionProfile("*")
+  protected val sessionids = new collection.concurrent.TrieMap[String, Session]
 
   def isRegisted(principal: String): Boolean = {
     val sids = principals.get(principal)
@@ -46,24 +44,23 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
     else sessionids.get(key.sessionId)
   }
 
-  override def register(auth: AuthenticationInfo, key: SessionKey): Session = {
+  override def register(auth: Account, key: SessionKey): Session = {
     val principal = auth.getName
     val existed = get(key) match {
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
           tryAllocate(key, auth)
-          existed.remark(" expired with replacement.")
+//          existed.remark(" expired with replacement.")
           remove(key)
         }
       }
       case None => tryAllocate(key, auth)
     }
 
-    val newSession = builder.build(key, auth, this)
-    newSession.timeout = getTimeout(auth)
+    val newSession = builder.build(key, auth, this, new ju.Date(),getTimeout(auth))
     sessionids.put(key.sessionId, newSession)
     principals.get(principal) match {
-      case None => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
+      case None       => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
       case Some(sids) => sids += key.sessionId
     }
     publish(new LoginEvent(newSession))
@@ -92,12 +89,10 @@ class MemSessionRegistry(val builder: SessionBuilder) extends AbstractSessionReg
 
   override def stat(): Unit = {}
 
-  protected override def allocate(auth: AuthenticationInfo, key: SessionKey): Boolean = true
+  protected override def allocate(auth: Account, key: SessionKey): Boolean = true
   /**
    * release slot for user
    */
   protected override def release(session: Session): Unit = {}
-
-  protected def getProfile(auth: AuthenticationInfo): Option[SessionProfile] = Some(DefaultSessionProfile)
 
 }

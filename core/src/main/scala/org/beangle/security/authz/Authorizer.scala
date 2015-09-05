@@ -19,7 +19,6 @@
 package org.beangle.security.authz
 
 import org.beangle.security.SecurityException
-import org.beangle.security.authc.AuthenticationInfo
 import org.beangle.commons.security.Request
 
 trait Authorizer {
