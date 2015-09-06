@@ -1,9 +1,9 @@
 package org.beangle.security.blueprint.domain
 
 import org.beangle.data.model.{ Enabled, Hierarchical, IntId, Named, Updated }
-import org.beangle.security.blueprint.{ Field, Profile, Role, User }
+import org.beangle.security.blueprint.{ Dimension, Profile, Role, User }
 
-class FieldBean extends IntId with Named with Field {
+class DimensionBean extends IntId with Named with Dimension {
   var title: String = _
   var source: String = _
   var multiple: Boolean = _
@@ -15,7 +15,7 @@ class FieldBean extends IntId with Named with Field {
 
 class RoleBean extends IntId with Named with Updated with Enabled
   with Hierarchical[Role] with Profile with Role {
-  var properties = new collection.mutable.HashMap[Field, String]
+  var properties = new collection.mutable.HashMap[Dimension, String]
   var creator: User = _
   var remark: String = _
   override def getName: String = {

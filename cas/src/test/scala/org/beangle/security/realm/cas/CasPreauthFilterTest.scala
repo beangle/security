@@ -1,20 +1,21 @@
 package org.beangle.security.realm.cas
 
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.{ AuthenticationInfo, AuthenticationToken, Authenticator, BadCredentialsException }
+import org.beangle.security.authc.{ Account, AuthenticationToken, Authenticator, BadCredentialsException }
 import org.beangle.security.mgt.DefaultSecurityManager
 import org.junit.runner.RunWith
 import org.mockito.Mockito.{ mock, when }
 import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.junit.JUnitRunner
+
 import javax.servlet.FilterChain
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse, HttpSession }
-import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
 
   val authenticator = new Authenticator() {
-    def authenticate(token: AuthenticationToken): AuthenticationInfo = {
+    def authenticate(token: AuthenticationToken): Account = {
       throw new BadCredentialsException("Rejected", token, null)
     }
   }

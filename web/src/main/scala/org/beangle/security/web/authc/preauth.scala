@@ -7,7 +7,7 @@ import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
 import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationException, AuthenticationInfo, AuthenticationToken }
+import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationException, AuthenticationToken }
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.Session
@@ -60,7 +60,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
 
   /** Do the actual authentication for a pre-authenticated user. */
   private def doAuthenticate(request: HttpServletRequest, response: HttpServletResponse): Unit = {
-    var authResult: AuthenticationInfo = null
+    var authResult: Account = null
     val token = getPreauthToken(request, response)
     if (null != token) {
       token.details ++= WebDetails.get(request)

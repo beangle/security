@@ -3,12 +3,12 @@ package org.beangle.security.blueprint.service.impl
 import org.beangle.commons.bean.Properties
 import org.beangle.commons.conversion.impl.DefaultConversion
 import org.beangle.commons.lang.Strings
-import org.beangle.security.blueprint.Field
+import org.beangle.security.blueprint.Dimension
 import org.beangle.security.blueprint.service.DataResolver
 
 object CsvDataResolver extends DataResolver {
 
-  def marshal(field: Field, items: Seq[Any]): String = {
+  def marshal(field: Dimension, items: Seq[Any]): String = {
     if (null == items || items.isEmpty) return ""
     val properties = new collection.mutable.ListBuffer[String]
     if (null != field.keyName) properties += field.keyName
@@ -37,7 +37,7 @@ object CsvDataResolver extends DataResolver {
     sb.toString()
   }
 
-  def unmarshal[T](field: Field, source: String): Seq[T] = {
+  def unmarshal[T](field: Dimension, source: String): Seq[T] = {
     if (Strings.isEmpty(source)) return List.empty
 
     val properties = new collection.mutable.ListBuffer[String]

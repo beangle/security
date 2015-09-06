@@ -4,7 +4,7 @@ import org.junit.runner.RunWith
 import org.scalatest.{ FunSpec, Matchers }
 import org.beangle.commons.lang.reflect.BeanManifest
 import org.beangle.security.blueprint.domain.RoleBean
-import org.beangle.security.blueprint.domain.FieldBean
+import org.beangle.security.blueprint.domain.DimensionBean
 import org.beangle.security.blueprint.domain.RoleBean
 import org.beangle.security.blueprint.service.impl.CsvDataResolver
 import org.scalatest.junit.JUnitRunner
@@ -12,7 +12,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class CsvDataResolverTest extends FunSpec with Matchers {
 
-  val field = new FieldBean()
+  val field = new DimensionBean()
   field.id = 1
   field.name = "role"
   field.source = "oql:from Role"

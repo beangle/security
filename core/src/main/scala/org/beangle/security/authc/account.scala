@@ -1,17 +1,27 @@
 package org.beangle.security.authc
 
+import java.security.Principal
+
+import org.beangle.commons.bean.Initializing
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.text.i18n.{ NullTextResource, TextResource }
 import org.beangle.security.authz.{ Authority, AuthorizationInfo }
 import org.beangle.security.realm.Realm
-import org.beangle.commons.bean.Initializing
 
-trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable with Serializable {
+import AccountStatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
+
+/**
+ * Authentication Information
+ * @author chaostone
+ */
+trait Account extends AuthorizationInfo with Principal with Mergable with Serializable {
 
   def id: Any
 
-  def category: Any
+  def principal: Any
+
+  def details: Map[String, Any]
 
   def accountExpired: Boolean
 
@@ -20,6 +30,22 @@ trait Account extends AuthenticationInfo with AuthorizationInfo with Mergable wi
   def credentialExpired: Boolean
 
   def disabled: Boolean
+
+  override def hashCode: Int = {
+    if (null == principal) 629 else principal.hashCode()
+  }
+
+  def getName: String = {
+    principal.toString
+  }
+}
+
+/**
+ * Authentication Info can merge with others
+ */
+trait Mergable {
+  def details_=(data: Map[String, Any])
+  def merge(info: Account): this.type
 }
 
 object AccountStatusMask {
@@ -29,7 +55,15 @@ object AccountStatusMask {
   val CredentialExpired = 8
 }
 
-class DefaultAccount(val principal: Any, var id: Any) extends Account with Mergable {
+class DefaultAccount(val id: Any,val principal: Any) extends Account {
+
+  var status: Int = _
+
+  var authorities: Seq[Authority] = List.empty
+
+  var permissions: List[Any] = List.empty
+
+  var details: Map[String, Any] = Map.empty
 
   import AccountStatusMask._
 
@@ -58,16 +92,6 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
 
   def disabled_=(value: Boolean): Unit = change(value, Disabled)
 
-  var status: Int = _
-
-  var category: Any = _
-
-  var authorities: Seq[Authority] = List.empty
-
-  var permissions: List[Any] = List.empty
-
-  var details: Map[String, Any] = Map.empty
-
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: DefaultAccount =>
@@ -83,25 +107,18 @@ class DefaultAccount(val principal: Any, var id: Any) extends Account with Merga
       .add("credentialExpired: ", credentialExpired)
       .add("AccountLocked: ", accountLocked)
       .add("Disabled: ", disabled)
-      .add("Category: ", category)
       .add("Authorities: ", authorities.mkString(","))
       .add("Permissions: ", permissions.mkString(",")).toString
   }
 
-  override def merge(info: AuthenticationInfo): this.type = {
-    info match {
-      case ac: Account => {
-        if (ac.accountExpired) this.accountExpired = true
-        if (ac.accountLocked) this.accountLocked = true
-        if (ac.credentialExpired) this.credentialExpired = true
-        if (ac.disabled) this.disabled = true
-        if (null != ac.id) this.id = ac.id
-        if (null != ac.category) this.category = ac.category
-        if (!ac.authorities.isEmpty) this.authorities = this.authorities ++ ac.authorities
-        if (!ac.permissions.isEmpty) this.permissions ::= ac.permissions
-        if (!ac.details.isEmpty) this.details ++= ac.details
-      }
-    }
+  override def merge(ac: Account): this.type = {
+    if (ac.accountExpired) this.accountExpired = true
+    if (ac.accountLocked) this.accountLocked = true
+    if (ac.credentialExpired) this.credentialExpired = true
+    if (ac.disabled) this.disabled = true
+    if (!ac.authorities.isEmpty) this.authorities = this.authorities ++ ac.authorities
+    if (!ac.permissions.isEmpty) this.permissions ::= ac.permissions
+    if (!ac.details.isEmpty) this.details ++= ac.details
     this
   }
 
@@ -128,8 +145,8 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
     if (token == null) "NONE_PROVIDED" else token.getName()
   }
 
-  override def getAuthenticationInfo(token: AuthenticationToken): Account = {
-    var merged: Account = if (null != parent) parent.getAuthenticationInfo(token) else null
+  override def getAccount(token: AuthenticationToken): Account = {
+    var merged: Account = if (null != parent) parent.getAccount(token) else null
 
     val principal = determinePrincipal(token)
     if (Strings.isEmpty(principal)) {
