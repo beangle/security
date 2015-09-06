@@ -13,9 +13,7 @@
 
   <properties>
     <beangle.commons.version>4.3.0</beangle.commons.version>
-    <beangle.data.version>4.2.3-SNAPSHOT</beangle.data.version>
-    <hibernate.version>4.3.1.Final</hibernate.version>
-    <ehcache.version>2.5.2</ehcache.version>
+    <beangle.data.version>4.2.3</beangle.data.version>
   </properties>
 
   <modules>
