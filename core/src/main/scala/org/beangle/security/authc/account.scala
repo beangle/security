@@ -17,8 +17,6 @@ import AccountStatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
  */
 trait Account extends AuthorizationInfo with Principal with Mergable with Serializable {
 
-  def id: Any
-
   def principal: Any
 
   def details: Map[String, Any]
@@ -55,7 +53,7 @@ object AccountStatusMask {
   val CredentialExpired = 8
 }
 
-class DefaultAccount(val id: Any,val principal: Any) extends Account {
+class DefaultAccount(val principal: Any) extends Account {
 
   var status: Int = _
 
@@ -94,15 +92,13 @@ class DefaultAccount(val id: Any,val principal: Any) extends Account {
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case test: DefaultAccount =>
-        Objects.equalsBuilder.add(principal, test.principal).add(id, test.id).isEquals
-      case _ => false
+      case test: DefaultAccount => Objects.equalsBuilder.add(principal, test.principal).isEquals
+      case _                    => false
     }
   }
 
   override def toString(): String = {
     Objects.toStringBuilder(this).add("Principal:", principal)
-      .add("Id: ", id)
       .add("AccountExpired: ", accountExpired)
       .add("credentialExpired: ", credentialExpired)
       .add("AccountLocked: ", accountLocked)

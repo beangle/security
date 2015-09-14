@@ -46,12 +46,12 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
   var cleaner: SessionCleaner = _
 
   def init() {
-    val exists = executor.query(s"select id from $statTable").map(x => x.head.asInstanceOf[Number]).toSet
+    val exists = executor.query(s"select id from $statTable").map(x => x.head.asInstanceOf[Int]).toSet
     profileProvider.getProfiles() foreach { p =>
-      if (exists.contains(p.id.longValue())) {
+      if (exists.contains(p.id)) {
         executor.update(s"update $statTable set capacity=? where id=?", p.capacity, p.id.longValue())
       } else {
-        executor.update(s"insert into $statTable(id,on_line,capacity,stat_at) values(?,?,?,?)", p.id.longValue, 0, p.capacity, new ju.Date)
+        executor.update(s"insert into $statTable(id,on_line,capacity,stat_at) values(?,?,?,?)", p.id, 0, p.capacity, new ju.Date)
       }
     }
     if (null != cleaner) {

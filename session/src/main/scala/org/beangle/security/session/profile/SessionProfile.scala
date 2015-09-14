@@ -7,19 +7,19 @@ import org.beangle.security.session.Session
  * Session Profile
  */
 trait SessionProfile {
-  def id: Number
+  def id: Int
   def capacity: Int
   def maxSession: Int
   def timeout: Short
 }
 
-object DefaultSessionProfile extends DefaultSessionProfile(1L) {
+object DefaultSessionProfile extends DefaultSessionProfile(1) {
   this.capacity = Short.MaxValue
   this.maxSession = 2
   this.timeout = Session.DefaultTimeOut
 }
 
-class DefaultSessionProfile(val id: Number) extends SessionProfile {
+class DefaultSessionProfile(val id: Int) extends SessionProfile {
   var capacity: Int = _
   var maxSession: Int = _
   var timeout: Short = _

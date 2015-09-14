@@ -16,13 +16,10 @@ case class SessionId(val sessionId: String) extends SessionKey
 object Session {
   val DefaultTimeOut: Short = 30 * 60
 
-  def userName: String = {
+  def user: String = {
     SecurityContext.session.principal.getName
   }
 
-  def userId: Any = {
-    SecurityContext.session.principal.id
-  }
 }
 
 trait Session extends Serializable {

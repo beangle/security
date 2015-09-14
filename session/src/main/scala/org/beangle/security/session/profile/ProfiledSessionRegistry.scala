@@ -20,7 +20,7 @@ abstract class ProfiledSessionRegistry extends AbstractSessionRegistry with Even
     profileProvider.getProfile(auth).timeout
   }
 
-  protected def getProfileId(auth: Account): Number = {
+  protected def getProfileId(auth: Account): Int = {
     profileProvider.getProfile(auth).id
   }
 
