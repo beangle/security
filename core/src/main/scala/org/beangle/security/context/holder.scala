@@ -31,16 +31,16 @@ object SecurityContext {
    * <li> global
    * </ul>
    */
-  private def buildHolder(strategyName: String): ContextHolder = {
+  private def buildHolder(strategyName: String): SecurityContextHolder = {
     strategyName match {
       case "threadLocal" => new ThreadLocalHolder(false)
       case "inheritableThreadLocal" => new ThreadLocalHolder(true)
       case "global" => GlobalHolder
       case _ => {
         try {
-          val clazz = Class.forName(strategyName).asInstanceOf[Class[ContextHolder]]
+          val clazz = Class.forName(strategyName).asInstanceOf[Class[SecurityContextHolder]]
           val customStrategy = clazz.getConstructor()
-          customStrategy.newInstance(Array()).asInstanceOf[ContextHolder]
+          customStrategy.newInstance(Array()).asInstanceOf[SecurityContextHolder]
         } catch {
           case ex: Exception => throw Throwables.propagate(ex)
         }
@@ -80,7 +80,7 @@ object SecurityContext {
  * </p>
  *
  */
-trait ContextHolder {
+trait SecurityContextHolder {
 
   def session: Session
 
@@ -90,7 +90,7 @@ trait ContextHolder {
 /**
  * A <code>static</code> field-based implementation of {@link org.beangle.security.core.context. ContextHolder}.
  */
-object GlobalHolder extends ContextHolder {
+object GlobalHolder extends SecurityContextHolder {
 
   var session: Session = _
 }
@@ -98,7 +98,7 @@ object GlobalHolder extends ContextHolder {
 /**
  * A <code>ThreadLocal</code>-based implementation of  {@link org.beangle.security.core.context.ContextHolder}.
  */
-class ThreadLocalHolder(inheritable: Boolean) extends ContextHolder {
+class ThreadLocalHolder(inheritable: Boolean) extends SecurityContextHolder {
 
   private val sessions = if (inheritable) new ThreadLocal[Session] else new InheritableThreadLocal[Session]
 

@@ -80,6 +80,7 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
   def getAttributes(uid: String, attrName: String): Set[Any] = {
     val values = new collection.mutable.HashSet[Any]
     val ctx = context
+//    ctx.modifyAttributes()
     if (ctx != null) {
       try {
         val dn = getUserDN(uid)
