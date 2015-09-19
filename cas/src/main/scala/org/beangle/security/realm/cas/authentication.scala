@@ -110,7 +110,7 @@ class CasPreauthFilter(securityManager: SecurityManager, val config: CasConfig) 
 
 class DefaultCasRealm(val accountStore: AccountStore, val ticketValidator: TicketValidator) extends AbstractAccountRealm {
 
-  protected override def determinePrincipal(token: AuthenticationToken): String = {
+  protected override def determinePrincipal(token: AuthenticationToken): Any = {
     try {
       val ticket = token.details(TicketName).toString
       val assertion = ticketValidator.validate(ticket, token.details("url").toString)

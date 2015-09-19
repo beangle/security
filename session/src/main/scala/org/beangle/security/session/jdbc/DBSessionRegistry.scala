@@ -33,7 +33,7 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
 
   private val fstconf = FSTConfiguration.createDefaultConfiguration();
 
-  private val insertColumns = "id,principal,login_at,os,agent,host,server,expired_at,timeout,last_access_at,last_accessed,profile_id,principal_name"
+  private val insertColumns = "id,principal,login_at,os,agent,host,server,expired_at,timeout,last_access_at,last_accessed,profile_id,principal_name,principal_description"
 
   private val selectColumns = "id,principal,login_at,timeout,server,expired_at,last_access_at,last_accessed"
 
@@ -165,9 +165,9 @@ class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
   }
 
   private def save(s: Session): Unit = {
-    executor.update(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+    executor.update(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       s.id, fstconf.asByteArray(s.principal), s.loginAt, s.os, s.agent, s.host, s.server, s.expiredAt,
-      s.timeout, s.lastAccessAt, s.lastAccessed, profileProvider.getProfile(s.principal).id.longValue(), s.principal.getName)
+      s.timeout, s.lastAccessAt, s.lastAccessed, profileProvider.getProfile(s.principal).id.longValue(), s.principal.getName, s.principal.description)
   }
 
 }
