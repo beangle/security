@@ -13,8 +13,8 @@ trait SecurityManager {
 
   def sessionRegistry: SessionRegistry
 
-  def isPermitted(principal: Any, request: Request): Boolean = {
-    authorizer.isPermitted(principal, request)
+  def isPermitted(session: Option[Session], request: Request): Boolean = {
+    authorizer.isPermitted(session, request)
   }
 
   //@throw(classOfAuthenticationException])
@@ -24,7 +24,7 @@ trait SecurityManager {
 }
 
 class DefaultSecurityManager(val authenticator: Authenticator, val authorizer: Authorizer,
-  val sessionRegistry: SessionRegistry) extends SecurityManager {
+    val sessionRegistry: SessionRegistry) extends SecurityManager {
 
   def login(token: AuthenticationToken, key: SessionKey): Session = {
     sessionRegistry.register(authenticator.authenticate(token), key)

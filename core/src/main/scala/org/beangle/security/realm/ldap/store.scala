@@ -80,21 +80,19 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
   def getAttributes(uid: String, attrName: String): Set[Any] = {
     val values = new collection.mutable.HashSet[Any]
     val ctx = context
+//    ctx.modifyAttributes()
     if (ctx != null) {
       try {
         val dn = getUserDN(uid)
         if (dn == null) logger.debug(s"User $uid not found")
         else {
           val userID = new CompositeName(dn)
-          var attrs: Attributes = null
-          if (null != attrName) {
-            attrs = ctx.getAttributes(userID, Array(attrName))
-          } else {
-            attrs = ctx.getAttributes(userID)
-          }
+          val attrs =
+            if (null != attrName) ctx.getAttributes(userID, Array(attrName))
+            else ctx.getAttributes(userID)
           val attrEnum = attrs.getAll()
-          while (attrEnum.hasMoreElements()) {
-            values += attrEnum.nextElement().asInstanceOf[Attribute].get()
+          while (attrEnum.hasMoreElements) {
+            values += attrEnum.nextElement.asInstanceOf[Attribute].get()
           }
         }
       } catch {
@@ -140,7 +138,9 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
     }
   }
 
-  private def context: DirContext = if (null == ctx) connect() else ctx
+  private def context: DirContext = {
+    if (null == ctx) connect() else ctx
+  }
 
   override def destroy(): Unit = this.disConnect()
 

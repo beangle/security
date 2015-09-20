@@ -13,7 +13,7 @@ import org.beangle.commons.web.security.RequestConvertor
 class AuthorizationFilter(val securityManager: SecurityManager, val requestConvertor: RequestConvertor) extends GenericHttpFilter {
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-    if (!securityManager.isPermitted(SecurityContext.principal, requestConvertor.convert(request.asInstanceOf[HttpServletRequest])))
+    if (!securityManager.isPermitted(SecurityContext.getSession, requestConvertor.convert(request.asInstanceOf[HttpServletRequest])))
       throw new AccessDeniedException(request, "access denied", null)
     chain.doFilter(request, response)
   }

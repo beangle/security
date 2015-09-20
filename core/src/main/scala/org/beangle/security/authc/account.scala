@@ -5,8 +5,7 @@ import java.security.Principal
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.text.i18n.{ NullTextResource, TextResource }
-import org.beangle.security.authz.{ Authority, AuthorizationInfo }
+import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
 
 import AccountStatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
@@ -17,9 +16,9 @@ import AccountStatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
  */
 trait Account extends AuthorizationInfo with Principal with Mergable with Serializable {
 
-  def id: Any
-
   def principal: Any
+
+  def description: String
 
   def details: Map[String, Any]
 
@@ -55,13 +54,13 @@ object AccountStatusMask {
   val CredentialExpired = 8
 }
 
-class DefaultAccount(val id: Any,val principal: Any) extends Account {
+class DefaultAccount(val principal: Any, val description: String) extends Account {
 
   var status: Int = _
 
-  var authorities: Seq[Authority] = List.empty
+  var authorities: Any = _
 
-  var permissions: List[Any] = List.empty
+  var permissions: Any = _
 
   var details: Map[String, Any] = Map.empty
 
@@ -94,21 +93,19 @@ class DefaultAccount(val id: Any,val principal: Any) extends Account {
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case test: DefaultAccount =>
-        Objects.equalsBuilder.add(principal, test.principal).add(id, test.id).isEquals
-      case _ => false
+      case test: DefaultAccount => Objects.equalsBuilder.add(principal, test.principal).isEquals
+      case _                    => false
     }
   }
 
   override def toString(): String = {
     Objects.toStringBuilder(this).add("Principal:", principal)
-      .add("Id: ", id)
       .add("AccountExpired: ", accountExpired)
       .add("credentialExpired: ", credentialExpired)
       .add("AccountLocked: ", accountLocked)
       .add("Disabled: ", disabled)
-      .add("Authorities: ", authorities.mkString(","))
-      .add("Permissions: ", permissions.mkString(",")).toString
+      .add("Authorities: ", authorities)
+      .add("Permissions: ", permissions).toString
   }
 
   override def merge(ac: Account): this.type = {
@@ -116,8 +113,8 @@ class DefaultAccount(val id: Any,val principal: Any) extends Account {
     if (ac.accountLocked) this.accountLocked = true
     if (ac.credentialExpired) this.credentialExpired = true
     if (ac.disabled) this.disabled = true
-    if (!ac.authorities.isEmpty) this.authorities = this.authorities ++ ac.authorities
-    if (!ac.permissions.isEmpty) this.permissions ::= ac.permissions
+    if (null != ac.authorities) this.authorities = ac.authorities
+    if (null != ac.permissions) this.permissions = ac.permissions
     if (!ac.details.isEmpty) this.details ++= ac.details
     this
   }
@@ -132,8 +129,6 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
 
   var parent: AbstractAccountRealm = _
 
-  var tr: TextResource = new NullTextResource()
-
   override def init(): Unit = {
     var parentRealm = parent
     while (null != parentRealm && parent != null) {
@@ -141,7 +136,7 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
       else parentRealm = parent.parent
     }
   }
-  protected def determinePrincipal(token: AuthenticationToken): String = {
+  protected def determinePrincipal(token: AuthenticationToken): Any = {
     if (token == null) "NONE_PROVIDED" else token.getName()
   }
 
@@ -149,7 +144,7 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
     var merged: Account = if (null != parent) parent.getAccount(token) else null
 
     val principal = determinePrincipal(token)
-    if (Strings.isEmpty(principal)) {
+    if (null == principal || principal.isInstanceOf[String] && Strings.isEmpty(principal.toString)) {
       throw new AuthenticationException("cannot find username for " + token.principal, token)
     }
 
@@ -170,13 +165,13 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
 
   protected def additionalCheck(token: AuthenticationToken, ac: Account) {
     if (ac.accountLocked)
-      throw new LockedException(tr("AccountStatusChecker.locked", "User account is locked"), token)
+      throw new LockedException("AccountStatusChecker.locked", token)
     if (ac.disabled)
-      throw new DisabledException(tr("AccountStatusChecker.disabled", "User is disabled"), token)
+      throw new DisabledException("AccountStatusChecker.disabled", token)
     if (ac.accountExpired)
-      throw new AccountExpiredException(tr("AccountStatusChecker.expired", "User account has expired"), token)
+      throw new AccountExpiredException("AccountStatusChecker.expired", token)
     if (ac.credentialExpired)
-      throw new CredentialsExpiredException(tr("AccountStatusChecker.credentialExpired", "User credentials have expired"), token)
+      throw new CredentialsExpiredException("AccountStatusChecker.credentialExpired", token)
   }
 
   protected def loadAccount(principal: Any): Option[Account]
