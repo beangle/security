@@ -16,21 +16,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.realm.ldap
+package org.beangle.security.realm.cas
 
-import org.beangle.commons.logging.Logging
+import java.io.File
+import org.beangle.commons.io.Files
 import org.junit.runner.RunWith
 import org.scalatest.{ FunSpec, Matchers }
 import org.scalatest.junit.JUnitRunner
+import org.beangle.commons.lang.ClassLoaders
 
-/**
- * @author chaostone
- */
 @RunWith(classOf[JUnitRunner])
-class LdapPasswordHandlerTest extends FunSpec with Matchers with Logging {
+class Cas20TicketValidatorTest extends FunSpec with Matchers {
+  val validator = new Cas20TicketValidator
+  describe("NeusoftCasTicketValidator") {
+    it("should parse success") {
+      val file = new File(ClassLoaders.getResource("auth-success.xml").getFile())
+      val response = Files.readString(file)
+      val assertion = validator.parseResponse("testticket", response)
+      assert(null != assertion)
+      assert(assertion.principal == "admin")
+    }
 
-  describe("LdapPasswordHandler generateDigest and verfity") {
-    println(LdapPasswordHandler.generateDigest("1", null, "sha"))
-    println(LdapPasswordHandler.verify("{SHA}NWoZK3kTsExUV00Ywo1G5jlUKKs=", "2"))
+    it("should raise exception when failure") {
+      val file = new File(ClassLoaders.getResource("auth-failure.xml").getFile())
+      val response = Files.readString(file)
+      intercept[TicketValidationException] {
+        validator.parseResponse("ticket", response)
+      }
+    }
   }
 }

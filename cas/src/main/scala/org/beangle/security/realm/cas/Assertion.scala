@@ -16,19 +16,18 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.web.authc
+package org.beangle.security.realm.cas
 
-import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.DetailNames.{Agent, Host, Os, Server}
+import java.{ util => ju }
 
-import javax.servlet.http.HttpServletRequest
+trait Assertion {
 
-object WebDetails {
-  def get(request: HttpServletRequest): Map[String, String] = {
-    val agent = RequestUtils.getUserAgent(request)
-    val server = request.getLocalAddr() + ":" + request.getLocalPort()
-    val host = RequestUtils.getIpAddr(request)
-    import org.beangle.security.authc.DetailNames._
-    Map((Os, agent.os.toString), (Agent, agent.browser.toString), (Host, host), (Server, server))
-  }
+  def principal: String
+
+  def ticket: String
+
+  def validAt: ju.Date
 }
+
+class AssertionBean(val principal: String, val ticket: String, val validAt: ju.Date, val attributes: Map[String, Any])
+  extends Assertion

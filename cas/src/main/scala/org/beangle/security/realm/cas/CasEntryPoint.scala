@@ -1,20 +1,32 @@
+/*
+ * Beangle, Agile Development Scaffold and Toolkit
+ *
+ * Copyright (c) 2005-2015, Beangle Software.
+ *
+ * Beangle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Beangle is distributed in the hope that it will be useful.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.beangle.security.realm.cas
 
 import java.net.URLEncoder
+
 import org.beangle.commons.lang.Strings
-import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStatusException, AccountStore, AuthenticationException, AuthenticationToken, BadCredentialsException, UsernameNotFoundException }
-import org.beangle.security.mgt.SecurityManager
-import org.beangle.security.web.{ AbstractPreauthFilter, EntryPoint, PreauthToken }
+import org.beangle.security.authc.{ AccountStatusException, AuthenticationException, UsernameNotFoundException }
+import org.beangle.security.web.EntryPoint
 
-import CasConfig.{ getLocalServer, TicketName }
+import CasConfig.getLocalServer
+import CasEntryPoint.constructServiceUrl
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-
-class CasToken(t: String) extends PreauthToken(t) {
-
-  def ticket: String = principal.toString
-
-  details += CasConfig.TicketName -> principal.toString
-}
 
 object CasEntryPoint {
 
@@ -89,40 +101,4 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") + serviceName + "=" + URLEncoder.encode(serviceUrl, "UTF-8") +
       (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "")
   }
-}
-/**
- * Processes a CAS service ticket.
- */
-class CasPreauthFilter(securityManager: SecurityManager, val config: CasConfig) extends AbstractPreauthFilter(securityManager) {
-
-  protected[cas] override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {
-    val ticket = request.getParameter(CasConfig.TicketName)
-    if (ticket == null) {
-      null
-    } else {
-      val url = CasEntryPoint.constructServiceUrl(request, response, null, getLocalServer(request), TicketName, config.encode)
-      val token = new CasToken(ticket)
-      token.details += "url" -> url
-      token
-    }
-  }
-}
-
-class DefaultCasRealm(val accountStore: AccountStore, val ticketValidator: TicketValidator) extends AbstractAccountRealm {
-
-  protected override def determinePrincipal(token: AuthenticationToken): Any = {
-    try {
-      val ticket = token.details(TicketName).toString
-      val assertion = ticketValidator.validate(ticket, token.details("url").toString)
-      assertion.principal
-    } catch {
-      case e: TicketValidationException => throw new BadCredentialsException("Bad credentials :" + token.details(TicketName), token, e)
-    }
-  }
-
-  protected override def credentialsCheck(token: AuthenticationToken, account: Account): Unit = {}
-
-  protected override def loadAccount(principal: Any): Option[Account] = accountStore.load(principal)
-
-  override def supports(token: AuthenticationToken): Boolean = token.isInstanceOf[CasToken]
 }
