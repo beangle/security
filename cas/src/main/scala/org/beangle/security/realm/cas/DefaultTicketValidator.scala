@@ -26,12 +26,12 @@ import org.xml.sax.Attributes
 import org.xml.sax.XMLReader
 import org.xml.sax.InputSource
 
-class Cas20TicketValidator extends AbstractTicketValidator {
+class DefaultTicketValidator extends AbstractTicketValidator {
 
   protected[cas] override def parseResponse(ticket: String, response: String): Assertion = {
     val reader = this.xmlReader
     reader.setFeature("http://xml.org/sax/features/namespaces", false)
-    val handler = new ServiceXmlHandler()
+    val handler = new ServiceXmlHandler(ticket)
     reader.setContentHandler(handler)
     reader.parse(new InputSource(new StringReader(response)))
     handler.assertion
@@ -43,39 +43,31 @@ class Cas20TicketValidator extends AbstractTicketValidator {
    */
   def xmlReader: XMLReader = XMLReaderFactory.createXMLReader()
 
-  class ServiceXmlHandler extends DefaultHandler {
+  class ServiceXmlHandler(ticket: String) extends DefaultHandler {
 
-    protected var currentText = new java.lang.StringBuffer()
+    private var currentText = new java.lang.StringBuffer()
 
-    protected var authenticationSuccess = false
-    protected var netid: String = _
+    private var authenticationSuccess = false
     private var userMap = new collection.mutable.HashMap[String, Object]
-    protected var errorCode: String = _
-    protected var errorMessage: String = _
-    protected var pgtIou: String = _
-    protected var user: String = _
-    protected var proxyList = new collection.mutable.ListBuffer[String]
-    protected var proxyFragment = false
-    protected var checkAliveFragment = false
-    protected var caKey: String = _
+    private var errorCode: String = _
+    private var errorMessage: String = _
+    private var pgtIou: String = _
+    private var user: String = _
+    private var proxyList = new collection.mutable.ListBuffer[String]
 
     def localName(qualifiedName: String): String = {
       Strings.substringAfter(qualifiedName, ":")
     }
     override def startElement(ns: String, lnm: String, qn: String, a: Attributes): Unit = {
-      val ln = localName(qn)
       currentText = new StringBuffer()
-      if (ln.equals("authenticationSuccess")) authenticationSuccess = true
-      else if (ln.equals("authenticationFailure")) {
-        authenticationSuccess = false
-        errorCode = a.getValue("code")
-        if (errorCode != null) errorCode = errorCode.trim()
-      } else if (ln.equals("attribute")) {
-        userMap.put(a.getValue("name"), a.getValue("value"))
-      }
-      if (authenticationSuccess) {
-        if (ln.equals("proxies")) proxyFragment = true
-        if (ln.equals("checkAliveTicket")) checkAliveFragment = true
+      localName(qn) match {
+        case "authenticationSuccess" => authenticationSuccess = true
+        case "authenticationFailure" =>
+          authenticationSuccess = false
+          errorCode = a.getValue("code")
+          if (errorCode != null) errorCode = errorCode.trim()
+        case "attribute" => userMap.put(a.getValue("name"), a.getValue("value"))
+        case _           =>
       }
     }
 
@@ -85,20 +77,18 @@ class Cas20TicketValidator extends AbstractTicketValidator {
 
     override def endElement(ns: String, lnm: String, qn: String): Unit = {
       val ln = localName(qn)
-      if (authenticationSuccess) {
-        if (ln.equals("user")) user = currentText.toString().trim()
-        if (ln.equals("proxyGrantingTicket")) pgtIou = currentText.toString().trim()
-      } else if (ln.equals("authenticationFailure")) errorMessage = currentText.toString().trim()
-      if (ln.equals("proxies")) proxyFragment = false
-      else if (proxyFragment && ln.equals("proxy")) proxyList += currentText.toString().trim()
-      if (ln.equals("checkAliveTicket")) {
-        checkAliveFragment = false
-        caKey = currentText.toString().trim()
+      ln match {
+        case "user"                   => user = currentText.toString.trim()
+        case "proxyGrantingTicket"    => pgtIou = currentText.toString.trim()
+        case "authenticationFailure"  => errorMessage = currentText.toString.trim()
+        case "proxy"                  => proxyList += currentText.toString.trim()
+        case "attributes" | "proxies" =>
+        case _                        => userMap.put(ln, currentText.toString.trim())
       }
     }
 
     def assertion: Assertion = {
-      if (authenticationSuccess) new AssertionBean(user, caKey, null, userMap.toMap)
+      if (authenticationSuccess) new AssertionBean(user, ticket, null, userMap.toMap)
       else throw new TicketValidationException(errorCode + ":" + errorMessage)
     }
   }

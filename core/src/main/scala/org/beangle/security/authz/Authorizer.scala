@@ -18,7 +18,6 @@
  */
 package org.beangle.security.authz
 
-import org.beangle.security.SecurityException
 import org.beangle.commons.security.Request
 import org.beangle.security.session.Session
 

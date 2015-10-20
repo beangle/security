@@ -20,6 +20,7 @@ package org.beangle.security.context
 
 import org.beangle.commons.lang.Throwables
 import org.beangle.security.session.Session
+import org.beangle.security.SecurityException
 
 object SecurityContext {
   val Anonymous = "anonymous"
@@ -58,7 +59,7 @@ object SecurityContext {
   }
 
   def session: Session = {
-    if (null == holder.session) throw new SecurityException("Not Login") else holder.session
+    if (null == holder.session) throw new SecurityException("Not Login",null) else holder.session
   }
 
   def hasValidContext: Boolean = {

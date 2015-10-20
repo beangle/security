@@ -27,6 +27,6 @@ class DefaultModule extends AbstractBindModule {
     bind("security.EntryPoint.cas", classOf[CasEntryPoint])
     bind("security.Realm.cas", classOf[DefaultCasRealm])
     bind("security.Filter.cas", classOf[CasPreauthFilter])
-    bind("security.TicketValidator.cas20", classOf[Cas20TicketValidator])
+    bind("security.TicketValidator.default", classOf[DefaultTicketValidator])
   }
 }

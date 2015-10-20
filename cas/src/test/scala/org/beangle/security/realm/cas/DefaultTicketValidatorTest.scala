@@ -27,8 +27,8 @@ import org.beangle.commons.lang.ClassLoaders
 
 @RunWith(classOf[JUnitRunner])
 class Cas20TicketValidatorTest extends FunSpec with Matchers {
-  val validator = new Cas20TicketValidator
-  describe("NeusoftCasTicketValidator") {
+  val validator = new DefaultTicketValidator
+  describe("DefaultCasTicketValidator") {
     it("should parse success") {
       val file = new File(ClassLoaders.getResource("auth-success.xml").getFile())
       val response = Files.readString(file)
