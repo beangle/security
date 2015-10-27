@@ -47,9 +47,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
       notifySuccess(token, info);
       info
     } catch {
-      case e: Throwable =>
-        val ae = if (e.isInstanceOf[AuthenticationException]) e.asInstanceOf[AuthenticationException]
-        else new AuthenticationException(s"Authentication failed for token submission [$token].  Possible unexpected error?", token, e)
+      case ae: AuthenticationException =>
         try {
           notifyFailure(token, ae)
         } catch {
@@ -59,6 +57,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
               "and propagating original AuthenticationException instead...", e2)
         }
         throw ae
+      case e: Throwable => throw e
     }
   }
 

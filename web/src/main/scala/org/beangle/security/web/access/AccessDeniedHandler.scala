@@ -55,12 +55,12 @@ class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHand
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {
     if (errorPage != null) {
       // Put exception into request scope (perhaps of use to a view)
-      request.asInstanceOf[HttpServletRequest].setAttribute("403_EXCEPTION", exception);
+      request.asInstanceOf[HttpServletRequest].setAttribute("403_EXCEPTION", exception)
       // Perform RequestDispatcher "forward"
       request.getRequestDispatcher(errorPage).forward(request, response)
     }
 
-    if (!response.isCommitted()) {
+    if (!response.isCommitted) {
       // Send 403 (we do this after response has been written)
       response.asInstanceOf[HttpServletResponse].sendError(HttpServletResponse.SC_FORBIDDEN, exception.getMessage())
     }

@@ -35,7 +35,7 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 import org.beangle.security.web.session.SessionIdPolicy
 
 class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegistry, val entryPoint: EntryPoint,
-  val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
+    val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
 
   var expiredUrl: String = _
   var logoutHandler: LogoutHandler = _
@@ -82,7 +82,7 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
   private def handleException(request: ServletRequest, response: ServletResponse, exception: SecurityException): Unit = {
     exception match {
       case ae: AuthenticationException =>
-        logger.debug("Authentication exception occurred", ae);
+        logger.debug("Authentication exception occurred", ae)
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
         if (SecurityContext.hasValidContext) accessDeniedHandler.handle(request, response, ade)
