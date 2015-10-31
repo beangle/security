@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<cas:serviceResponse xmlns:sso="sso-namespace">
+  <cas:authenticationFailure code='INVALID_TICKET'>
+    ticket 'ST_portal1_-458698-1IBoJaTT8rVVf99hhy' not recognized
+  </cas:authenticationFailure>
+</cas:serviceResponse>

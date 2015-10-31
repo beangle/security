@@ -1,3 +1,21 @@
+/*
+ * Beangle, Agile Development Scaffold and Toolkit
+ *
+ * Copyright (c) 2005-2015, Beangle Software.
+ *
+ * Beangle is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Beangle is distributed in the hope that it will be useful.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.beangle.security.web.access
 
 import javax.servlet.ServletRequest
@@ -37,12 +55,12 @@ class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHand
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {
     if (errorPage != null) {
       // Put exception into request scope (perhaps of use to a view)
-      request.asInstanceOf[HttpServletRequest].setAttribute("403_EXCEPTION", exception);
+      request.asInstanceOf[HttpServletRequest].setAttribute("403_EXCEPTION", exception)
       // Perform RequestDispatcher "forward"
       request.getRequestDispatcher(errorPage).forward(request, response)
     }
 
-    if (!response.isCommitted()) {
+    if (!response.isCommitted) {
       // Send 403 (we do this after response has been written)
       response.asInstanceOf[HttpServletResponse].sendError(HttpServletResponse.SC_FORBIDDEN, exception.getMessage())
     }

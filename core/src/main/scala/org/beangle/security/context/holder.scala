@@ -1,7 +1,7 @@
 /*
- * Beangle, Agile Java/Scala Development Scaffold and Toolkit
+ * Beangle, Agile Development Scaffold and Toolkit
  *
- * Copyright (c) 2005-2013, Beangle Software.
+ * Copyright (c) 2005-2015, Beangle Software.
  *
  * Beangle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,6 +20,7 @@ package org.beangle.security.context
 
 import org.beangle.commons.lang.Throwables
 import org.beangle.security.session.Session
+import org.beangle.security.SecurityException
 
 object SecurityContext {
   val Anonymous = "anonymous"
@@ -58,7 +59,7 @@ object SecurityContext {
   }
 
   def session: Session = {
-    if (null == holder.session) throw new SecurityException("Not Login") else holder.session
+    if (null == holder.session) throw new SecurityException("Not Login",null) else holder.session
   }
 
   def hasValidContext: Boolean = {

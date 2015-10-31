@@ -1,7 +1,7 @@
 /*
- * Beangle, Agile Java/Scala Development Scaffold and Toolkit
+ * Beangle, Agile Development Scaffold and Toolkit
  *
- * Copyright (c) 2005-2013, Beangle Software.
+ * Copyright (c) 2005-2015, Beangle Software.
  *
  * Beangle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,6 @@
  */
 package org.beangle.security.authz
 
-import org.beangle.security.SecurityException
 import org.beangle.commons.security.Request
 import org.beangle.security.session.Session
 
