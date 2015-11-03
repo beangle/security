@@ -23,14 +23,19 @@ import java.{ util => ju }
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.Account
-import org.beangle.security.session.{ LoginEvent, LogoutEvent, Session, SessionBuilder, SessionId, SessionKey }
-import org.beangle.security.session.profile.{ DefaultSessionProfile, ProfiledSessionRegistry, SessionProfile }
+import org.beangle.security.session.{ DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionId, SessionKey }
+import org.beangle.security.session.profile.ProfiledSessionRegistry
 
-class MemSessionRegistry(val builder: SessionBuilder) extends ProfiledSessionRegistry with Logging with EventPublisher {
+/**
+ * Hold session in memory
+ */
+class MemSessionRegistry extends ProfiledSessionRegistry with Logging with EventPublisher {
 
   protected val principals = new collection.concurrent.TrieMap[Any, collection.mutable.HashSet[String]]
 
   protected val sessionids = new collection.concurrent.TrieMap[String, Session]
+
+  var builder: SessionBuilder = new DefaultSessionBuilder
 
   def isRegisted(principal: String): Boolean = {
     val sids = principals.get(principal)
@@ -68,14 +73,14 @@ class MemSessionRegistry(val builder: SessionBuilder) extends ProfiledSessionReg
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
           tryAllocate(key, auth)
-//          existed.remark(" expired with replacement.")
+          //          existed.remark(" expired with replacement.")
           remove(key)
         }
       }
       case None => tryAllocate(key, auth)
     }
 
-    val newSession = builder.build(key, auth, this, new ju.Date(),getTimeout(auth))
+    val newSession = builder.build(key, auth, this, new ju.Date(), getTimeout(auth))
     sessionids.put(key.sessionId, newSession)
     principals.get(principal) match {
       case None       => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
