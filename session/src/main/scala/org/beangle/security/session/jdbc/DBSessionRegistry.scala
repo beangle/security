@@ -19,41 +19,34 @@
 package org.beangle.security.session.jdbc
 
 import java.io.{ InputStream, ObjectInputStream }
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream }
 import java.{ util => ju }
+import java.util.Timer
+
+import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.JdbcExecutor
-import org.beangle.security.authc.Account
+import org.beangle.security.authc.{ Account, DefaultAccount }
+import org.beangle.security.session.{ DefaultSession, DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionCleaner, SessionCleanupDaemon, SessionId, SessionKey }
+import org.beangle.security.session.profile.{ ProfileChangeEvent, ProfiledSessionRegistry }
 import org.nustaq.serialization.FSTConfiguration
-import org.beangle.security.authc.DefaultAccount
-import org.beangle.security.session.SessionKey
-import org.beangle.security.session.LogoutEvent
-import org.beangle.security.session.profile.ProfiledSessionRegistry
-import org.beangle.security.session.profile.SessionProfile
-import org.beangle.security.session.LoginEvent
-import org.beangle.security.session.DefaultSession
-import org.beangle.security.session.profile.DefaultSessionProfile
-import org.beangle.security.session.Session
-import org.beangle.security.session.SessionBuilder
-import org.beangle.security.session.SessionId
-import org.beangle.security.session.profile.ProfileChangeEvent
-import org.beangle.commons.bean.Initializing
-import org.beangle.security.session.SessionCleaner
-import org.beangle.security.session.SessionCleanupDaemon
-import java.util.Timer
+
+import javax.sql.DataSource
 
 /**
  * 基于数据库的session注册表
  */
-class DBSessionRegistry(val builder: SessionBuilder, val executor: JdbcExecutor)
-    extends ProfiledSessionRegistry with EventPublisher with Initializing {
+class DBSessionRegistry(dataSource: DataSource) extends ProfiledSessionRegistry with EventPublisher with Initializing {
 
-  private val fstconf = FSTConfiguration.createDefaultConfiguration();
+  private val fstconf = FSTConfiguration.createDefaultConfiguration()
 
   private val insertColumns = "id,principal,login_at,os,agent,host,server,expired_at,timeout,last_access_at,last_accessed,profile_id,principal_name,principal_description"
 
   private val selectColumns = "id,principal,login_at,timeout,server,expired_at,last_access_at,last_accessed"
+
+  val executor = new JdbcExecutor(dataSource)
+
+  var builder: SessionBuilder = new DefaultSessionBuilder
 
   var sessionTable = "session_infoes"
 
