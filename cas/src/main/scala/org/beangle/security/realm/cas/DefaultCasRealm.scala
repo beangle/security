@@ -20,8 +20,8 @@ package org.beangle.security.realm.cas
 
 import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationToken, BadCredentialsException }
 import org.beangle.security.web.authc.PreauthToken
-
 import CasConfig.TicketName
+import org.beangle.security.authc.AbstractAccountStoreRealm
 
 class CasToken(t: String) extends PreauthToken(t) {
 
@@ -30,7 +30,8 @@ class CasToken(t: String) extends PreauthToken(t) {
   details += CasConfig.TicketName -> principal.toString
 }
 
-class DefaultCasRealm(val accountStore: AccountStore, val ticketValidator: TicketValidator) extends AbstractAccountRealm {
+class DefaultCasRealm(accountStore: AccountStore, val ticketValidator: TicketValidator)
+    extends AbstractAccountStoreRealm(accountStore) {
 
   protected override def determinePrincipal(token: AuthenticationToken): Any = {
     try {
@@ -43,8 +44,6 @@ class DefaultCasRealm(val accountStore: AccountStore, val ticketValidator: Ticke
   }
 
   protected override def credentialsCheck(token: AuthenticationToken, account: Account): Unit = {}
-
-  protected override def loadAccount(principal: Any): Option[Account] = accountStore.load(principal)
 
   override def supports(token: AuthenticationToken): Boolean = token.isInstanceOf[CasToken]
 }

@@ -37,6 +37,7 @@ import org.beangle.security.web.session.SessionIdPolicy
 class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegistry, val entryPoint: EntryPoint,
     val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
 
+  private val hasEmptyFilter = !filters.isEmpty
   var expiredUrl: String = _
   var logoutHandler: LogoutHandler = _
 
@@ -52,8 +53,7 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
           breakChain = true
           registry.remove(sid)
           val hs = req.getSession(false)
-          if (null != hs)
-            hs.invalidate()
+          if (null != hs) hs.invalidate()
           if (null != logoutHandler) logoutHandler.logout(req, res, s)
           if (null != expiredUrl) RedirectUtils.sendRedirect(req, res, expiredUrl)
           else {
@@ -68,9 +68,8 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
       }
       if (breakChain) false
       else {
-        val chain = new ResultChain(filters.iterator)
-        chain.doFilter(req, res)
-        chain.result
+        if (!hasEmptyFilter) new ResultChain(filters.iterator).doFilter(req, res)
+        true
       }
     } catch {
       case bse: SecurityException =>
@@ -99,9 +98,8 @@ class SecurityInterceptor(val filters: List[Filter], val registry: SessionRegist
   }
 }
 
-class ResultChain(val filterIter: Iterator[_ <: Filter], var result: Boolean = false) extends FilterChain {
+class ResultChain(val filterIter: Iterator[_ <: Filter]) extends FilterChain {
   override def doFilter(request: ServletRequest, response: ServletResponse): Unit = {
     if (filterIter.hasNext) filterIter.next.doFilter(request, response, this)
-    else result = true
   }
 }

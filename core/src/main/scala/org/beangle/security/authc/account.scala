@@ -19,14 +19,13 @@
 package org.beangle.security.authc
 
 import java.security.Principal
-
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
-
 import AccountStatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
+import org.beangle.commons.inject.bind.nowire
 
 /**
  * Authentication Information
@@ -145,6 +144,7 @@ trait AccountStore {
 
 abstract class AbstractAccountRealm extends Realm with Logging with Initializing {
 
+  @nowire
   var parent: AbstractAccountRealm = _
 
   override def init(): Unit = {
@@ -198,4 +198,11 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
 
   def supports(token: AuthenticationToken): Boolean = token.isInstanceOf[UsernamePasswordAuthenticationToken]
 
+}
+
+abstract class AbstractAccountStoreRealm(val accountStore: AccountStore) extends AbstractAccountRealm {
+
+  protected override def loadAccount(principal: Any): Option[Account] = {
+    accountStore.load(principal)
+  }
 }
