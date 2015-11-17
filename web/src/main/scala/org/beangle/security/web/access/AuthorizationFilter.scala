@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletRequest
 import org.beangle.security.context.SecurityContext
 import org.beangle.commons.web.security.RequestConvertor
 
-class AuthorizationFilter(val securityManager: SecurityManager, val requestConvertor: RequestConvertor) extends GenericHttpFilter {
+class AuthorizationFilter(val securityManager: SecurityManager, val requestConvertor: RequestConvertor)
+    extends GenericHttpFilter with SecurityFilter {
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
     if (!securityManager.isPermitted(SecurityContext.getSession, requestConvertor.convert(request.asInstanceOf[HttpServletRequest])))

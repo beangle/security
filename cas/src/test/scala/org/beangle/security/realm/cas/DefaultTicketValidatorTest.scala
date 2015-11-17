@@ -34,7 +34,7 @@ class Cas20TicketValidatorTest extends FunSpec with Matchers {
       val response = Files.readString(file)
       val assertion = validator.parseResponse("testticket", response)
       assert(null != assertion)
-      assert(assertion.principal == "admin")
+      assert(assertion.name == "admin")
     }
 
     it("should raise exception when failure") {

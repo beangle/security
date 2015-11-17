@@ -16,15 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.realm.ldap
+package org.beangle.security.codec
 
-import org.beangle.security.authc.{ AbstractAccountRealm, Account, AuthenticationToken, BadCredentialsException }
-import org.beangle.security.authc.DefaultAccount
+import org.beangle.commons.logging.Logging
+import org.junit.runner.RunWith
+import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.junit.JUnitRunner
 
-class DefaultLdapRealm(val userStore: LdapUserStore, val passwordValidator: LdapPasswordValidator) extends AbstractAccountRealm {
+/**
+ * @author chaostone
+ */
+@RunWith(classOf[JUnitRunner])
+class DefaultPasswordEncoderTest extends FunSpec with Matchers with Logging {
 
-  protected override def credentialsCheck(token: AuthenticationToken, account: Account): Unit = {
-    if (!passwordValidator.verify(account.getName, token.credentials.toString)) throw new BadCredentialsException("Incorrect password", token, null)
+  describe("DefaultPasswordEncoder generate and verfity") {
+    println(DefaultPasswordEncoder.generate("1", null, "sha"))
+    println(DefaultPasswordEncoder.verify("{SHA}NWoZK3kTsExUV00Ywo1G5jlUKKs=", "2"))
   }
-  protected override def loadAccount(principal: Any): Option[Account] = userStore.load(principal)
 }

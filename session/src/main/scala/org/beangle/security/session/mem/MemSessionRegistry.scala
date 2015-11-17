@@ -19,12 +19,12 @@
 package org.beangle.security.session.mem
 
 import java.{ util => ju }
-
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.Account
-import org.beangle.security.session.{ DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionId, SessionKey }
+import org.beangle.security.session.{ DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder }
 import org.beangle.security.session.profile.ProfiledSessionRegistry
+import org.beangle.security.session.util.UpdadateDelayGenerator
 
 /**
  * Hold session in memory
@@ -35,69 +35,60 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
 
   protected val sessionids = new collection.concurrent.TrieMap[String, Session]
 
-  var builder: SessionBuilder = new DefaultSessionBuilder
+  private val accessDelayMillis = new UpdadateDelayGenerator().generateDelayMilliTime()
 
-  def isRegisted(principal: String): Boolean = {
+  var builder: SessionBuilder = DefaultSessionBuilder
+
+  override def isRegisted(principal: String): Boolean = {
     val sids = principals.get(principal)
     (!sids.isEmpty && !sids.get.isEmpty)
   }
 
-  override def get(principal: String, includeExpired: Boolean): Seq[Session] = {
+  override def getByPrincipal(principal: String): Seq[Session] = {
     principals.get(principal) match {
       case None => List.empty
       case Some(sids) => {
         val list = new collection.mutable.ListBuffer[Session]
-        for (sessionid <- sids)
-          get(SessionId(sessionid)).foreach(info => if (includeExpired || !info.expired) list += info)
+        for (sessionid <- sids) list ++= get(sessionid)
         list
       }
     }
   }
 
-  override def getExpired(lastAccessAt: ju.Date): Seq[Session] = {
-    val expired = new collection.mutable.ListBuffer[Session]
-    sessionids foreach {
-      case (id, s) => if (s.expired || s.lastAccessAt.before(lastAccessAt)) expired += s
-    }
-    expired
+  override def get(sessionId: String): Option[Session] = {
+    if (null == sessionId) None else sessionids.get(sessionId)
   }
 
-  override def get(key: SessionKey): Option[Session] = {
-    if (null == key) None
-    else sessionids.get(key.sessionId)
-  }
-
-  override def register(auth: Account, key: SessionKey): Session = {
+  override def register(sessionId: String, auth: Account, agent: Session.Agent): Session = {
     val principal = auth.getName
-    val existed = get(key) match {
+    val existed = get(sessionId) match {
       case Some(existed) => {
         if (existed.principal.getName() != principal) {
-          tryAllocate(key, auth)
-          //          existed.remark(" expired with replacement.")
-          remove(key)
+          tryAllocate(sessionId, auth)
+          remove(sessionId)
         }
       }
-      case None => tryAllocate(key, auth)
+      case None => tryAllocate(sessionId, auth)
     }
 
-    val newSession = builder.build(key, auth, this, new ju.Date(), getTimeout(auth))
-    sessionids.put(key.sessionId, newSession)
+    val newSession = builder.build(sessionId, this, auth, agent, System.currentTimeMillis, getTimeout(auth))
+    sessionids.put(sessionId, newSession)
     principals.get(principal) match {
-      case None       => principals.put(principal, new collection.mutable.HashSet += key.sessionId)
-      case Some(sids) => sids += key.sessionId
+      case None       => principals.put(principal, new collection.mutable.HashSet += sessionId)
+      case Some(sids) => sids += sessionId
     }
     publish(new LoginEvent(newSession))
     newSession
   }
 
-  override def remove(key: SessionKey): Option[Session] = {
-    get(key) match {
+  override def remove(sessionId: String): Option[Session] = {
+    get(sessionId) match {
       case Some(s) => {
-        sessionids.remove(key.sessionId)
+        sessionids.remove(sessionId)
         val principal = s.principal
-        logger.debug(s"Remove session $key for $principal")
+        logger.debug(s"Remove session $sessionId for $principal")
         val sids = principals.get(principal) foreach { sids =>
-          sids.remove(key.sessionId)
+          sids.remove(sessionId)
           if (sids.isEmpty) principals.remove(principal)
         }
         release(s)
@@ -108,11 +99,32 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
     }
   }
 
-  def count(): Int = sessionids.size
+  override def getBeforeAccessAt(lastAccessAt: Long): Seq[String] = {
+    val expired = new collection.mutable.ListBuffer[String]
+    sessionids foreach {
+      case (id, s) => if (s.status.lastAccessAt < lastAccessAt) expired += s.id
+    }
+    expired
+  }
+
+  override def count(): Int = {
+    sessionids.size
+  }
+
+  override def access(sessionId: String, accessAt: Long, accessed: String): Option[Session] = {
+    get(sessionId) match {
+      case s @ Some(session) =>
+        if ((accessAt - session.status.lastAccessAt) > accessDelayMillis) {
+          sessionids.put(session.id, builder.build(session, new Session.DefaultStatus(accessAt)))
+        }
+        s
+      case None => None
+    }
+  }
 
   override def stat(): Unit = {}
 
-  protected override def allocate(auth: Account, key: SessionKey): Boolean = true
+  protected override def allocate(auth: Account, sessionId: String): Boolean = true
   /**
    * release slot for user
    */

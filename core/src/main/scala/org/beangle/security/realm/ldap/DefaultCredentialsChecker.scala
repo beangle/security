@@ -16,18 +16,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.realm.cas
+package org.beangle.security.realm.ldap
 
-import java.{ util => ju }
+import org.beangle.security.authc.CredentialsChecker
+import org.beangle.security.codec.DefaultPasswordEncoder
 
-trait Assertion {
+class DefaultCredentialsChecker(ldapUserService: LdapUserService) extends CredentialsChecker {
 
-  def principal: String
-
-  def ticket: String
-
-  def validAt: ju.Date
+  override def check(principal: Any, credential: Any): Boolean = {
+    val uid = principal.toString
+    ldapUserService.getUserDN(uid) match {
+      case Some(dn) =>
+        ldapUserService.getPassword(dn) match {
+          case Some(p) => DefaultPasswordEncoder.verify(p, credential.toString)
+          case None    => false
+        }
+      case None => false
+    }
+  }
 }
 
-class AssertionBean(val principal: String, val ticket: String, val validAt: ju.Date, val attributes: Map[String, Any])
-  extends Assertion

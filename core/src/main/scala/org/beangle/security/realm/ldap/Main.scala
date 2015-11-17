@@ -18,33 +18,33 @@
  */
 package org.beangle.security.realm.ldap
 
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import org.beangle.commons.lang.Strings
-import org.beangle.commons.lang.Consoles
+import java.io.{ BufferedReader, InputStreamReader }
 
-object LdapMain {
+import org.beangle.commons.lang.{ Consoles, Strings }
 
-  private def getStore(url: String, username: String, password: String, base: String): LdapUserStore = {
-    new SimpleLdapUserStore(url, username, password, base)
+object Main {
+
+  private def getStore(url: String, username: String, password: String, base: String): LdapUserService = {
+    val ctx = new PoolingContextSource(url, username, password)
+    ctx.init()
+    new DefaultLdapUserService(ctx, base)
   }
 
-  private def tryGet(store: LdapUserStore, name: String) {
-    val dn = store.getUserDN(name)
-    val pwd = store.getPassword(name)
-    if (null == dn) {
-      println("Cannot find :" + name)
-    } else {
-      println("Find:" + name)
-      println("dn:" + dn)
-      println("pwd:" + pwd)
+  private def tryGet(store: LdapUserService, name: String) {
+    val dn = store.getUserDN(name) match {
+      case Some(dn) =>
+        val details = store.getAttributes(dn)
+        println("Find:" + name)
+        println("dn:" + dn)
+        println("detail:" + details)
+      case None =>
+        println("Cannot find :" + name)
     }
   }
 
-  private def tryTestPassword(store: LdapUserStore, name: String, password: String) {
-    val ldapValidator = new DefaultLdapPasswordValidator(store)
-    val isTrue = ldapValidator.verify(name, password)
+  private def tryTestPassword(store: LdapUserService, name: String, password: String) {
+    val checker = new DefaultCredentialsChecker(store)
+    val isTrue = checker.check(name, password)
     println("password " + (if (isTrue) " ok! " else " WRONG!"))
   }
 
@@ -62,6 +62,7 @@ object LdapMain {
       username = args(2)
       password = args(3)
     }
+
     println("Connecting to ldap://" + host)
     println("Using base:" + base)
     val store = getStore("ldap://" + host, username, password, base)

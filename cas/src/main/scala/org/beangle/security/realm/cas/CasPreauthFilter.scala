@@ -24,21 +24,33 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletRequest
 import org.beangle.security.mgt.SecurityManager
 import CasConfig._
+import org.beangle.security.context.SecurityContext
 /**
  * Processes a CAS service ticket.
  */
-class CasPreauthFilter(securityManager: SecurityManager, val config: CasConfig)
+class CasPreauthFilter(securityManager: SecurityManager, config: CasConfig, ticketValidator: TicketValidator)
     extends AbstractPreauthFilter(securityManager) {
 
-  protected[cas] override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {
-    val ticket = request.getParameter(CasConfig.TicketName)
-    if (ticket == null) {
-      null
-    } else {
-      val url = CasEntryPoint.constructServiceUrl(request, response, null, getLocalServer(request), TicketName, config.encode)
-      val token = new CasToken(ticket)
-      token.details += "url" -> url
-      token
+  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, ticket: String): Option[PreauthToken] = {
+    val url = CasEntryPoint.constructServiceUrl(req, res, null, getLocalServer(req), TicketName)
+    try {
+      Some(new PreauthToken(ticketValidator.validate(ticket, url).name, ticket))
+    } catch {
+      case e: TicketValidationException =>
+        logger.error("Bad credentials :" + ticket, e)
+        None
     }
   }
+
+  protected[cas] override def getTokenStr(request: HttpServletRequest): Option[String] = {
+    val ticket = request.getParameter(CasConfig.TicketName)
+    if (ticket == null) {
+      None
+    } else {
+      //FIXME need test
+      val referer = request.getHeader("Referer")
+      if (null == referer || !referer.startsWith(config.casServer)) None else Some(ticket)
+    }
+  }
+
 }

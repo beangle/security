@@ -19,23 +19,23 @@
 package org.beangle.security.authc
 
 import java.security.Principal
-import org.beangle.commons.bean.Initializing
+
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
-import AccountStatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
-import org.beangle.commons.inject.bind.nowire
+
+import DefaultAccount.StatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
 
 /**
  * Authentication Information
  * @author chaostone
  */
-trait Account extends AuthorizationInfo with Principal with Mergable with Serializable {
+trait Account extends AuthorizationInfo with Principal with Serializable {
 
   def principal: Any
 
-  def description: String
+  def userName: String
 
   def details: Map[String, Any]
 
@@ -56,22 +56,16 @@ trait Account extends AuthorizationInfo with Principal with Mergable with Serial
   }
 }
 
-/**
- * Authentication Info can merge with others
- */
-trait Mergable {
-  def details_=(data: Map[String, Any])
-  def merge(info: Account): this.type
+object DefaultAccount {
+  object StatusMask {
+    val Locked = 1
+    val Disabled = 2
+    val AccountExpired = 4
+    val CredentialExpired = 8
+  }
 }
 
-object AccountStatusMask {
-  val Locked = 1;
-  val Disabled = 2
-  val AccountExpired = 4
-  val CredentialExpired = 8
-}
-
-class DefaultAccount(val principal: Any, val description: String) extends Account {
+class DefaultAccount(val principal: Any, val userName: String) extends Account {
 
   var status: Int = _
 
@@ -80,8 +74,6 @@ class DefaultAccount(val principal: Any, val description: String) extends Accoun
   var permissions: Any = _
 
   var details: Map[String, Any] = Map.empty
-
-  import AccountStatusMask._
 
   private def change(value: Boolean, mask: Int): Unit = {
     if (value) status = status | mask
@@ -125,60 +117,36 @@ class DefaultAccount(val principal: Any, val description: String) extends Accoun
       .add("Permissions: ", permissions).toString
   }
 
-  override def merge(ac: Account): this.type = {
-    if (ac.accountExpired) this.accountExpired = true
-    if (ac.accountLocked) this.accountLocked = true
-    if (ac.credentialExpired) this.credentialExpired = true
-    if (ac.disabled) this.disabled = true
-    if (null != ac.authorities) this.authorities = ac.authorities
-    if (null != ac.permissions) this.permissions = ac.permissions
-    if (!ac.details.isEmpty) this.details ++= ac.details
-    this
-  }
-
 }
 
 trait AccountStore {
   def load(principal: Any): Option[Account]
 }
 
-abstract class AbstractAccountRealm extends Realm with Logging with Initializing {
+abstract class AbstractAccountRealm extends Realm with Logging {
 
-  @nowire
-  var parent: AbstractAccountRealm = _
-
-  override def init(): Unit = {
-    var parentRealm = parent
-    while (null != parentRealm && parent != null) {
-      if (parent == this) parent = null
-      else parentRealm = parent.parent
-    }
-  }
   protected def determinePrincipal(token: AuthenticationToken): Any = {
-    if (token == null) "NONE_PROVIDED" else token.getName()
+    if (token == null) "NONE_PROVIDED" else token.getName
   }
 
   override def getAccount(token: AuthenticationToken): Account = {
-    var merged: Account = if (null != parent) parent.getAccount(token) else null
-
     val principal = determinePrincipal(token)
     if (null == principal || principal.isInstanceOf[String] && Strings.isEmpty(principal.toString)) {
       throw new AuthenticationException("cannot find username for " + token.principal, token)
     }
 
+    if (!token.trusted) {
+      if (!credentialsCheck(token))
+        throw new BadCredentialsException("Incorrect credentials", token, null)
+    }
+
     loadAccount(principal) match {
       case Some(account) =>
-        if (null == merged) {
-          merged = account
-          credentialsCheck(token, account)
-        } else {
-          merged.merge(account)
-        }
-        additionalCheck(token, merged)
+        additionalCheck(token, account)
+        account
       case None =>
-        if (null != merged) throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
+        throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
     }
-    merged
   }
 
   protected def additionalCheck(token: AuthenticationToken, ac: Account) {
@@ -194,15 +162,19 @@ abstract class AbstractAccountRealm extends Realm with Logging with Initializing
 
   protected def loadAccount(principal: Any): Option[Account]
 
-  protected def credentialsCheck(token: AuthenticationToken, account: Account): Unit
+  protected def credentialsCheck(token: AuthenticationToken): Boolean
 
-  def supports(token: AuthenticationToken): Boolean = token.isInstanceOf[UsernamePasswordAuthenticationToken]
+  def supports(token: AuthenticationToken): Boolean = true
 
 }
 
-abstract class AbstractAccountStoreRealm(val accountStore: AccountStore) extends AbstractAccountRealm {
+class DefaultAccountRealm(accountStore: AccountStore, credentialsChecker: CredentialsChecker) extends AbstractAccountRealm {
 
   protected override def loadAccount(principal: Any): Option[Account] = {
     accountStore.load(principal)
+  }
+
+  protected override def credentialsCheck(token: AuthenticationToken): Boolean = {
+    credentialsChecker.check(token.principal, token.credentials)
   }
 }

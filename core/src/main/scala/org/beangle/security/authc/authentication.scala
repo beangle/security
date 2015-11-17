@@ -44,7 +44,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
     try {
       val info = doAuthenticate(token);
       if (info == null) throw new AuthenticationException(s"No account information found for authentication token [$token]", token)
-      notifySuccess(token, info);
+      notifySuccess(token, info)
       info
     } catch {
       case ae: AuthenticationException =>
@@ -83,17 +83,9 @@ trait RealmAuthenticationStrategy {
   @throws(classOf[AuthenticationException])
   def authenticate(realms: List[Realm], token: AuthenticationToken): Account
 
-  protected def merge(info: Account, aggregate: Account): Account = {
-    if (null == aggregate) info
-    else aggregate.merge(info)
-  }
-
   protected def returnOrRaise(info: Account, token: AuthenticationToken, t: Throwable): Account = {
-    if (null == info) throw if (null == t) new RuntimeException(s"Realm not found for $token") else t
-    else {
-      info.details = info.details ++ token.details
-      info
-    }
+    if (null == info) throw if (null == t) new AuthenticationException(s"Realm not found for $token", token.principal, null) else t
+    else info
   }
 }
 
@@ -122,54 +114,6 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
     returnOrRaise(info, token, lastException)
   }
 }
-/**
- * Pass Through all possible realm and aggregate authentication info
- */
-object AtLeastOneSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
-  override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
-    val realmIter = realms.iterator
-    var aggregate: Account = null
-    var lastException: Throwable = null
-    while (realmIter.hasNext) {
-      val realm = realmIter.next()
-      if (realm.supports(token)) {
-        try {
-          val info = realm.getAccount(token)
-          if (null != info) aggregate = merge(info, aggregate)
-        } catch {
-          case t: Throwable => {
-            lastException = t
-            logger.debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
-          }
-        }
-      }
-    }
-    returnOrRaise(aggregate, token, lastException)
-  }
-}
-/**
- * All realms should pass the authentication when it support then token and return merged authenticaiton info.
- */
-object AllSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
-
-  override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
-    val realmIter = realms.iterator
-    var aggregate: Account = null
-    while (realmIter.hasNext) {
-      val realm = realmIter.next()
-      if (realm.supports(token)) {
-        try {
-          val info = realm.getAccount(token)
-          if (null == info) throw new AuthenticationException(s"Realm [$realm] could not find account data for [$token].", token)
-          else aggregate = merge(info, aggregate)
-        } catch {
-          case e: Throwable => throw e
-        }
-      }
-    }
-    returnOrRaise(aggregate, token, null)
-  }
-}
 
 /**
  * Realm Authenticator
@@ -179,4 +123,8 @@ class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator w
   override def doAuthenticate(token: AuthenticationToken): Account = {
     strategy.authenticate(reams, token)
   }
+}
+
+trait CredentialsChecker {
+  def check(principal: Any, credential: Any): Boolean
 }

@@ -19,20 +19,31 @@
 package org.beangle.security.web.session
 
 import javax.servlet.http.HttpServletRequest
-import org.beangle.security.session.SessionId
+import javax.servlet.http.HttpServletResponse
 
 class DefaultSessionIdPolicy extends SessionIdPolicy {
 
   var sessionIdParam: String = _
 
-  def getSessionId(req: HttpServletRequest): SessionId = {
+  def getSessionId(req: HttpServletRequest): String = {
     var sid: String = null
     if (null != sessionIdParam) {
       sid = req.getParameter(sessionIdParam)
     } else {
-      val hs = req.getSession(true)
-      sid = hs.getId
+      val hs = req.getSession(false)
+      if (null != hs) sid = hs.getId
     }
-    if (null != sid) SessionId(sid) else null
+    if (null != sid) sid else null
+  }
+
+  def newSessionId(req: HttpServletRequest, res: HttpServletResponse): String = {
+    if (null == sessionIdParam) {
+      req.getSession(true).getId
+    } else {
+      null
+    }
+  }
+
+  def delSessionId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
   }
 }

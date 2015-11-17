@@ -43,12 +43,12 @@ class SessionCleaner(val registry: SessionRegistry) extends Logging {
 
   def cleanup() {
     val watch = new Stopwatch(true)
-    logger.debug("clean up expired or over expired time session start ...")
+    logger.debug("starting clean up over expired time sessions ...")
     val calendar = ju.Calendar.getInstance()
     try {
       var removed = 0
-      registry.getExpired(Dates.rollMinutes(calendar.getTime(), -expiredMinutes)) foreach { s =>
-        registry.remove(SessionId(s.id)) foreach (olds => removed += 1)
+      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -expiredMinutes).getTime) foreach { sid =>
+        registry.remove(sid) foreach (olds => removed += 1)
       }
       if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")
       registry.stat()

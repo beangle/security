@@ -19,9 +19,13 @@
 package org.beangle.security.web.session
 
 import javax.servlet.http.HttpServletRequest
-import org.beangle.security.session.SessionId
+import javax.servlet.http.HttpServletResponse
 
 trait SessionIdPolicy {
 
-  def getSessionId(request: HttpServletRequest): SessionId
+  def getSessionId(request: HttpServletRequest): String
+
+  def newSessionId(request: HttpServletRequest, response: HttpServletResponse): String
+
+  def delSessionId(request: HttpServletRequest, response: HttpServletResponse): Unit
 }

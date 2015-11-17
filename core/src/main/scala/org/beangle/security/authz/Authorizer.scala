@@ -25,3 +25,9 @@ trait Authorizer {
 
   def isPermitted(session: Option[Session], request: Request): Boolean
 }
+
+object PublicAuthorizer extends Authorizer {
+  def isPermitted(session: Option[Session], request: Request): Boolean = {
+    true
+  }
+}
