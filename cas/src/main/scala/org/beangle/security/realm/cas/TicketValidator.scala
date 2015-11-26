@@ -22,7 +22,6 @@ import java.net.{ MalformedURLException, URL, URLEncoder }
 
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.util.HttpUtils
-import org.beangle.security.web.authc.PreauthUser
 
 import javax.net.ssl.HostnameVerifier
 
@@ -31,7 +30,7 @@ class TicketValidationException(message: String) extends Exception(message)
 trait TicketValidator {
 
   @throws(classOf[TicketValidationException])
-  def validate(ticket: String, service: String): PreauthUser
+  def validate(ticket: String, service: String): String
 }
 
 /**
@@ -95,14 +94,14 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
    * Parses the response from the server into a CAS Assertion.
    * @throws TicketValidationException
    */
-  protected def parseResponse(ticket: String, response: String): PreauthUser
+  protected def parseResponse(ticket: String, response: String): String
 
   /**
    * Contacts the CAS Server to retrieve the response for the ticket validation.
    */
   protected def retrieveResponse(url: URL, ticket: String): String = HttpUtils.getResponseText(url, hostnameVerifier, encoding)
 
-  def validate(ticket: String, service: String): PreauthUser = {
+  def validate(ticket: String, service: String): String = {
     val validationUrl = constructValidationUrl(ticket, service)
     logger.debug(s"Constructing validation url: $validationUrl")
     try {
@@ -124,11 +123,10 @@ import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.Attributes
 import org.xml.sax.XMLReader
 import org.xml.sax.InputSource
-import org.beangle.security.web.authc.PreauthUser
 
 class DefaultTicketValidator extends AbstractTicketValidator {
 
-  protected[cas] override def parseResponse(ticket: String, response: String): PreauthUser = {
+  protected[cas] override def parseResponse(ticket: String, response: String): String = {
     val reader = this.xmlReader
     reader.setFeature("http://xml.org/sax/features/namespaces", false)
     val handler = new ServiceXmlHandler(ticket)
@@ -187,8 +185,8 @@ class DefaultTicketValidator extends AbstractTicketValidator {
       }
     }
 
-    def preuser: PreauthUser = {
-      if (authenticationSuccess) PreauthUser(user, ticket)
+    def preuser: String = {
+      if (authenticationSuccess) user
       else throw new TicketValidationException(errorCode + ":" + errorMessage)
     }
   }

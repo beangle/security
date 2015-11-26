@@ -43,7 +43,7 @@ class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
 
   describe("CasPreauthFilter") {
     it("Normal operation") {
-      assert(null != filter.getTokenStr(mockRequest()))
+      assert(null != filter.getCredentials(mockRequest()))
     }
 
 //    it("Null Service Ticket Handled Gracefully") {

@@ -30,11 +30,7 @@ object Session {
     SecurityContext.session.principal.getName
   }
 
-  trait Agent extends Serializable {
-
-    def os: String
-
-    def agent: String
+  trait Client extends Serializable {
 
     def ip: String
 
@@ -45,9 +41,11 @@ object Session {
     def lastAccessAt: Long
   }
 
-  class Data(val principal: Account, val agent: Agent, val loginAt: Long, val timeout: Short) extends Serializable
+  class Data(val principal: Account, val client: Client, val loginAt: Long, val timeout: Int) extends Serializable
 
-  class DefaultAgent(val os: String, val agent: String, val ip: String) extends Agent
+  class AgentClient(val agent: String, val ip: String, val os: String) extends Client
+
+  class SsoClient(val ssoCredentials: Any, agent: String, ip: String, os: String) extends AgentClient(agent, ip, os)
 
   class DefaultStatus(val lastAccessAt: Long) extends Status
 }
@@ -58,14 +56,14 @@ trait Session {
 
   def principal: Account
 
-  def agent: Session.Agent
+  def client: Session.Client
 
   def status: Session.Status
 
   def loginAt: Long
 
   /** the time in seconds that the session may remain idle before expiring.*/
-  def timeout: Short
+  def timeout: Int
 
   def onlineTime: Long
 
@@ -79,15 +77,15 @@ class DefaultSession(val id: String, registry: SessionRegistry, val data: Sessio
     data.principal
   }
 
-  override def agent: Session.Agent = {
-    data.agent
+  override def client: Session.Client = {
+    data.client
   }
 
   override def loginAt: Long = {
     data.loginAt
   }
 
-  override def timeout: Short = {
+  override def timeout: Int = {
     data.timeout
   }
 
@@ -105,14 +103,14 @@ class DefaultSession(val id: String, registry: SessionRegistry, val data: Sessio
 }
 
 trait SessionBuilder {
-  def build(key: String, registry: SessionRegistry, auth: Account, agent: Session.Agent, loginAt: Long, timeout: Short): Session
+  def build(key: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Long, timeout: Int): Session
   def build(key: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session
   def build(old: Session, status: Session.Status): Session
 }
 
 object DefaultSessionBuilder extends SessionBuilder {
 
-  override def build(sessionId: String, registry: SessionRegistry, auth: Account, agent: Session.Agent, loginAt: Long, timeout: Short): Session = {
+  override def build(sessionId: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Long, timeout: Int): Session = {
     new DefaultSession(sessionId, registry, new Session.Data(auth, agent, loginAt, timeout), new Session.DefaultStatus(System.currentTimeMillis))
   }
 

@@ -22,14 +22,6 @@ import java.security.Principal
 
 import org.beangle.commons.lang.Objects
 
-object AuthenticationToken {
-  object Details {
-    val Agent = "agent"
-    val Os = "os"
-    val Ip = "ip"
-  }
-}
-
 /**
  * Authentication Token used before authentication
  */

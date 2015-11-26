@@ -31,3 +31,9 @@ object PublicAuthorizer extends Authorizer {
     true
   }
 }
+
+object ProtectedAuthorizer extends Authorizer {
+  def isPermitted(session: Option[Session], request: Request): Boolean = {
+    session.isDefined
+  }
+}

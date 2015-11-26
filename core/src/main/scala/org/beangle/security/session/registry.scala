@@ -24,30 +24,30 @@ import org.beangle.security.authc.Account
 
 trait SessionRegistry {
 
-  def register(sessionId: String, info: Account, agent: Session.Agent): Session
+  def register(sessionId: String, info: Account, client: Session.Client): Session
 
   def remove(sessionId: String): Option[Session]
 
-  /**
-   * Get last accessed session key before the time
-   */
-  def getBeforeAccessAt(accessAt: Long): Seq[String]
-
   def access(sessionId: String, accessAt: Long, accessed: String): Option[Session]
-
-  def isRegisted(principal: String): Boolean
 
   def get(sessionId: String): Option[Session]
 
-  def getByPrincipal(principal: String): Seq[Session]
-
-  def stat(): Unit
-
-  def count: Int
+  def size: Int
 }
 
-abstract class AbstractSessionRegistry extends SessionRegistry with Logging with EventPublisher {
+trait LimitedSessionRegistry extends SessionRegistry {
 
+  protected def getMaxSession(auth: Account): Int
+
+  protected def getTimeout(auth: Account): Short
+
+  protected def allocate(auth: Account, sessionId: String): Boolean
+  /**
+   * release slot for user
+   */
+  protected def release(session: Session)
+
+  def getByPrincipal(principal: String): Seq[Session]
   /**
    * allocate a slot for user
    */
@@ -66,13 +66,4 @@ abstract class AbstractSessionRegistry extends SessionRegistry with Logging with
     }
   }
 
-  protected def getMaxSession(auth: Account): Int
-
-  protected def getTimeout(auth: Account): Short
-
-  protected def allocate(auth: Account, sessionId: String): Boolean
-  /**
-   * release slot for user
-   */
-  protected def release(session: Session)
 }

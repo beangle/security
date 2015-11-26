@@ -33,19 +33,19 @@ trait UsernameSource {
   /**
    * Obtain username supplied in the request.
    */
-  def resolveUser(request: HttpServletRequest, tokenStr: String): Option[PreauthUser]
+  def resolveUser(request: HttpServletRequest, credentials: Any): Option[String]
 
-  def getTokenStr(request: HttpServletRequest): Option[String]
+  def getCredentials(request: HttpServletRequest): Option[Any]
 }
 
 /**
  * Abtain username by cookie
  */
-class CookieUsernameSource extends UsernameSource {
+abstract class AbstractCookieUsernameSource extends UsernameSource {
 
   var cookieName: String = _
 
-  override def getTokenStr(request: HttpServletRequest): Option[String] = {
+  override def getCredentials(request: HttpServletRequest): Option[Any] = {
     val cookies = request.getCookies
     if (cookies != null) {
       cookies.find(c => c.getName == cookieName) match {
@@ -54,10 +54,6 @@ class CookieUsernameSource extends UsernameSource {
       }
     }
     None
-  }
-
-  override def resolveUser(request: HttpServletRequest, tokenStr: String): Option[PreauthUser] = {
-    Some(PreauthUser(tokenStr, tokenStr))
   }
 }
 
@@ -70,7 +66,7 @@ class RemoteUsernameSource extends UsernameSource with Logging {
 
   var stripPrefix = true
 
-  override def getTokenStr(request: HttpServletRequest): Option[String] = {
+  override def getCredentials(request: HttpServletRequest): Option[Any] = {
     var username: String = null
     val p = request.getUserPrincipal()
     if (null != p) username = p.getName()
@@ -80,8 +76,8 @@ class RemoteUsernameSource extends UsernameSource with Logging {
     if (null == username) None else Some(username)
   }
 
-  override def resolveUser(request: HttpServletRequest, tokenStr: String): Option[PreauthUser] = {
-    Some(PreauthUser(tokenStr, tokenStr))
+  override def resolveUser(request: HttpServletRequest, credentials: Any): Option[String] = {
+    Some(credentials.toString)
   }
 
   private def stripPrefix(userName: String): String = {
@@ -105,20 +101,19 @@ class ParameterUsernameSource extends UsernameSource with Logging {
 
   var extra = "123456!"
 
-  override def getTokenStr(request: HttpServletRequest): Option[String] = {
+  override def getCredentials(request: HttpServletRequest): Option[Any] = {
     val s = request.getParameter(digestParam)
     if (null == s) None else Some(s)
   }
 
-  override def resolveUser(request: HttpServletRequest, tokenStr: String): Option[PreauthUser] = {
+  override def resolveUser(request: HttpServletRequest, credentials: Any): Option[String] = {
     val ip = RequestUtils.getIpAddr(request)
     val cid = request.getParameter(userParam)
     val timeParamStr = request.getParameter(timeParam)
-    var t: Long = 0
-    if (null != timeParamStr) t = java.lang.Long.valueOf(timeParamStr)
+    val t: Long = if (null == timeParamStr) 0L else java.lang.Long.valueOf(timeParamStr)
 
-    val s = tokenStr
-    if (0 == t || null == s || null == cid || null == ip) None
+    val s = credentials.toString
+    if (0 == t || null == cid || null == ip) None
     else {
       val full = cid + "," + ip + "," + t + "," + extra
       val digest = Digests.md5Hex(full)
@@ -136,7 +131,7 @@ class ParameterUsernameSource extends UsernameSource with Logging {
           None
         } else {
           logger.debug(s"user $cid login at server time:$now")
-          Some(PreauthUser(cid, digest))
+          Some(cid)
         }
       } else None
     }

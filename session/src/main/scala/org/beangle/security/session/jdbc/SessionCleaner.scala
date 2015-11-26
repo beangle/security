@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.session
+package org.beangle.security.session.jdbc
 
 import org.beangle.commons.lang.Dates
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.lang.time.Stopwatch
 import java.{ util => ju }
 import java.util.TimerTask
+import org.beangle.security.session.util.UpdateDelayGenerator
 /**
  * Database session registry cleaner.
  * <ul>
@@ -31,15 +32,15 @@ import java.util.TimerTask
  * </ul>
  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple  deployed.
  */
-class SessionCleaner(val registry: SessionRegistry) extends Logging {
+class SessionCleaner(val registry: DBSessionRegistry) extends Logging {
 
   /** 默认过期时间 30分钟 */
   var expiredMinutes = 30
 
   /**
-   * Default interval(5 minutes) for clean up expired session infos.
+   * Default interval(最大写延迟的基础上增加5分钟)clean up expired session infos.
    */
-  var cleanIntervalMillis = 5 * 60 * 1000
+  var cleanIntervalMillis = 5 * 60 * 1000 + new UpdateDelayGenerator().maxDelay
 
   def cleanup() {
     val watch = new Stopwatch(true)
@@ -62,5 +63,4 @@ class SessionCleanupDaemon(cleaner: SessionCleaner) extends TimerTask {
   override def run() {
     cleaner.cleanup();
   }
-
 }

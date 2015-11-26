@@ -19,15 +19,22 @@
 package org.beangle.security.web.authc
 
 import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.AuthenticationToken.Details.{ Agent, Ip, Os }
-
 import javax.servlet.http.HttpServletRequest
+import org.beangle.security.session.Session
 
-object WebDetails {
-  def get(request: HttpServletRequest): Map[String, String] = {
+object WebClient {
+
+  def get(request: HttpServletRequest): Session.Client = {
     val agent = RequestUtils.getUserAgent(request)
     val server = request.getLocalAddr() + ":" + request.getLocalPort()
     val ip = RequestUtils.getIpAddr(request)
-    Map((Os, agent.os.toString), (Agent, agent.browser.toString), (Ip, ip))
+    new Session.AgentClient(agent.browser.toString, ip, agent.os.toString)
+  }
+
+  def get(request: HttpServletRequest, ssoCredentials: Any): Session.Client = {
+    val agent = RequestUtils.getUserAgent(request)
+    val server = request.getLocalAddr() + ":" + request.getLocalPort()
+    val ip = RequestUtils.getIpAddr(request)
+    new Session.SsoClient(ssoCredentials, agent.browser.toString, ip, agent.os.toString)
   }
 }

@@ -18,38 +18,24 @@
  */
 package org.beangle.security.web.authc
 
-import java.util.Date
-import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
-import org.beangle.commons.web.util.RequestUtils
-import org.beangle.security.authc.{ AbstractAccountRealm, Account, AccountStore, AuthenticationException, AuthenticationToken }
+import org.beangle.security.authc.{ AuthenticationException, AuthenticationToken }
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.Session
 import org.beangle.security.web.session.{ DefaultSessionIdPolicy, SessionIdPolicy }
+
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-
-object PreauthToken {
-  val TokenName = "preauth_token"
-}
 
 /**
  * Preauth Authentication Token
  */
-class PreauthToken(val principal: Any, tokenstr: String) extends AuthenticationToken {
+class PreauthToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
 
   var details: Map[String, Any] = Map.empty
-
-  details += PreauthToken.TokenName -> tokenstr
-
-  def token: String = {
-    details(PreauthToken.TokenName).toString
-  }
-
-  override def credentials: Any = null
 
   override def trusted: Boolean = {
     true
@@ -59,14 +45,11 @@ class PreauthToken(val principal: Any, tokenstr: String) extends AuthenticationT
     obj match {
       case test: PreauthToken =>
         Objects.equalsBuilder.add(principal, test.principal)
-          .add(details, test.details)
-          .isEquals
+          .add(details, test.details).add(credentials, test.credentials).isEquals
       case _ => false
     }
   }
 }
-
-case class PreauthUser(val name: String, token: String)
 
 abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter with Logging {
 
@@ -86,9 +69,8 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
 
   /** Do the actual authentication for a pre-authenticated user. */
   private def doAuthenticate(token: PreauthToken, request: HttpServletRequest, response: HttpServletResponse): Unit = {
-    token.details ++= WebDetails.get(request)
     try {
-      val session = securityManager.login(sessionIdPolicy.getSessionId(request), token)
+      val session = securityManager.login(sessionIdPolicy.newSessionId(request, response), token, WebClient.get(request, token.credentials))
       SecurityContext.session = session
       val httpSession = request.getSession(false)
       if (null != httpSession) httpSession.setMaxInactiveInterval(session.timeout)
@@ -98,22 +80,22 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
     }
   }
 
-  protected def getTokenStr(req: HttpServletRequest): Option[String]
+  protected def getCredentials(req: HttpServletRequest): Option[Any]
 
-  protected def resovleToken(req: HttpServletRequest, res: HttpServletResponse, tokenStr: String): Option[PreauthToken]
+  protected def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken]
 
   protected def requiresAuthentication(req: HttpServletRequest, res: HttpServletResponse): Option[PreauthToken] = {
-    getTokenStr(req) match {
+    getCredentials(req) match {
       case None => None
       case Some(newer) =>
         SecurityContext.getSession match {
           case None => resovleToken(req, res, newer)
           case Some(s) =>
-            //FIXME account details donot contain token_name
-            s.principal.details.get(PreauthToken.TokenName) match {
-              case Some(token) =>
-                if (newer == token) None else resovleToken(req, res, newer)
-              case None => resovleToken(req, res, newer)
+            val client = s.client
+            if (client.isInstanceOf[Session.SsoClient]) {
+              if (newer == client.asInstanceOf[Session.SsoClient].ssoCredentials) None else resovleToken(req, res, newer)
+            } else {
+              resovleToken(req, res, newer)
             }
         }
     }
@@ -123,8 +105,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
    * Puts the <code>Authentication</code> instance returned by the
    * authentication manager into the secure context.
    */
-  protected def successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse,
-    session: Session): Unit = {
+  protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
     logger.debug(s"PreAuthentication success: $session")
     SecurityContext.session = session
   }
@@ -145,14 +126,14 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
 class UsernamePreauthFilter(securityManager: SecurityManager) extends AbstractPreauthFilter(securityManager) {
   var usernameSource: UsernameSource = _
 
-  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, tokenStr: String): Option[PreauthToken] = {
-    usernameSource.resolveUser(req, tokenStr) match {
-      case Some(u) => if (Strings.isNotBlank(u.name)) Some(new PreauthToken(u.name, u.token)) else None
-      case None    => None
+  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
+    usernameSource.resolveUser(req, credentials) match {
+      case Some(username) => if (Strings.isNotBlank(username)) Some(new PreauthToken(username, credentials)) else None
+      case None           => None
     }
   }
 
-  protected override def getTokenStr(request: HttpServletRequest): Option[String] = {
-    usernameSource.getTokenStr(request)
+  protected override def getCredentials(request: HttpServletRequest): Option[Any] = {
+    usernameSource.getCredentials(request)
   }
 }

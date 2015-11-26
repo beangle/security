@@ -28,9 +28,9 @@ import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.JdbcExecutor
 import org.beangle.security.authc.Account
-import org.beangle.security.session.{ DefaultSession, DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder, SessionCleaner, SessionCleanupDaemon }
+import org.beangle.security.session.{ DefaultSession, DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder }
 import org.beangle.security.session.profile.{ ProfileChangeEvent, ProfiledSessionRegistry }
-import org.beangle.security.session.util.UpdadateDelayGenerator
+import org.beangle.security.session.util.UpdateDelayGenerator
 import org.nustaq.serialization.FSTConfiguration
 
 import javax.sql.DataSource
@@ -48,7 +48,7 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
 
   private val statusSelectColumns = "last_access_at"
 
-  private val accessDelayMillis = new UpdadateDelayGenerator().generateDelayMilliTime()
+  private val accessDelayMillis = new UpdateDelayGenerator().generateDelayMilliTime()
 
   private val dataCache = dataCacheManager.getCache[String, Session.Data]("session_data")
 
@@ -81,7 +81,7 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
     }
   }
 
-  override def register(sessionId: String, info: Account, agent: Session.Agent): Session = {
+  override def register(sessionId: String, info: Account, client: Session.Client): Session = {
     val existed = get(sessionId).orNull
     val principal = info.getName
     // 是否为重复注册
@@ -90,7 +90,7 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
     } else {
       tryAllocate(sessionId, info) // 争取名额
       if (null != existed) remove(sessionId, " expired with replacement."); // 注销同会话的其它账户
-      val session = builder.build(sessionId, this, info, agent, System.currentTimeMillis(), getTimeout(info)) // 新生
+      val session = builder.build(sessionId, this, info, client, System.currentTimeMillis(), getTimeout(info)) // 新生
       save(session)
       publish(new LoginEvent(session))
       session
@@ -162,15 +162,11 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
     }
   }
 
-  override def getBeforeAccessAt(lastAccessAt: Long): Seq[String] = {
+  def getBeforeAccessAt(lastAccessAt: Long): Seq[String] = {
     executor.query(s"select id from $sessionTable info where info.last_access_at <?", lastAccessAt).map { data => data(0).toString }
   }
 
-  override def isRegisted(principal: String): Boolean = {
-    !executor.query(s"select id from $sessionTable where principal =?", principal).isEmpty
-  }
-
-  override def count: Int = {
+  override def size: Int = {
     executor.queryForInt(s"select count(id) from $sessionTable")
   }
 
@@ -182,7 +178,7 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
     executor.update(s"update $statTable set on_line=on_line - 1 where on_line>0 and id=?", getProfileId(session.principal).longValue())
   }
 
-  override def stat(): Unit = {
+  def stat(): Unit = {
     executor.update(s"update $statTable stat set on_line=(select count(id) from $sessionTable " +
       " info where  info.profile_id=stat.id),stat_at = ?", new ju.Date())
   }
@@ -210,7 +206,7 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
     val sessionId = s.id
 
     executor.update(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?)",
-      sessionId, fstconf.asByteArray(new Session.Data(s.principal, s.agent, s.loginAt, s.timeout)),
+      sessionId, fstconf.asByteArray(new Session.Data(s.principal, s.client, s.loginAt, s.timeout)),
       s.status.lastAccessAt, s.principal.getName, profileProvider.getProfile(s.principal).id.longValue)
 
     dataCache.putIfAbsent(sessionId, s.data)

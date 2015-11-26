@@ -24,7 +24,7 @@ import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.Account
 import org.beangle.security.session.{ DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder }
 import org.beangle.security.session.profile.ProfiledSessionRegistry
-import org.beangle.security.session.util.UpdadateDelayGenerator
+import org.beangle.security.session.util.UpdateDelayGenerator
 
 /**
  * Hold session in memory
@@ -35,14 +35,10 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
 
   protected val sessionids = new collection.concurrent.TrieMap[String, Session]
 
-  private val accessDelayMillis = new UpdadateDelayGenerator().generateDelayMilliTime()
+  private val accessDelayMillis = new UpdateDelayGenerator().generateDelayMilliTime()
 
   var builder: SessionBuilder = DefaultSessionBuilder
 
-  override def isRegisted(principal: String): Boolean = {
-    val sids = principals.get(principal)
-    (!sids.isEmpty && !sids.get.isEmpty)
-  }
 
   override def getByPrincipal(principal: String): Seq[Session] = {
     principals.get(principal) match {
@@ -59,7 +55,7 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
     if (null == sessionId) None else sessionids.get(sessionId)
   }
 
-  override def register(sessionId: String, auth: Account, agent: Session.Agent): Session = {
+  override def register(sessionId: String, auth: Account, client: Session.Client): Session = {
     val principal = auth.getName
     val existed = get(sessionId) match {
       case Some(existed) => {
@@ -71,7 +67,7 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
       case None => tryAllocate(sessionId, auth)
     }
 
-    val newSession = builder.build(sessionId, this, auth, agent, System.currentTimeMillis, getTimeout(auth))
+    val newSession = builder.build(sessionId, this, auth, client, System.currentTimeMillis, getTimeout(auth))
     sessionids.put(sessionId, newSession)
     principals.get(principal) match {
       case None       => principals.put(principal, new collection.mutable.HashSet += sessionId)
@@ -99,15 +95,7 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
     }
   }
 
-  override def getBeforeAccessAt(lastAccessAt: Long): Seq[String] = {
-    val expired = new collection.mutable.ListBuffer[String]
-    sessionids foreach {
-      case (id, s) => if (s.status.lastAccessAt < lastAccessAt) expired += s.id
-    }
-    expired
-  }
-
-  override def count(): Int = {
+  override def size: Int = {
     sessionids.size
   }
 
@@ -122,12 +110,7 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
     }
   }
 
-  override def stat(): Unit = {}
-
   protected override def allocate(auth: Account, sessionId: String): Boolean = true
-  /**
-   * release slot for user
-   */
   protected override def release(session: Session): Unit = {}
 
 }

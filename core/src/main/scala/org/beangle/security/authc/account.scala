@@ -145,7 +145,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         additionalCheck(token, account)
         account
       case None =>
-        throw new UsernameNotFoundException(s"Cannot find account data for $token", null)
+        throw new UsernameNotFoundException(s"Cannot find account data for $token", token)
     }
   }
 
@@ -169,6 +169,10 @@ abstract class AbstractAccountRealm extends Realm with Logging {
 }
 
 class DefaultAccountRealm(accountStore: AccountStore, credentialsChecker: CredentialsChecker) extends AbstractAccountRealm {
+
+  def this(accountStore: AccountStore) {
+    this(accountStore, null)
+  }
 
   protected override def loadAccount(principal: Any): Option[Account] = {
     accountStore.load(principal)
