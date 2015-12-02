@@ -2,18 +2,18 @@
   <parent>
     <groupId>org.beangle</groupId>
     <artifactId>beangle-scala</artifactId>
-    <version>22.3</version>
+    <version>22.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.beangle.security</groupId>
   <artifactId>beangle-security-parent_2.11</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.0.12</version>
+  <version>4.0.13</version>
 
   <properties>
-    <beangle.commons.version>4.4.4</beangle.commons.version>
-    <beangle.data.version>4.3.2</beangle.data.version>
+    <beangle.commons.version>4.4.7</beangle.commons.version>
+    <beangle.data.version>4.3.3</beangle.data.version>
   </properties>
 
   <modules>

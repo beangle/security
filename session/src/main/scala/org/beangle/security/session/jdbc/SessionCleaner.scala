@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.session
+package org.beangle.security.session.jdbc
 
 import org.beangle.commons.lang.Dates
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.lang.time.Stopwatch
 import java.{ util => ju }
 import java.util.TimerTask
+import org.beangle.security.session.util.UpdateDelayGenerator
 /**
  * Database session registry cleaner.
  * <ul>
@@ -31,24 +32,24 @@ import java.util.TimerTask
  * </ul>
  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple  deployed.
  */
-class SessionCleaner(val registry: SessionRegistry) extends Logging {
+class SessionCleaner(val registry: DBSessionRegistry) extends Logging {
 
   /** 默认过期时间 30分钟 */
   var expiredMinutes = 30
 
   /**
-   * Default interval(5 minutes) for clean up expired session infos.
+   * Default interval(最大写延迟的基础上增加5分钟)clean up expired session infos.
    */
-  var cleanIntervalMillis = 5 * 60 * 1000
+  var cleanIntervalMillis = 5 * 60 * 1000 + new UpdateDelayGenerator().maxDelay
 
   def cleanup() {
     val watch = new Stopwatch(true)
-    logger.debug("clean up expired or over expired time session start ...")
+    logger.debug("starting clean up over expired time sessions ...")
     val calendar = ju.Calendar.getInstance()
     try {
       var removed = 0
-      registry.getExpired(Dates.rollMinutes(calendar.getTime(), -expiredMinutes)) foreach { s =>
-        registry.remove(SessionId(s.id)) foreach (olds => removed += 1)
+      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -expiredMinutes).getTime) foreach { sid =>
+        registry.remove(sid) foreach (olds => removed += 1)
       }
       if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")
       registry.stat()
@@ -62,5 +63,4 @@ class SessionCleanupDaemon(cleaner: SessionCleaner) extends TimerTask {
   override def run() {
     cleaner.cleanup();
   }
-
 }

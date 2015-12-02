@@ -20,16 +20,8 @@ package org.beangle.security.session
 
 import java.io.{ Serializable => jSerializable }
 import java.security.Principal
-import java.{ util => ju }
 import org.beangle.security.authc.Account
-import org.beangle.security.authc.DetailNames.{ Agent, Host, Os }
 import org.beangle.security.context.SecurityContext
-
-trait SessionKey {
-  def sessionId: String
-}
-
-case class SessionId(val sessionId: String) extends SessionKey
 
 object Session {
   val DefaultTimeOut: Short = 30 * 60
@@ -38,84 +30,96 @@ object Session {
     SecurityContext.session.principal.getName
   }
 
+  trait Client extends Serializable {
+
+    def ip: String
+
+  }
+
+  trait Status extends Serializable {
+
+    def lastAccessAt: Long
+  }
+
+  class Data(val principal: Account, val client: Client, val loginAt: Long, val timeout: Int) extends Serializable
+
+  class AgentClient(val agent: String, val ip: String, val os: String) extends Client
+
+  class SsoClient(val ssoCredentials: Any, agent: String, ip: String, os: String) extends AgentClient(agent, ip, os)
+
+  class DefaultStatus(val lastAccessAt: Long) extends Status
 }
 
-trait Session extends Serializable {
+trait Session {
 
   def id: String
 
   def principal: Account
 
-  def loginAt: ju.Date
+  def client: Session.Client
 
-  def lastAccessAt: ju.Date
+  def status: Session.Status
 
-  def expiredAt: ju.Date
+  def loginAt: Long
 
-  def expired: Boolean
+  /** the time in seconds that the session may remain idle before expiring.*/
+  def timeout: Int
 
   def onlineTime: Long
 
-  def lastAccessed: String
-
-  def os: String
-
-  def agent: String
-
-  def host: String
-
-  def server: String
-
-  /** the time in seconds that the session session may remain idle before expiring.*/
-  def timeout: Short
-
   def stop(): Unit
-
-  def expire(): Unit
-
-  def access(accessAt: ju.Date, accessed: String): Unit
 
 }
 
-class DefaultSession(val id: String, val principal: Account, val loginAt: ju.Date, val timeout: Short, val os: String, val agent: String, val host: String)
-    extends Session {
-  var server: String = _
-  var expiredAt: ju.Date = _
-  var lastAccessAt: ju.Date = _
-  var lastAccessed: String = _
-  @transient
-  var registry: SessionRegistry = _
+class DefaultSession(val id: String, registry: SessionRegistry, val data: Session.Data, val status: Session.Status) extends Session {
 
-  def onlineTime: Long = {
-    if (null == expiredAt) System.currentTimeMillis() - loginAt.getTime()
-    else expiredAt.getTime() - loginAt.getTime()
+  override def principal: Account = {
+    data.principal
   }
 
-  def expired: Boolean = null != expiredAt
-  def stop(): Unit = registry.remove(SessionId(id))
-  def expire(): Unit = {
-    expiredAt = new ju.Date()
-    registry.expire(this)
+  override def client: Session.Client = {
+    data.client
   }
 
-  def access(accessAt: ju.Date, accessed: String): Unit = {
-    registry.access(this, accessAt, accessed)
-    lastAccessAt = accessAt
-    lastAccessed = accessed
+  override def loginAt: Long = {
+    data.loginAt
+  }
+
+  override def timeout: Int = {
+    data.timeout
+  }
+
+  override def stop(): Unit = {
+    registry.remove(id)
+  }
+
+  override def onlineTime: Long = {
+    System.currentTimeMillis() - loginAt
+  }
+
+  def clone(newer: Session.Status): Session = {
+    new DefaultSession(id, registry, data, newer)
   }
 }
 
 trait SessionBuilder {
-  def build(key: SessionKey, auth: Account, registry: SessionRegistry, loginAt: ju.Date, timeout: Short): Session
+  def build(key: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Long, timeout: Int): Session
+  def build(key: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session
+  def build(old: Session, status: Session.Status): Session
 }
 
-class DefaultSessionBuilder extends SessionBuilder {
+object DefaultSessionBuilder extends SessionBuilder {
 
-  def build(key: SessionKey, auth: Account, registry: SessionRegistry, loginAt: ju.Date, timeout: Short): Session = {
-    val session = new DefaultSession(key.sessionId, auth, loginAt, timeout, auth.details(Os).toString, auth.details(Agent).toString, auth.details(Host).toString)
-    session.registry = registry
-    session.lastAccessAt = new ju.Date()
-    session
+  override def build(sessionId: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Long, timeout: Int): Session = {
+    new DefaultSession(sessionId, registry, new Session.Data(auth, agent, loginAt, timeout), new Session.DefaultStatus(System.currentTimeMillis))
+  }
+
+  override def build(sessionId: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session = {
+    new DefaultSession(sessionId, registry, data, status)
+  }
+
+  def build(old: Session, status: Session.Status): Session = {
+    old.asInstanceOf[DefaultSession].clone(status)
   }
 }
 

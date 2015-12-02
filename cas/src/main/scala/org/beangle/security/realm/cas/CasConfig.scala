@@ -58,8 +58,6 @@ class CasConfig(server: String) extends Initializing {
    */
   var renew = false
 
-  var encode = true
-
   var artifactName = CasConfig.TicketName
 
   var loginUri = "/login"

@@ -30,9 +30,8 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 object CasEntryPoint {
 
-  def constructServiceUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String,
-    ticketName: String, encode: Boolean): String = {
-    if (Strings.isNotBlank(service)) return if (encode) res.encodeURL(service) else service
+  def constructServiceUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String, ticketName: String): String = {
+    if (Strings.isNotBlank(service)) return res.encodeURL(service)
 
     val buffer = new StringBuilder()
     if (!serverName.startsWith("https://") && !serverName.startsWith("http://"))
@@ -52,7 +51,7 @@ object CasEntryPoint {
         }
       }
     }
-    if (encode) res.encodeURL(buffer.toString()) else buffer.toString
+    res.encodeURL(buffer.toString)
   }
 }
 
@@ -71,27 +70,27 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
         if (req.getServletPath().endsWith(localLogin)) {
           throw ae
         } else {
-          val serviceUrl = constructLocalLoginUrl(req, res, null, getLocalServer(req), config.encode)
+          val serviceUrl = constructLocalLoginUrl(req, res, null, getLocalServer(req))
           val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, false)
           res.sendRedirect(redirectUrl + "&isLoginService=11")
         }
       } else {
-        val serviceUrl = constructServiceUrl(req, res, null, getLocalServer(req), config.artifactName, config.encode)
+        val serviceUrl = constructServiceUrl(req, res, null, getLocalServer(req), config.artifactName)
         val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, false)
         res.sendRedirect(redirectUrl)
       }
     }
   }
 
-  def constructLocalLoginUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String, encode: Boolean): String = {
+  def constructLocalLoginUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String): String = {
     if (Strings.isNotBlank(service)) {
-      if (encode) res.encodeURL(service) else service
+      res.encodeURL(service)
     } else {
       val buffer = new StringBuilder()
       if (!serverName.startsWith("https://") && !serverName.startsWith("http://"))
         buffer.append(if (req.isSecure) "https://" else "http://")
       buffer.append(serverName).append(req.getContextPath).append(localLogin)
-      if (encode) res.encodeURL(buffer.toString) else buffer.toString
+      res.encodeURL(buffer.toString)
     }
   }
   /**

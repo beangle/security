@@ -19,7 +19,7 @@
 package org.beangle.security.web.access
 
 import org.beangle.commons.web.access.DefaultAccessRequestBuilder
-import org.beangle.security.session.{ SessionId, SessionRegistry }
+import org.beangle.security.session.SessionRegistry
 import javax.servlet.http.HttpServletRequest
 import org.beangle.security.web.session.SessionIdPolicy
 
@@ -39,7 +39,7 @@ class SecurityAccessRequestBuilder(val registry: SessionRegistry) extends Defaul
     else {
       registry.get(sessionIdPolicy.getSessionId(request)) match {
         case Some(s) => s.principal.getName
-        case None => null
+        case None    => null
       }
     }
   }

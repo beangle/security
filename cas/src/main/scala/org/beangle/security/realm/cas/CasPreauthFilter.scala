@@ -24,21 +24,20 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletRequest
 import org.beangle.security.mgt.SecurityManager
 import CasConfig._
+import org.beangle.security.context.SecurityContext
 /**
  * Processes a CAS service ticket.
  */
-class CasPreauthFilter(securityManager: SecurityManager, val config: CasConfig)
+class CasPreauthFilter(securityManager: SecurityManager, config: CasConfig, ticketValidator: TicketValidator)
     extends AbstractPreauthFilter(securityManager) {
 
-  protected[cas] override def getPreauthToken(request: HttpServletRequest, response: HttpServletResponse): PreauthToken = {
-    val ticket = request.getParameter(CasConfig.TicketName)
-    if (ticket == null) {
-      null
-    } else {
-      val url = CasEntryPoint.constructServiceUrl(request, response, null, getLocalServer(request), TicketName, config.encode)
-      val token = new CasToken(ticket)
-      token.details += "url" -> url
-      token
-    }
+  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
+    val url = CasEntryPoint.constructServiceUrl(req, res, null, getLocalServer(req), TicketName)
+    Some(new PreauthToken(ticketValidator.validate(credentials.toString(), url), credentials))
   }
+
+  protected[cas] override def getCredentials(request: HttpServletRequest): Option[Any] = {
+    Option(request.getParameter(CasConfig.TicketName))
+  }
+
 }

@@ -22,14 +22,6 @@ import java.security.Principal
 
 import org.beangle.commons.lang.Objects
 
-object DetailNames {
-  val Agent = "agent"
-  val Os = "os"
-  val Server = "server"
-  val Host = "host"
-  val Timeout = "timeout"
-}
-
 /**
  * Authentication Token used before authentication
  */
@@ -44,30 +36,41 @@ trait AuthenticationToken extends Principal with Serializable {
   override def getName: String = {
     this.principal match {
       case jPrincipal: java.security.Principal => jPrincipal.getName
-      case null => ""
-      case obj: Any => obj.toString
+      case null                                => ""
+      case obj: Any                            => obj.toString
     }
   }
 
-  override def hashCode: Int = if (null == principal) 629 else principal.hashCode()
+  override def hashCode: Int = {
+    if (null == principal) 629 else principal.hashCode()
+  }
+
+  def trusted: Boolean = {
+    false
+  }
+
 }
 
 /**
  * Simple Authentication Token
  */
 @SerialVersionUID(3966615358056184985L)
-class UsernamePasswordAuthenticationToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
+class UsernamePasswordToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
 
   var details: Map[String, Any] = Map.empty
 
   override def equals(obj: Any): Boolean = {
     obj match {
-      case test: UsernamePasswordAuthenticationToken =>
+      case test: UsernamePasswordToken =>
         Objects.equalsBuilder.add(principal, test.principal)
           .add(credentials, test.credentials).add(details, test.details)
           .isEquals
       case _ => false
     }
+  }
+
+  override def toString: String = {
+    "principal:" + principal
   }
 
 }

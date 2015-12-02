@@ -19,14 +19,14 @@
 package org.beangle.security.session.profile
 
 import org.beangle.security.authc.Account
-import org.beangle.security.session.{ AbstractSessionRegistry, Session }
 import org.beangle.commons.event.EventListener
 import org.beangle.commons.event.Event
+import org.beangle.security.session.LimitedSessionRegistry
 
 /**
  * @author chaostone
  */
-abstract class ProfiledSessionRegistry extends AbstractSessionRegistry with EventListener[ProfileChangeEvent] {
+abstract class ProfiledSessionRegistry extends LimitedSessionRegistry with EventListener[ProfileChangeEvent] {
 
   var profileProvider: ProfileProvider = DefaultProfileProvider
 
