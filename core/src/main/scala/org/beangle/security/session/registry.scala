@@ -32,7 +32,6 @@ trait SessionRegistry {
 
   def get(sessionId: String): Option[Session]
 
-  def size: Int
 }
 
 trait LimitedSessionRegistry extends SessionRegistry {

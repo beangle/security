@@ -37,19 +37,7 @@ class CasPreauthFilter(securityManager: SecurityManager, config: CasConfig, tick
   }
 
   protected[cas] override def getCredentials(request: HttpServletRequest): Option[Any] = {
-    val ticket = request.getParameter(CasConfig.TicketName)
-    if (ticket == null) {
-      None
-    } else {
-      //FIXME need test
-      val referer = request.getHeader("Referer")
-      if (null != referer && !referer.startsWith(config.casServer)) {
-        logger.info(ticket + " referr error :" + referer)
-        None
-      } else {
-        Some(ticket)
-      }
-    }
+    Option(request.getParameter(CasConfig.TicketName))
   }
 
 }
