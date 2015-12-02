@@ -47,11 +47,11 @@ class CacheSessionRegistry(dataCacheManager: CacheManager, statusCacheManager: C
 
   private val accessDelayMillis = new UpdateDelayGenerator().generateDelayMilliTime()
 
-  private val dataCache = dataCacheManager.getCache[String, Session.Data]("session_data")
+  private val dataCache = dataCacheManager.getCache("session_data", classOf[String], classOf[Session.Data])
 
-  private val statusCache = statusCacheManager.getCache[String, Session.Status]("session_status")
+  private val statusCache = statusCacheManager.getCache("session_status", classOf[String], classOf[Session.Status])
 
-  private val timeout = dataCache.liveTime
+  private val timeout = dataCache.ttl
 
   var builder: SessionBuilder = DefaultSessionBuilder
 
@@ -108,10 +108,6 @@ class CacheSessionRegistry(dataCacheManager: CacheManager, statusCacheManager: C
       }
       Some(builder.build(sessionId, this, data, status))
     }
-  }
-
-  override def size: Int = {
-    dataCache.keys.size
   }
 
   private def remove(sessionId: String, reason: String): Option[Session] = {

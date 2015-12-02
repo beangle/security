@@ -95,10 +95,6 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
     }
   }
 
-  override def size: Int = {
-    sessionids.size
-  }
-
   override def access(sessionId: String, accessAt: Long, accessed: String): Option[Session] = {
     get(sessionId) match {
       case s @ Some(session) =>

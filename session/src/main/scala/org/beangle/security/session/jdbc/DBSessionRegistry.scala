@@ -50,9 +50,9 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
 
   private val accessDelayMillis = new UpdateDelayGenerator().generateDelayMilliTime()
 
-  private val dataCache = dataCacheManager.getCache[String, Session.Data]("session_data")
+  private val dataCache = dataCacheManager.getCache("session_data", classOf[String], classOf[Session.Data])
 
-  private val statusCache = statusCacheManager.getCache[String, Session.Status]("session_status")
+  private val statusCache = statusCacheManager.getCache("session_status", classOf[String], classOf[Session.Status])
 
   private val executor = new JdbcExecutor(dataSource)
 
@@ -164,10 +164,6 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
 
   def getBeforeAccessAt(lastAccessAt: Long): Seq[String] = {
     executor.query(s"select id from $sessionTable info where info.last_access_at <?", lastAccessAt).map { data => data(0).toString }
-  }
-
-  override def size: Int = {
-    executor.queryForInt(s"select count(id) from $sessionTable")
   }
 
   protected override def allocate(auth: Account, sessionId: String): Boolean = {
