@@ -24,6 +24,7 @@
       <artifactId>beangle-data-jdbc_2.12</artifactId>
       <version>${beangle.data.version}</version>
     </dependency>
+    <!--FIXME-->
     <dependency>
       <groupId>de.ruedigermoeller</groupId>
       <artifactId>fst</artifactId>
