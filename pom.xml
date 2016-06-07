@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.beangle</groupId>
     <artifactId>beangle-scala</artifactId>
-    <version>23.1</version>
+    <version>23.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.beangle.security</groupId>
@@ -12,8 +12,8 @@
   <version>4.0.15-SNAPSHOT</version>
 
   <properties>
-    <beangle.commons.version>4.4.8</beangle.commons.version>
-    <beangle.data.version>4.3.4</beangle.data.version>
+    <beangle.commons.version>4.5.0</beangle.commons.version>
+    <beangle.data.version>4.4.0</beangle.data.version>
   </properties>
 
   <modules>

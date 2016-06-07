@@ -35,7 +35,7 @@ trait Account extends AuthorizationInfo with Principal with Serializable {
 
   def principal: Any
 
-  def userName: String
+  def description: String
 
   def details: Map[String, Any]
 
@@ -65,7 +65,7 @@ object DefaultAccount {
   }
 }
 
-class DefaultAccount(val principal: Any, val userName: String) extends Account {
+class DefaultAccount(val principal: Any, val description: String) extends Account {
 
   var status: Int = _
 

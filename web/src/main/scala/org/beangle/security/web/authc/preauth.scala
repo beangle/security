@@ -49,6 +49,10 @@ class PreauthToken(val principal: Any, val credentials: Any) extends Authenticat
       case _ => false
     }
   }
+
+  override def toString: String = {
+    principal.toString
+  }
 }
 
 abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter with Logging {
