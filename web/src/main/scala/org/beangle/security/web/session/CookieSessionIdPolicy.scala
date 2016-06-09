@@ -18,15 +18,11 @@
  */
 package org.beangle.security.web.session
 
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpServletRequest
-import org.beangle.commons.web.util.CookieUtils
-import org.beangle.commons.web.util.CookieGenerator
-import org.beangle.commons.lang.annotation.value
-import java.net.URLEncoder
-import javax.servlet.http.Cookie
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.web.context.ServletContextHolder
+import org.beangle.commons.web.util.{ CookieGenerator, CookieUtils }
+
+import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 /**
  * @author chaostone
