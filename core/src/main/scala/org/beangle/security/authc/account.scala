@@ -1,7 +1,7 @@
 /*
  * Beangle, Agile Development Scaffold and Toolkit
  *
- * Copyright (c) 2005-2015, Beangle Software.
+ * Copyright (c) 2005-2016, Beangle Software.
  *
  * Beangle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -35,7 +35,7 @@ trait Account extends AuthorizationInfo with Principal with Serializable {
 
   def principal: Any
 
-  def userName: String
+  def description: String
 
   def details: Map[String, Any]
 
@@ -65,7 +65,7 @@ object DefaultAccount {
   }
 }
 
-class DefaultAccount(val principal: Any, val userName: String) extends Account {
+class DefaultAccount(val principal: Any, val description: String) extends Account {
 
   var status: Int = _
 

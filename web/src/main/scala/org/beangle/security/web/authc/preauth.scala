@@ -1,7 +1,7 @@
 /*
  * Beangle, Agile Development Scaffold and Toolkit
  *
- * Copyright (c) 2005-2015, Beangle Software.
+ * Copyright (c) 2005-2016, Beangle Software.
  *
  * Beangle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -48,6 +48,10 @@ class PreauthToken(val principal: Any, val credentials: Any) extends Authenticat
           .add(details, test.details).add(credentials, test.credentials).isEquals
       case _ => false
     }
+  }
+
+  override def toString: String = {
+    principal.toString
   }
 }
 
