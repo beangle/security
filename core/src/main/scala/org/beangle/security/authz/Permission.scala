@@ -24,8 +24,8 @@ import java.util.Date
 trait Permission extends Serializable with Cloneable {
   def resource: Resource
   def principal: Principal
-  def actions: String
-  def restrictions: String
+  def actions: Option[String]
+  def restrictions: Option[String]
   def beginAt: Date
-  def endAt: Date
+  def endAt: Option[Date]
 }
