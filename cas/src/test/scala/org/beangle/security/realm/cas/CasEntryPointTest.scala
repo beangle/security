@@ -23,7 +23,7 @@ import scala.annotation.elidable
 import scala.annotation.elidable.FINE
 import org.beangle.commons.logging.Logging
 import org.junit.runner.RunWith
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{ mock, verify, when }
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
