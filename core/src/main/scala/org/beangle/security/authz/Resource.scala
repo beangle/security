@@ -28,8 +28,8 @@ object Resource {
 
 trait Resource extends Serializable {
   def title: String
-  def actions: String
-  def remark: String
+  def actions: Option[String]
+  def remark: Option[String]
   def name: String
   def enabled: Boolean
 }
