@@ -64,7 +64,7 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     MessageDigest.isEqual(hs._1, msgDigest.digest())
   }
 
-  def generateDigest(password: String, salts: String, algorithm: String): String = {
+  def generate(password: String, salts: String, algorithm: String): String = {
     val alg =
       if (algorithm.equalsIgnoreCase("sha")) "SHA-1"
       else if (algorithm.equalsIgnoreCase("md5")) "MD5"
