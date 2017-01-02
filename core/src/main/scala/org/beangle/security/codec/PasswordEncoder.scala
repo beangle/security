@@ -1,7 +1,7 @@
 /*
  * Beangle, Agile Development Scaffold and Toolkit
  *
- * Copyright (c) 2005-2016, Beangle Software.
+ * Copyright (c) 2005-2017, Beangle Software.
  *
  * Beangle is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -60,17 +60,18 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     msgDigest.reset()
     msgDigest.update(password.getBytes)
     msgDigest.update(hs._2)
+    println(digest,new String(hs._2))
     MessageDigest.isEqual(hs._1, msgDigest.digest())
   }
 
-  override def generate(password: String, saltHex: String, algorithm: String): String = {
+  def generate(password: String, salts: String, algorithm: String): String = {
     val alg =
       if (algorithm.equalsIgnoreCase("sha")) "SHA-1"
       else if (algorithm.equalsIgnoreCase("md5")) "MD5"
       else algorithm
 
     val msgDigest = MessageDigest.getInstance(alg)
-    val salt = if (saltHex == null) new Array[Byte](0) else Hex.decode(saltHex)
+    val salt = if (salts == null) new Array[Byte](0) else salts.getBytes
     val label =
       if (alg.startsWith("SHA")) { if (salt.length <= 0) "{SHA}" else "{SSHA}" }
       else if (alg.startsWith("MD5")) { if (salt.length <= 0) "{MD5}" else "{SMD5}" }
