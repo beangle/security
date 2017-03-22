@@ -22,10 +22,9 @@ import java.net.URLEncoder
 
 import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.{ AccountStatusException, AuthenticationException, UsernameNotFoundException }
+import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
 
-import CasConfig.getLocalServer
-import CasEntryPoint.constructServiceUrl
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 object CasEntryPoint {
@@ -56,13 +55,13 @@ object CasEntryPoint {
 }
 
 class CasEntryPoint(val config: CasConfig) extends EntryPoint {
-  import CasEntryPoint._
   import CasConfig._
+  import CasEntryPoint._
   /** 本地登录地址 */
   var localLogin: String = _
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
-    if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException])) {
+    if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException] || ae.isInstanceOf[SessionException])) {
       res.getWriter().append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
     } else {
       if (null != localLogin) {
