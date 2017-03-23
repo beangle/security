@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse
 
 class ParamSessionIdPolicy(val sessionIdParam: String = "JSESSIONID") extends SessionIdPolicy {
 
-  def getSessionId(req: HttpServletRequest): String = {
+  override def getId(req: HttpServletRequest): String = {
     var sid: String = null
     if (null != sessionIdParam) {
       sid = req.getParameter(sessionIdParam)
@@ -34,7 +34,7 @@ class ParamSessionIdPolicy(val sessionIdParam: String = "JSESSIONID") extends Se
     if (null != sid) sid else null
   }
 
-  def newSessionId(req: HttpServletRequest, res: HttpServletResponse): String = {
+  override def newId(req: HttpServletRequest, res: HttpServletResponse): String = {
     if (null == sessionIdParam) {
       req.getSession(true).getId
     } else {
@@ -42,6 +42,10 @@ class ParamSessionIdPolicy(val sessionIdParam: String = "JSESSIONID") extends Se
     }
   }
 
-  def delSessionId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+  override def delId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+  }
+
+  override def idName: String = {
+    sessionIdParam
   }
 }

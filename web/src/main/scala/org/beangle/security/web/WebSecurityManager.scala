@@ -20,14 +20,14 @@ class WebSecurityManager(val authenticator: Authenticator, val authorizer: Autho
   }
 
   def login(request: HttpServletRequest, response: HttpServletResponse, token: AuthenticationToken): Session = {
-    val key = sessionIdPolicy.newSessionId(request, response)
+    val key = sessionIdPolicy.newId(request, response)
     sessionRegistry.register(key, authenticator.authenticate(token), WebClient.get(request))
   }
 
   def logout(request: HttpServletRequest, response: HttpServletResponse,
              session: Session): Unit = {
     session.stop()
-    sessionIdPolicy.delSessionId(request, response)
+    sessionIdPolicy.delId(request, response)
     val s = request.getSession(false)
     if (null != s) s.invalidate()
   }

@@ -37,7 +37,7 @@ class SecurityAccessRequestBuilder(val registry: SessionRegistry) extends Defaul
     val session = request.getSession(false)
     if (null == session) null
     else {
-      registry.get(sessionIdPolicy.getSessionId(request)) match {
+      registry.get(sessionIdPolicy.getId(request)) match {
         case Some(s) => s.principal.getName
         case None    => null
       }

@@ -23,9 +23,11 @@ import javax.servlet.http.HttpServletResponse
 
 trait SessionIdPolicy {
 
-  def getSessionId(request: HttpServletRequest): String
+  def idName: String
 
-  def newSessionId(request: HttpServletRequest, response: HttpServletResponse): String
+  def getId(request: HttpServletRequest): String
 
-  def delSessionId(request: HttpServletRequest, response: HttpServletResponse): Unit
+  def newId(request: HttpServletRequest, response: HttpServletResponse): String
+
+  def delId(request: HttpServletRequest, response: HttpServletResponse): Unit
 }

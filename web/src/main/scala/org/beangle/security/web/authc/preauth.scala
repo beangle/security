@@ -74,7 +74,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
   /** Do the actual authentication for a pre-authenticated user. */
   private def doAuthenticate(token: PreauthToken, request: HttpServletRequest, response: HttpServletResponse): Unit = {
     try {
-      val newSessionId = securityManager.sessionIdPolicy.newSessionId(request, response)
+      val newSessionId = securityManager.sessionIdPolicy.newId(request, response)
       val session = securityManager.login(newSessionId, token, WebClient.get(request, token.credentials))
       SecurityContext.session = session
       val httpSession = request.getSession(false)

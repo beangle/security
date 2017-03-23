@@ -26,6 +26,7 @@ import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
 
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.web.session.SessionIdPolicy
 
 object CasEntryPoint {
 
@@ -59,6 +60,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   import CasEntryPoint._
   /** 本地登录地址 */
   var localLogin: String = _
+  var sessionIdPolicy: SessionIdPolicy = _
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
     if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException] || ae.isInstanceOf[SessionException])) {
@@ -97,6 +99,6 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
    */
   def constructLoginUrl(loginUrl: String, serviceName: String, serviceUrl: String, renew: Boolean, gateway: Boolean): String = {
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") + serviceName + "=" + URLEncoder.encode(serviceUrl, "UTF-8") +
-      (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "")
+      (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "") + "&scname=" + sessionIdPolicy.idName
   }
 }
