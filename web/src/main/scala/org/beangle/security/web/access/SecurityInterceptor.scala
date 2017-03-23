@@ -35,12 +35,11 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 import org.beangle.security.web.session.SessionIdPolicy
 
 class SecurityInterceptor(val filters: List[SecurityFilter], val registry: SessionRegistry, val entryPoint: EntryPoint,
-    val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
+                          val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
 
   private val hasFilter = !filters.isEmpty
   var expiredUrl: String = _
   var logoutHandler: LogoutHandler = _
-
   var sessionIdPolicy: SessionIdPolicy = _
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {

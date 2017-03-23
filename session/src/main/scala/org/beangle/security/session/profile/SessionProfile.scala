@@ -32,7 +32,7 @@ trait SessionProfile {
 }
 
 object DefaultSessionProfile extends DefaultSessionProfile(1) {
-  this.capacity = Short.MaxValue
+  this.capacity = Int.MaxValue
   this.maxSession = -1
   this.timeout = Session.DefaultTimeOut
 }
