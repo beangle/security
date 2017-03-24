@@ -57,7 +57,7 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       ep.commence(request, response, null)
       verify(response).sendRedirect(
         "https://cas/login?service="
-          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&scname=JSESSIONID")
+          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&sid_name=JSESSIONID")
     }
 
     it("commence with renew") {
@@ -76,7 +76,7 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       ep.commence(request, response, null)
       verify(response).sendRedirect(
         "https://cas/login?service="
-          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&renew=true&scname=JSESSIONID")
+          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&renew=true&sid_name=JSESSIONID")
 
     }
     it("constuct service url") {

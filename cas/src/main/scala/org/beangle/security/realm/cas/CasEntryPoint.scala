@@ -99,6 +99,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
    */
   def constructLoginUrl(loginUrl: String, serviceName: String, serviceUrl: String, renew: Boolean, gateway: Boolean): String = {
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") + serviceName + "=" + URLEncoder.encode(serviceUrl, "UTF-8") +
-      (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "") + "&scname=" + sessionIdPolicy.idName
+      (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "") +
+      "&" + SessionIdPolicy.SessionIdName + "=" + sessionIdPolicy.idName
   }
 }

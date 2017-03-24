@@ -20,7 +20,9 @@ package org.beangle.security.web.session
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
+object SessionIdPolicy {
+  val SessionIdName = "sid_name"
+}
 trait SessionIdPolicy {
 
   def idName: String
