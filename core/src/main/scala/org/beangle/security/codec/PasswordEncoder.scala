@@ -60,7 +60,6 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     msgDigest.reset()
     msgDigest.update(password.getBytes)
     msgDigest.update(hs._2)
-    println(digest,new String(hs._2))
     MessageDigest.isEqual(hs._1, msgDigest.digest())
   }
 

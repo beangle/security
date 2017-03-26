@@ -25,10 +25,12 @@ import javax.servlet.http.HttpServletRequest
 import org.beangle.security.mgt.SecurityManager
 import CasConfig._
 import org.beangle.security.context.SecurityContext
+import org.beangle.security.web.WebSecurityManager
+
 /**
  * Processes a CAS service ticket.
  */
-class CasPreauthFilter(securityManager: SecurityManager, config: CasConfig, ticketValidator: TicketValidator)
+class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, ticketValidator: TicketValidator)
     extends AbstractPreauthFilter(securityManager) {
 
   protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {

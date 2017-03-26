@@ -122,4 +122,3 @@ object DefaultSessionBuilder extends SessionBuilder {
     old.asInstanceOf[DefaultSession].clone(status)
   }
 }
-

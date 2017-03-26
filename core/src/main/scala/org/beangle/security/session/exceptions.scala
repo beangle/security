@@ -24,5 +24,5 @@ class SessionException(msg: String, principal: Any) extends AuthenticationExcept
 }
 
 class OvermaxSessionException(val maxUserLimit: Int, principal: Any)
-  extends SessionException(String.valueOf(maxUserLimit), principal) {
+    extends SessionException("Over max session Limit :" + String.valueOf(maxUserLimit), principal) {
 }

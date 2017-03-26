@@ -21,11 +21,9 @@ package org.beangle.security.web.session
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class DefaultSessionIdPolicy extends SessionIdPolicy {
+class ParamSessionIdPolicy(val sessionIdParam: String = "JSESSIONID") extends SessionIdPolicy {
 
-  var sessionIdParam: String = _
-
-  def getSessionId(req: HttpServletRequest): String = {
+  override def getId(req: HttpServletRequest): String = {
     var sid: String = null
     if (null != sessionIdParam) {
       sid = req.getParameter(sessionIdParam)
@@ -36,7 +34,7 @@ class DefaultSessionIdPolicy extends SessionIdPolicy {
     if (null != sid) sid else null
   }
 
-  def newSessionId(req: HttpServletRequest, res: HttpServletResponse): String = {
+  override def newId(req: HttpServletRequest, res: HttpServletResponse): String = {
     if (null == sessionIdParam) {
       req.getSession(true).getId
     } else {
@@ -44,6 +42,10 @@ class DefaultSessionIdPolicy extends SessionIdPolicy {
     }
   }
 
-  def delSessionId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+  override def delId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+  }
+
+  override def idName: String = {
+    sessionIdParam
   }
 }

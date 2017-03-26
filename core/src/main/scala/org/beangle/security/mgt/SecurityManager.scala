@@ -40,12 +40,3 @@ trait SecurityManager {
 
   def logout(session: Session): Unit = session.stop()
 }
-
-class DefaultSecurityManager(val authenticator: Authenticator, val authorizer: Authorizer,
-    val sessionRegistry: SessionRegistry) extends SecurityManager {
-
-  def login(sessionId: String, token: AuthenticationToken, client: Session.Client): Session = {
-    sessionRegistry.register(sessionId, authenticator.authenticate(token), client)
-  }
-
-}

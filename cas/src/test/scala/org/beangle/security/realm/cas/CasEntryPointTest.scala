@@ -30,6 +30,7 @@ import org.mockito.stubbing.Answer
 import org.scalatest.{ FunSpec, Matchers }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 import org.scalatest.junit.JUnitRunner
+import org.beangle.security.web.session.ParamSessionIdPolicy
 
 @RunWith(classOf[JUnitRunner])
 class CasEntryPointTest extends FunSpec with Matchers with Logging {
@@ -45,6 +46,7 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       val config = new CasConfig("https://cas")
       config.renew = false
       val ep = new CasEntryPoint(config)
+      ep.sessionIdPolicy = new ParamSessionIdPolicy
       val request = mock(classOf[HttpServletRequest])
       when(request.getRequestURI()).thenReturn("/bigWebApp/some_path")
       when(request.getServerName()).thenReturn("mycompany.com")
@@ -55,13 +57,14 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       ep.commence(request, response, null)
       verify(response).sendRedirect(
         "https://cas/login?service="
-          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8"))
+          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&sid_name=JSESSIONID")
     }
 
     it("commence with renew") {
       val config = new CasConfig("https://cas")
       config.renew = true
       val ep = new CasEntryPoint(config)
+      ep.sessionIdPolicy = new ParamSessionIdPolicy
       val request = mock(classOf[HttpServletRequest])
       when(request.getRequestURI()).thenReturn("/bigWebApp/some_path")
       when(request.getServerName()).thenReturn("mycompany.com")
@@ -73,7 +76,7 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       ep.commence(request, response, null)
       verify(response).sendRedirect(
         "https://cas/login?service="
-          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&renew=true")
+          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&renew=true&sid_name=JSESSIONID")
 
     }
     it("constuct service url") {

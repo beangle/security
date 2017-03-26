@@ -20,7 +20,8 @@ package org.beangle.security.realm.cas
 
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.{ Account, AuthenticationToken, Authenticator, BadCredentialsException }
-import org.beangle.security.mgt.DefaultSecurityManager
+import org.beangle.security.web.session.ParamSessionIdPolicy
+import org.beangle.security.web.WebSecurityManager
 import org.junit.runner.RunWith
 import org.mockito.Mockito.{ mock, when }
 import org.scalatest.{ FunSpec, Matchers }
@@ -37,20 +38,20 @@ class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
       throw new BadCredentialsException("Rejected", token, null)
     }
   }
-  val securityManager = new DefaultSecurityManager(authenticator, null, null)
+  val securityManager = new WebSecurityManager(authenticator, null, null, new ParamSessionIdPolicy)
 
-  val filter = new CasPreauthFilter(securityManager, new CasConfig("http://localhost/cas"),null)
+  val filter = new CasPreauthFilter(securityManager, new CasConfig("http://localhost/cas"), null)
 
   describe("CasPreauthFilter") {
     it("Normal operation") {
       assert(null != filter.getCredentials(mockRequest()))
     }
 
-//    it("Null Service Ticket Handled Gracefully") {
-//      intercept[BadCredentialsException] {
-//        filter.doFilter(mockRequest(), mock(classOf[HttpServletResponse]), mock(classOf[FilterChain]))
-//      }
-//    }
+    //    it("Null Service Ticket Handled Gracefully") {
+    //      intercept[BadCredentialsException] {
+    //        filter.doFilter(mockRequest(), mock(classOf[HttpServletResponse]), mock(classOf[FilterChain]))
+    //      }
+    //    }
   }
 
   private def mockRequest(): HttpServletRequest = {
