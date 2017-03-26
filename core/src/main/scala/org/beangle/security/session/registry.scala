@@ -24,14 +24,13 @@ import org.beangle.security.authc.Account
 
 trait SessionRegistry {
 
+  def get(sessionId: String): Option[Session]
+
   def register(sessionId: String, info: Account, client: Session.Client): Session
 
   def remove(sessionId: String): Option[Session]
 
   def access(sessionId: String, accessAt: Long, accessed: String): Option[Session]
-
-  def get(sessionId: String): Option[Session]
-
 }
 
 trait LimitedSessionRegistry extends SessionRegistry {

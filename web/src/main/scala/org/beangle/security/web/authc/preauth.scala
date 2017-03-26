@@ -25,7 +25,8 @@ import org.beangle.security.authc.{ AuthenticationException, AuthenticationToken
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.Session
-import org.beangle.security.web.session.{ DefaultSessionIdPolicy, SessionIdPolicy }
+import org.beangle.security.web.session.SessionIdPolicy
+import org.beangle.security.web.WebSecurityManager
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
@@ -55,9 +56,8 @@ class PreauthToken(val principal: Any, val credentials: Any) extends Authenticat
   }
 }
 
-abstract class AbstractPreauthFilter(val securityManager: SecurityManager) extends GenericHttpFilter with Logging {
+abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter with Logging {
 
-  var sessionIdPolicy: SessionIdPolicy = new DefaultSessionIdPolicy
   /**
    * Try to authenticate a pre-authenticated user if the
    * user has not yet been authenticated.
@@ -74,7 +74,8 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
   /** Do the actual authentication for a pre-authenticated user. */
   private def doAuthenticate(token: PreauthToken, request: HttpServletRequest, response: HttpServletResponse): Unit = {
     try {
-      val session = securityManager.login(sessionIdPolicy.newSessionId(request, response), token, WebClient.get(request, token.credentials))
+      val newSessionId = securityManager.sessionIdPolicy.newId(request, response)
+      val session = securityManager.login(newSessionId, token, WebClient.get(request, token.credentials))
       SecurityContext.session = session
       val httpSession = request.getSession(false)
       if (null != httpSession) httpSession.setMaxInactiveInterval(session.timeout)
@@ -127,7 +128,7 @@ abstract class AbstractPreauthFilter(val securityManager: SecurityManager) exten
   }
 }
 
-class UsernamePreauthFilter(securityManager: SecurityManager) extends AbstractPreauthFilter(securityManager) {
+class UsernamePreauthFilter(securityManager: WebSecurityManager) extends AbstractPreauthFilter(securityManager) {
   var usernameSource: UsernameSource = _
 
   protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {

@@ -34,11 +34,13 @@ import org.beangle.security.session.util.UpdateDelayGenerator
 import org.nustaq.serialization.FSTConfiguration
 
 import javax.sql.DataSource
+import org.beangle.commons.logging.Logging
+
 /**
  * 基于数据库的session注册表
  */
 class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, statusCacheManager: CacheManager)
-    extends ProfiledSessionRegistry with EventPublisher with Initializing {
+    extends ProfiledSessionRegistry with EventPublisher with Initializing with Logging {
 
   private val fstconf = FSTConfiguration.createDefaultConfiguration()
 
@@ -62,7 +64,7 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
 
   var statTable = "session_stats"
 
-  var cleaner: SessionCleaner = _
+  var enableCleanup = false
 
   def init() {
     val exists = executor.query(s"select id from $statTable").map(x => x.head.asInstanceOf[Int]).toSet
@@ -73,7 +75,9 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
         executor.update(s"insert into $statTable(id,on_line,capacity,stat_at) values(?,?,?,?)", p.id, 0, p.capacity, new ju.Date)
       }
     }
-    if (null != cleaner) {
+    if (enableCleanup) {
+      val cleaner = new SessionCleaner(this)
+      logger.info(s"start Beangle Session Cleaner after ${cleaner.cleanIntervalMillis} millis")
       // 下一次间隔开始清理，不浪费启动时间
       new Timer("Beangle Session Cleaner", true).schedule(new SessionCleanupDaemon(cleaner),
         new ju.Date(System.currentTimeMillis + cleaner.cleanIntervalMillis),
@@ -210,3 +214,4 @@ class DBSessionRegistry(dataSource: DataSource, dataCacheManager: CacheManager, 
   }
 
 }
+
