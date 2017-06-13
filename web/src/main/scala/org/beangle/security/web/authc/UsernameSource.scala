@@ -23,7 +23,11 @@ import org.beangle.commons.lang.Strings
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.web.util.RequestUtils
 import org.beangle.commons.logging.Logging
-import java.util.Date
+import java.time.ZonedDateTime
+import java.time.ZoneId
+import java.time.Instant
+import java.time.Clock
+
 /**
  * Source of the username supplied with pre-authenticated authentication
  * request. The username can be supplied in the request: in cookie, request
@@ -124,10 +128,10 @@ class ParameterUsernameSource extends UsernameSource with Logging {
         logger.debug(s"my_digest:$digest")
       }
       if (digest.equals(s)) {
-        val time = t * 1000
-        val now = new Date()
-        if (enableExpired && (Math.abs(now.getTime() - time) > (expiredTime * 1000))) {
-          logger.debug(s"user $cid time expired:server time:${now} and given time :${new java.util.Date(time)}")
+        val now = ZonedDateTime.now
+        val time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(t), ZoneId.systemDefault())
+        if (enableExpired && (Math.abs(now.toEpochSecond - t) > (expiredTime))) {
+          logger.debug(s"user $cid time expired:server time:${now} and given time :${time}")
           None
         } else {
           logger.debug(s"user $cid login at server time:$now")
