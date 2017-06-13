@@ -30,7 +30,7 @@ class Cas20TicketValidatorTest extends FunSpec with Matchers {
   val validator = new DefaultTicketValidator
   describe("DefaultCasTicketValidator") {
     it("should parse success") {
-      val file = new File(ClassLoaders.getResource("auth-success.xml").getFile())
+      val file = new File(ClassLoaders.getResource("auth-success.xml").get.getFile())
       val response = Files.readString(file)
       val assertion = validator.parseResponse("testticket", response)
       assert(null != assertion)
@@ -38,7 +38,7 @@ class Cas20TicketValidatorTest extends FunSpec with Matchers {
     }
 
     it("should raise exception when failure") {
-      val file = new File(ClassLoaders.getResource("auth-failure.xml").getFile())
+      val file = new File(ClassLoaders.getResource("auth-failure.xml").get.getFile())
       val response = Files.readString(file)
       intercept[TicketValidationException] {
         validator.parseResponse("ticket", response)

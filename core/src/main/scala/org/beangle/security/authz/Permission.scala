@@ -19,13 +19,13 @@
 package org.beangle.security.authz
 
 import java.security.Principal
-import java.util.Date
+import java.time.ZonedDateTime
 
 trait Permission extends Serializable with Cloneable {
   def resource: Resource
   def principal: Principal
   def actions: Option[String]
   def restrictions: Option[String]
-  def beginAt: Date
-  def endAt: Option[Date]
+  def beginAt: ZonedDateTime
+  def endAt: Option[ZonedDateTime]
 }

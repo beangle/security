@@ -22,7 +22,7 @@ import java.io.{ InputStream, ObjectInputStream }
 import java.{ util => ju }
 import java.util.Timer
 import org.beangle.commons.bean.Initializing
-import org.beangle.commons.cache.CacheManager
+import org.beangle.cache.CacheManager
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.JdbcExecutor
