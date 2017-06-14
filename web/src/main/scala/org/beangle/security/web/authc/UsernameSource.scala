@@ -23,7 +23,6 @@ import org.beangle.commons.lang.Strings
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.web.util.RequestUtils
 import org.beangle.commons.logging.Logging
-import java.time.ZonedDateTime
 import java.time.ZoneId
 import java.time.Instant
 import java.time.Clock
@@ -128,10 +127,9 @@ class ParameterUsernameSource extends UsernameSource with Logging {
         logger.debug(s"my_digest:$digest")
       }
       if (digest.equals(s)) {
-        val now = ZonedDateTime.now
-        val time = ZonedDateTime.ofInstant(Instant.ofEpochSecond(t), ZoneId.systemDefault())
-        if (enableExpired && (Math.abs(now.toEpochSecond - t) > (expiredTime))) {
-          logger.debug(s"user $cid time expired:server time:${now} and given time :${time}")
+        val now = Instant.now.getEpochSecond
+        if (enableExpired && (Math.abs(now - t) > (expiredTime))) {
+          logger.debug(s"user $cid time expired:server time:${now} and given time :${t}")
           None
         } else {
           logger.debug(s"user $cid login at server time:$now")
