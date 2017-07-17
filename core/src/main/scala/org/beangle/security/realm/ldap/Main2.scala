@@ -22,35 +22,18 @@ import java.io.{ BufferedReader, InputStreamReader }
 
 import org.beangle.commons.lang.{ Consoles, Strings }
 import org.beangle.security.codec.DefaultPasswordEncoder
+import java.io.FileReader
+import java.io.File
+import org.beangle.commons.csv.CsvReader
+import java.io.FileWriter
+import org.beangle.commons.csv.CsvWriter
 
-object Main {
+object Main2 {
 
   private def getStore(url: String, username: String, password: String, base: String): LdapUserStore = {
     val ctx = new PoolingContextSource(url, username, password)
     ctx.init()
     new SimpleLdapUserStore(ctx, base)
-  }
-
-  private def tryGet(store: LdapUserStore, name: String): Option[String] = {
-    store.getUserDN(name) match {
-      case Some(dname) =>
-        val details = store.getAttributes(dname)
-        println("Find:" + name)
-        println("dn:" + dname)
-        println("detail:" + details)
-        Some(dname)
-      case None =>
-        println("Cannot find :" + name)
-        None
-    }
-  }
-
-  private def tryTestPassword(store: LdapUserStore, dn: String, password: String) {
-    val rs = store.getPassword(dn) match {
-      case Some(p) => DefaultPasswordEncoder.verify(p, password)
-      case None    => false
-    }
-    println("password " + (if (rs) " ok! " else " WRONG!"))
   }
 
   def main(args: Array[String]): Unit = {
@@ -68,36 +51,31 @@ object Main {
       password = args(3)
     }
 
-    println("Connecting to ldap://" + host)
-    println("Using base:" + base)
     val store = getStore("ldap://" + host, username, password, base)
-    println("verify/change user/password: ")
-    val stdin = new BufferedReader(new InputStreamReader(System.in))
-    var value = stdin.readLine()
-    while (Strings.isNotBlank(value)) {
-      if (value == "quit" || value == "q" || value == "exit") System.exit(0)
-      val action = Strings.substringBefore(value, " ")
-      value = Strings.substringAfterLast(value, " ")
-      var myname: String = null
-      var mypass: String = null
-      if (value.contains("/")) {
-        myname = Strings.substringBefore(value, "/")
-        mypass = Strings.substringAfter(value, "/")
+    val accountReader = new FileReader(new File("/Users/chaostone/data-1497760352517.csv"))
+    val accountWriter = new FileWriter(new File("/Users/chaostone/data-1497760352517_new.csv"))
+    val accountCsvReader = new CsvReader(accountReader)
+    val accountCsvWriter = new CsvWriter(accountWriter)
+    accountCsvReader.readNext()
+    var result = accountCsvReader.readNext()
+    var i = 1
+    while (null != result) {
+      val name = result(0)
+      println(s"processing $i")
+      val pwd = store.getUserDN(name) match {
+        case Some(dn) =>
+          val p = store.getPassword(dn).getOrElse("??1")
+          if (p == "??1") println(s"$i $name missing passwd")
+          p
+        case None =>
+          println(s"processing $i $name and entry is missing")
+          "???"
       }
-      if (action == "verify") {
-        tryGet(store, myname) foreach { dn =>
-          tryTestPassword(store, dn, mypass)
-        }
-      } else if (action == "change") {
-        tryGet(store, myname) foreach { dn =>
-          store.updatePassword(dn, mypass)
-          tryTestPassword(store, dn, mypass)
-        }
-      }
-      println("verify/change user[/password]: ")
-      value = stdin.readLine()
+      accountCsvWriter.write(Array(result(0), pwd))
+      result = accountCsvReader.readNext()
+      i += 1
     }
-
+    accountCsvWriter.close();
   }
 
 }

@@ -25,6 +25,7 @@ import org.beangle.commons.logging.Logging
 
 import javax.naming.Context.{ INITIAL_CONTEXT_FACTORY, PROVIDER_URL, SECURITY_AUTHENTICATION, SECURITY_CREDENTIALS, SECURITY_PRINCIPAL }
 import javax.naming.directory.{ DirContext, InitialDirContext }
+import org.beangle.commons.bean.Disposable
 
 /**
  * @author chaostone
@@ -39,7 +40,7 @@ trait ContextSource {
  * @see http://docs.oracle.com/javase/jndi/tutorial/ldap/connect/pool.html
  * @see http://blog.pierreroudier.net/2013/10/jndi-ldap-pools-unlimited-size-and-no-timeout-by-default/
  */
-class PoolingContextSource(val url: String, userName: String, password: String) extends ContextSource with Initializing with Logging {
+class PoolingContextSource(val url: String, userName: String, password: String) extends ContextSource with Initializing with Disposable with Logging {
 
   private var properties = new jl.Hashtable[String, String]
 
@@ -68,5 +69,9 @@ class PoolingContextSource(val url: String, userName: String, password: String) 
 
   def release(ctx: DirContext): Unit = {
     if (ctx != null) ctx.close()
+  }
+
+  def destroy(): Unit = {
+
   }
 }
