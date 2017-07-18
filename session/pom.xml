@@ -12,7 +12,6 @@
   <properties>
     <bundle.symbolicName>org.beangle.security.session</bundle.symbolicName>
     <bundle.namespace>org.beangle.security.session</bundle.namespace>
-    <fst.version>2.48</fst.version>
   </properties>
 
   <dependencies>
@@ -28,11 +27,6 @@
       <groupId>org.beangle.data</groupId>
       <artifactId>beangle-data-jdbc_2.12</artifactId>
       <version>${beangle.data.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>de.ruedigermoeller</groupId>
-      <artifactId>fst</artifactId>
-      <version>${fst.version}</version>
     </dependency>
   </dependencies>
 </project>

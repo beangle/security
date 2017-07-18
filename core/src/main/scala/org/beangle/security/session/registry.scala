@@ -18,8 +18,8 @@
  */
 package org.beangle.security.session
 
-import org.beangle.commons.event.EventPublisher
-import org.beangle.commons.logging.Logging
+import java.time.{ Duration, Instant }
+
 import org.beangle.security.authc.Account
 
 trait SessionRegistry {
@@ -30,14 +30,14 @@ trait SessionRegistry {
 
   def remove(sessionId: String): Option[Session]
 
-  def access(sessionId: String, accessAt: Long, accessed: String): Option[Session]
+  def access(sessionId: String, accessAt: Instant, accessed: String): Option[Session]
 }
 
 trait LimitedSessionRegistry extends SessionRegistry {
 
   protected def getMaxSession(auth: Account): Int
 
-  protected def getTimeout(auth: Account): Short
+  protected def getTimeout(auth: Account): Duration
 
   protected def allocate(auth: Account, sessionId: String): Boolean
   /**

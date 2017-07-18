@@ -22,6 +22,7 @@ import org.beangle.security.authc.Account
 import org.beangle.commons.event.EventListener
 import org.beangle.commons.event.Event
 import org.beangle.security.session.LimitedSessionRegistry
+import java.time.Duration
 
 /**
  * @author chaostone
@@ -34,7 +35,7 @@ abstract class ProfiledSessionRegistry extends LimitedSessionRegistry with Event
     profileProvider.getProfile(auth).maxSession
   }
 
-  protected def getTimeout(auth: Account): Short = {
+  protected def getTimeout(auth: Account): Duration = {
     profileProvider.getProfile(auth).timeout
   }
 

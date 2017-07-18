@@ -141,12 +141,12 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
     getUserDN(principal.toString).map(dn => new DefaultAccount(principal, dn))
   }
 
+  //FIXME 
   def create(user: Account, password: String): Unit = {
     val attrs = new BasicAttributes();
     attrs.put("cn", user.description)
     attrs.put("sn", user.description)
     attrs.put(uidName, user.principal.toString)
     attrs.put(LdapUserStore.UserPassword, password.getBytes)
-    
   }
 }

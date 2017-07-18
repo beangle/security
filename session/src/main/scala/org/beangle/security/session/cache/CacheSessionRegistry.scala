@@ -18,40 +18,28 @@
  */
 package org.beangle.security.session.jdbc
 
-import java.io.{ InputStream, ObjectInputStream }
-import java.{ util => ju }
-import java.util.Timer
-import org.beangle.commons.bean.Initializing
+import java.time.{ Duration, Instant }
+
 import org.beangle.cache.CacheManager
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.lang.Objects
-import org.beangle.data.jdbc.query.JdbcExecutor
 import org.beangle.security.authc.Account
-import org.beangle.security.session.profile.{ ProfileChangeEvent, ProfiledSessionRegistry }
+import org.beangle.security.session.{ DefaultSession, DefaultSessionBuilder, LogoutEvent, Session, SessionBuilder, SessionRegistry }
 import org.beangle.security.session.util.UpdateDelayGenerator
-import org.nustaq.serialization.FSTConfiguration
-import javax.sql.DataSource
-import org.beangle.security.session.SessionRegistry
-import org.beangle.security.session.LogoutEvent
-import org.beangle.security.session.DefaultSession
-import org.beangle.security.session.SessionBuilder
-import org.beangle.security.session.DefaultSessionBuilder
-import org.beangle.security.session.Session
+
 /**
  * 基于数据库的session注册表
  */
 class CacheSessionRegistry(dataCacheManager: CacheManager, statusCacheManager: CacheManager) extends SessionRegistry
     with EventPublisher {
 
-  private val fstconf = FSTConfiguration.createDefaultConfiguration()
-
-  private val accessDelayMillis = new UpdateDelayGenerator().generateDelayMilliTime()
+  private val accessDelaySeconds = new UpdateDelayGenerator().generateDelaySeconds()
 
   private val dataCache = dataCacheManager.getCache("session_data", classOf[String], classOf[Session.Data])
 
   private val statusCache = statusCacheManager.getCache("session_status", classOf[String], classOf[Session.Status])
 
-  private val timeout = dataCache.ttl
+  private val timeout = Duration.ofSeconds(dataCache.ttl)
 
   var builder: SessionBuilder = DefaultSessionBuilder
 
@@ -65,7 +53,7 @@ class CacheSessionRegistry(dataCacheManager: CacheManager, statusCacheManager: C
       existed
     } else {
       if (null != existed) remove(sessionId, " expired with replacement."); // 注销同会话的其它账户
-      val session = builder.build(sessionId, this, info, client, System.currentTimeMillis(), timeout) // 新生
+      val session = builder.build(sessionId, this, info, client, Instant.now, timeout) // 新生
       save(session)
       //      publish(new LoginEvent(session))
       session
@@ -76,17 +64,17 @@ class CacheSessionRegistry(dataCacheManager: CacheManager, statusCacheManager: C
     remove(sessionId, null)
   }
 
-  override def access(sessionId: String, accessAt: Long, accessed: String): Option[Session] = {
+  override def access(sessionId: String, accessAt: Instant, accessed: String): Option[Session] = {
     get(sessionId) match {
       case s @ Some(session) =>
-        if ((accessAt - session.status.lastAccessAt) > accessDelayMillis) {
+        if ((accessAt.getEpochSecond - session.status.lastAccessAt.getEpochSecond) > accessDelaySeconds) {
           //the session was killed by some one,next access will issue login
-//          if (dataCache.touch(session.id)) {
-//            statusCache.put(session.id, new Session.DefaultStatus(accessAt))
-//          } else {
-//            dataCache.evict(session.id)
-//            statusCache.evict(session.id)
-//          }
+          if (dataCache.touch(session.id)) {
+            statusCache.put(session.id, new Session.DefaultStatus(accessAt))
+          } else {
+            dataCache.evict(session.id)
+            statusCache.evict(session.id)
+          }
         }
         s
       case None => None
@@ -103,7 +91,7 @@ class CacheSessionRegistry(dataCacheManager: CacheManager, statusCacheManager: C
       None
     } else {
       if (null == status) {
-        status = new Session.DefaultStatus(System.currentTimeMillis)
+        status = new Session.DefaultStatus(Instant.now)
         statusCache.put(sessionId, status)
       }
       Some(builder.build(sessionId, this, data, status))

@@ -31,10 +31,10 @@ object WebClient {
     new Session.AgentClient(agent.browser.toString, ip, agent.os.toString)
   }
 
-  def get(request: HttpServletRequest, ssoCredentials: Any): Session.Client = {
+  def get(request: HttpServletRequest, ssoToken: Any): Session.Client = {
     val agent = RequestUtils.getUserAgent(request)
     val server = request.getLocalAddr() + ":" + request.getLocalPort()
     val ip = RequestUtils.getIpAddr(request)
-    new Session.SsoClient(ssoCredentials, agent.browser.toString, ip, agent.os.toString)
+    new Session.SsoClient(ssoToken, agent.browser.toString, ip, agent.os.toString)
   }
 }
