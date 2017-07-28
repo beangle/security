@@ -19,7 +19,7 @@
 package org.beangle.security.session.jdbc
 
 import java.io.{ InputStream, ObjectInputStream }
-import java.sql.Timestamp
+import java.sql.{ Timestamp, Types }
 import java.time.Instant
 import java.util.Timer
 
@@ -29,7 +29,7 @@ import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
 import org.beangle.commons.logging.Logging
-import org.beangle.data.jdbc.query.JdbcExecutor
+import org.beangle.data.jdbc.query.{ JdbcExecutor, ParamSetter }
 import org.beangle.security.authc.Account
 import org.beangle.security.session.{ DefaultSession, DefaultSessionBuilder, LoginEvent, LogoutEvent, Session, SessionBuilder }
 import org.beangle.security.session.profile.{ ProfileChangeEvent, ProfiledSessionRegistry }
@@ -44,7 +44,7 @@ class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer,
   dataCacheManager: CacheManager, statusCacheManager: CacheManager)
     extends ProfiledSessionRegistry with EventPublisher with Initializing with Logging {
 
-  private val insertColumns = "id,principal,ip,agent,os,loginAt,timeout,last_access_at,profile_id,data"
+  private val insertColumns = "id,principal,description,ip,agent,os,login_at,timeout,last_access_at,profile_id,data"
 
   private val allSelectColumns = "data,last_access_at"
 
@@ -109,7 +109,8 @@ class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer,
     get(sessionId) match {
       case s @ Some(session) =>
         if ((accessAt.getEpochSecond - session.status.lastAccessAt.getEpochSecond) > accessDelaySeconds) {
-          val existed = executor.update(s"update $sessionTable set last_access_at=? where id=?", accessAt, session.id) > 0
+          val existed = executor.update(s"update $sessionTable set last_access_at=? where id=?",
+            Timestamp.from(accessAt), session.id) > 0
           //the session was killed by some one,next access will issue login
           if (existed) {
             statusCache.put(session.id, new Session.DefaultStatus(accessAt))
@@ -166,8 +167,8 @@ class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer,
     }
   }
 
-  def getBeforeAccessAt(lastAccessAt: Long): Seq[String] = {
-    executor.query(s"select id from $sessionTable info where info.last_access_at <?", lastAccessAt).map { data => data(0).toString }
+  def getBeforeAccessAt(lastAccessAt: Instant): Seq[String] = {
+    executor.query(s"select id from $sessionTable info where info.last_access_at < ?", Timestamp.from(lastAccessAt)).map { data => data(0).toString }
   }
 
   protected override def allocate(auth: Account, sessionId: String): Boolean = {
@@ -207,12 +208,22 @@ class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer,
 
     //principal,ip,agent,os,loginAt,timeout,last_access_at,profile_id,data
     val ac = s.client.asInstanceOf[Session.AgentClient]
-    executor.update(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?)",
-      sessionId, s.principal.getName, s.client.ip,
-      ac.agent, ac.os, Timestamp.from(s.loginAt), s.timeout.getSeconds,
-      Timestamp.from(s.status.lastAccessAt), profileProvider.getProfile(s.principal).id.longValue,
-      serializer.serialize(new Session.Data(s.principal, s.client, s.loginAt, s.timeout), Map.empty))
-
+    executor.statement(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?,?)")
+      .prepare(x => {
+        x.setString(1, sessionId)
+        x.setString(2, s.principal.getName)
+        x.setString(3, s.principal.description)
+        x.setString(4, s.client.ip)
+        x.setString(5, ac.agent)
+        x.setString(6, ac.os)
+        x.setTimestamp(7, Timestamp.from(s.loginAt))
+        x.setInt(8, s.timeout.getSeconds.asInstanceOf[Int])
+        x.setTimestamp(9, Timestamp.from(s.status.lastAccessAt))
+        x.setLong(10, profileProvider.getProfile(s.principal).id.longValue)
+        ParamSetter.setParam(x, 11,
+          serializer.serialize(new Session.Data(s.principal, s.client, s.loginAt, s.timeout), Map.empty),
+          Types.BINARY)
+      }).execute()
     dataCache.putIfAbsent(sessionId, s.data)
     statusCache.put(sessionId, s.status) // Given the status cache is local cache
   }
