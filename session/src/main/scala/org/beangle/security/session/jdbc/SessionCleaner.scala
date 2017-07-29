@@ -48,7 +48,7 @@ class SessionCleaner(val registry: DBSessionRegistry) extends Logging {
     val calendar = ju.Calendar.getInstance()
     try {
       var removed = 0
-      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -expiredMinutes).getTime) foreach { sid =>
+      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -expiredMinutes).toInstant) foreach { sid =>
         registry.remove(sid) foreach (olds => removed += 1)
       }
       if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")

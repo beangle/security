@@ -18,11 +18,11 @@
  */
 package org.beangle.security.web.access
 
-import java.{ util => ju }
+import java.time.Instant
+
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.web.filter.VirtualFilterChain
 import org.beangle.commons.web.intercept.Interceptor
-import org.beangle.commons.web.util.{ RedirectUtils, RequestUtils }
+import org.beangle.commons.web.util.RequestUtils
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
@@ -30,12 +30,13 @@ import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.SessionRegistry
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.authc.LogoutHandler
-import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 import org.beangle.security.web.session.SessionIdPolicy
 
+import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
+import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+
 class SecurityInterceptor(val filters: List[SecurityFilter], val registry: SessionRegistry, val entryPoint: EntryPoint,
-                          val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
+    val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
 
   private val hasFilter = !filters.isEmpty
   var expiredUrl: String = _
@@ -45,7 +46,7 @@ class SecurityInterceptor(val filters: List[SecurityFilter], val registry: Sessi
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
       val sid = sessionIdPolicy.getId(req)
-      SecurityContext.session = registry.access(sid, System.currentTimeMillis, RequestUtils.getServletPath(req)).orNull
+      SecurityContext.session = registry.access(sid, Instant.now, RequestUtils.getServletPath(req)).orNull
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {

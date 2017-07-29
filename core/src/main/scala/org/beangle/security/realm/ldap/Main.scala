@@ -21,31 +21,36 @@ package org.beangle.security.realm.ldap
 import java.io.{ BufferedReader, InputStreamReader }
 
 import org.beangle.commons.lang.{ Consoles, Strings }
+import org.beangle.security.codec.DefaultPasswordEncoder
 
 object Main {
 
-  private def getStore(url: String, username: String, password: String, base: String): LdapUserService = {
+  private def getStore(url: String, username: String, password: String, base: String): LdapUserStore = {
     val ctx = new PoolingContextSource(url, username, password)
     ctx.init()
-    new DefaultLdapUserService(ctx, base)
+    new SimpleLdapUserStore(ctx, base)
   }
 
-  private def tryGet(store: LdapUserService, name: String) {
-    val dn = store.getUserDN(name) match {
-      case Some(dn) =>
-        val details = store.getAttributes(dn)
+  private def tryGet(store: LdapUserStore, name: String): Option[String] = {
+    store.getUserDN(name) match {
+      case Some(dname) =>
+        val details = store.getAttributes(dname)
         println("Find:" + name)
-        println("dn:" + dn)
+        println("dn:" + dname)
         println("detail:" + details)
+        Some(dname)
       case None =>
         println("Cannot find :" + name)
+        None
     }
   }
 
-  private def tryTestPassword(store: LdapUserService, name: String, password: String) {
-    val checker = new DefaultCredentialsChecker(store)
-    val isTrue = checker.check(name, password)
-    println("password " + (if (isTrue) " ok! " else " WRONG!"))
+  private def tryTestPassword(store: LdapUserStore, dn: String, password: String) {
+    val rs = store.getPassword(dn) match {
+      case Some(p) => DefaultPasswordEncoder.verify(p, password)
+      case None    => false
+    }
+    println("password " + (if (rs) " ok! " else " WRONG!"))
   }
 
   def main(args: Array[String]): Unit = {
@@ -66,28 +71,33 @@ object Main {
     println("Connecting to ldap://" + host)
     println("Using base:" + base)
     val store = getStore("ldap://" + host, username, password, base)
-    println("Enter query user[/password]: ")
+    println("verify/change user/password: ")
     val stdin = new BufferedReader(new InputStreamReader(System.in))
     var value = stdin.readLine()
     while (Strings.isNotBlank(value)) {
-      var myname = value
+      if (value == "quit" || value == "q" || value == "exit") System.exit(0)
+      val action = Strings.substringBefore(value, " ")
+      value = Strings.substringAfterLast(value, " ")
+      var myname: String = null
       var mypass: String = null
       if (value.contains("/")) {
         myname = Strings.substringBefore(value, "/")
         mypass = Strings.substringAfter(value, "/")
       }
-      try {
-        tryGet(store, myname)
-        if (null != mypass) {
-          tryTestPassword(store, myname, mypass)
+      if (action == "verify") {
+        tryGet(store, myname) foreach { dn =>
+          tryTestPassword(store, dn, mypass)
         }
-      } catch {
-        case e: Exception => e.printStackTrace()
-      } finally {
-        println("Enter query user[/password]: ")
+      } else if (action == "change") {
+        tryGet(store, myname) foreach { dn =>
+          store.updatePassword(dn, mypass)
+          tryTestPassword(store, dn, mypass)
+        }
       }
+      println("verify/change user[/password]: ")
       value = stdin.readLine()
     }
+
   }
 
 }

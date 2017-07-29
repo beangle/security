@@ -18,36 +18,33 @@
  */
 package org.beangle.security.session
 
-import java.io.{ Serializable => jSerializable }
-import java.security.Principal
+import java.time.{ Duration, Instant }
+
 import org.beangle.security.authc.Account
 import org.beangle.security.context.SecurityContext
 
 object Session {
-  val DefaultTimeOut: Short = 30 * 60
+  val DefaultTimeOut = Duration.ofSeconds(30 * 60)
 
   def user: String = {
     SecurityContext.session.principal.getName
   }
 
   trait Client extends Serializable {
-
     def ip: String
-
   }
 
   trait Status extends Serializable {
-
-    def lastAccessAt: Long
+    def lastAccessAt: Instant
   }
 
-  class Data(val principal: Account, val client: Client, val loginAt: Long, val timeout: Int) extends Serializable
+  class Data(val account: Account, val client: Client, val loginAt: Instant, val timeout: Duration) extends Serializable
 
   class AgentClient(val agent: String, val ip: String, val os: String) extends Client
 
-  class SsoClient(val ssoCredentials: Any, agent: String, ip: String, os: String) extends AgentClient(agent, ip, os)
+  class SsoClient(val token: Any, agent: String, ip: String, os: String) extends AgentClient(agent, ip, os)
 
-  class DefaultStatus(val lastAccessAt: Long) extends Status
+  class DefaultStatus(val lastAccessAt: Instant) extends Status
 }
 
 trait Session {
@@ -60,12 +57,9 @@ trait Session {
 
   def status: Session.Status
 
-  def loginAt: Long
+  def loginAt: Instant
 
-  /** the time in seconds that the session may remain idle before expiring.*/
-  def timeout: Int
-
-  def onlineTime: Long
+  def timeout: Duration
 
   def stop(): Unit
 
@@ -74,18 +68,18 @@ trait Session {
 class DefaultSession(val id: String, registry: SessionRegistry, val data: Session.Data, val status: Session.Status) extends Session {
 
   override def principal: Account = {
-    data.principal
+    data.account
   }
 
   override def client: Session.Client = {
     data.client
   }
 
-  override def loginAt: Long = {
+  override def loginAt: Instant = {
     data.loginAt
   }
 
-  override def timeout: Int = {
+  override def timeout: Duration = {
     data.timeout
   }
 
@@ -93,8 +87,8 @@ class DefaultSession(val id: String, registry: SessionRegistry, val data: Sessio
     registry.remove(id)
   }
 
-  override def onlineTime: Long = {
-    System.currentTimeMillis() - loginAt
+  def onlineTime: Duration = {
+    Duration.ofSeconds(Instant.now().getEpochSecond - loginAt.getEpochSecond)
   }
 
   def clone(newer: Session.Status): Session = {
@@ -103,15 +97,15 @@ class DefaultSession(val id: String, registry: SessionRegistry, val data: Sessio
 }
 
 trait SessionBuilder {
-  def build(key: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Long, timeout: Int): Session
+  def build(key: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Instant, timeout: Duration): Session
   def build(key: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session
   def build(old: Session, status: Session.Status): Session
 }
 
 object DefaultSessionBuilder extends SessionBuilder {
 
-  override def build(sessionId: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Long, timeout: Int): Session = {
-    new DefaultSession(sessionId, registry, new Session.Data(auth, agent, loginAt, timeout), new Session.DefaultStatus(System.currentTimeMillis))
+  override def build(sessionId: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Instant, timeout: Duration): Session = {
+    new DefaultSession(sessionId, registry, new Session.Data(auth, agent, loginAt, timeout), new Session.DefaultStatus(Instant.now))
   }
 
   override def build(sessionId: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session = {

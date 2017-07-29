@@ -18,7 +18,8 @@
  */
 package org.beangle.security.session.mem
 
-import java.{ util => ju }
+import java.time.Instant
+
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.Account
@@ -35,10 +36,9 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
 
   protected val sessionids = new collection.concurrent.TrieMap[String, Session]
 
-  private val accessDelayMillis = new UpdateDelayGenerator().generateDelayMilliTime()
+  private val accessDelaySeconds = new UpdateDelayGenerator(30,60).generateDelaySeconds()
 
   var builder: SessionBuilder = DefaultSessionBuilder
-
 
   override def getByPrincipal(principal: String): Seq[Session] = {
     principals.get(principal) match {
@@ -67,7 +67,7 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
       case None => tryAllocate(sessionId, auth)
     }
 
-    val newSession = builder.build(sessionId, this, auth, client, System.currentTimeMillis, getTimeout(auth))
+    val newSession = builder.build(sessionId, this, auth, client, Instant.now, getTimeout(auth))
     sessionids.put(sessionId, newSession)
     principals.get(principal) match {
       case None       => principals.put(principal, new collection.mutable.HashSet += sessionId)
@@ -95,10 +95,10 @@ class MemSessionRegistry extends ProfiledSessionRegistry with Logging with Event
     }
   }
 
-  override def access(sessionId: String, accessAt: Long, accessed: String): Option[Session] = {
+  override def access(sessionId: String, accessAt: Instant, accessed: String): Option[Session] = {
     get(sessionId) match {
       case s @ Some(session) =>
-        if ((accessAt - session.status.lastAccessAt) > accessDelayMillis) {
+        if ((accessAt.getEpochSecond - session.status.lastAccessAt.getEpochSecond) > accessDelaySeconds) {
           sessionids.put(session.id, builder.build(session, new Session.DefaultStatus(accessAt)))
         }
         s

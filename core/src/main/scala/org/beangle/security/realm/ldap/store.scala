@@ -18,60 +18,51 @@
  */
 package org.beangle.security.realm.ldap
 
-import java.{ util => jl }
-import org.beangle.commons.bean.Disposable
+import scala.collection.mutable.Buffer
+
+import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
+import org.beangle.security.authc.{ Account, AccountStore, DefaultAccount }
+import org.beangle.security.codec.DefaultPasswordEncoder
+
 import javax.naming.{ CompositeName, NamingException }
-import javax.naming.directory.{ Attribute, Attributes, DirContext, InitialDirContext, SearchControls }
-import org.beangle.security.authc.AccountStore
-import org.beangle.security.authc.DefaultAccount
-import org.beangle.security.authc.Account
-import javax.naming.directory.BasicAttributes
+import javax.naming.directory.{ Attribute, BasicAttributes, DirContext, SearchControls }
 
 /**
  * Ldap User Store (RFC 4510)
  * @see http://tools.ietf.org/html/rfc4510
  * @see http://www.rfc-base.org/rfc-4510.html
+ * @see http://directory.apache.org/api/java-api.html
  */
 trait LdapUserStore extends AccountStore {
 
-  def getUserDN(uid: String): String
+  def getUserDN(uid: String): Option[String]
 
-  def getPassword(uid: String): String
+  def getPassword(userDN: String): Option[String]
 
-  def getAttributes(uid: String, attrName: String): Set[Any]
+  def getAttribute(userDN: String, attrName: String): Option[Any]
+
+  def getAttributes(userDN: String, attributeNames: String*): collection.Map[String, Any]
 
   def updateAttribute(dn: String, attribute: String, value: AnyRef): Unit
 
-  def url: String
+  def updatePassword(userDN: String, passwd: String): Unit
+
+  //def create(user: Account): Unit
 }
 
-class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
-  var url: String = _
-  var userName: String = _
-  var password: String = _
-  var base: String = _
-  var ctx: DirContext = _
+object LdapUserStore {
+  val CommonName = "cn"
+  val UserPassword = "userPassword"
+}
 
-  private var uidName = "uid"
-  private var properties = new jl.Hashtable[String, String]
+class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore with Logging {
 
-  def this(url: String, userName: String, password: String, base: String) {
-    this()
-    assert(null != url)
-    assert(null != userName)
-    assert(null != password)
-    assert(null != base)
-    this.url = url
-    this.userName = userName
-    this.password = password
-    this.base = base
-  }
+  var uidName = "uid"
 
-  def getUserDN(uid: String): String = {
-    val ctx = context
-    if (ctx == null) return null
+  override def getUserDN(uid: String): Option[String] = {
+    val ctx = contextSource.get()
     var result: String = null
     val condition = Strings.concat(uidName, "=", uid)
     try {
@@ -79,6 +70,9 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
       val constraints = new SearchControls()
       constraints.setSearchScope(2)
       constraints.setReturningAttributes(attrList)
+      //this must be false
+      //@see http://stackoverflow.com/questions/11955041/why-doesnt-dircontext-close-return-the-ldap-connection-to-the-pool
+      constraints.setReturningObjFlag(false)
       var results = ctx.search(base, condition, constraints)
       if (results.hasMore()) {
         val si = results.next()
@@ -88,98 +82,71 @@ class SimpleLdapUserStore extends LdapUserStore with Disposable with Logging {
       results = null
     } catch {
       case e: Throwable => logger.error("Ldap search error,uid=" + uid, e)
+    } finally {
+      contextSource.release(ctx)
     }
-    return result
+    Option(result)
   }
 
-  def getPassword(uid: String): String = {
-    val passwords = getAttributes(uid, "userPassword")
-    if (passwords.isEmpty) return null
-    else new String(passwords.head.asInstanceOf[Array[Byte]])
+  override def getPassword(userDN: String): Option[String] = {
+    getAttribute(userDN, LdapUserStore.UserPassword).map(p => new String(p.asInstanceOf[Array[Byte]]))
   }
 
-  def updateAttribute(dn: String, attribute: String, value: AnyRef): Unit = {
-    val name = new CompositeName(dn)
-    val attrs = new BasicAttributes
-    attrs.put(attribute, value)
-    if (null == attribute) {
-      context.modifyAttributes(name, DirContext.REMOVE_ATTRIBUTE, attrs)
-    } else {
-      context.modifyAttributes(name, DirContext.REPLACE_ATTRIBUTE, attrs)
-    }
+  override def getAttribute(userDN: String, attrName: String): Option[Any] = {
+    getAttributes(userDN, attrName).get(attrName)
   }
 
-  def getAttributes(uid: String, attrName: String): Set[Any] = {
-    val values = new collection.mutable.HashSet[Any]
-    val ctx = context
-    if (ctx != null) {
-      try {
-        val dn = getUserDN(uid)
-        if (dn == null) logger.debug(s"User $uid not found")
-        else {
-          val userID = new CompositeName(dn)
-          val attrs =
-            if (null != attrName) ctx.getAttributes(userID, Array(attrName))
-            else ctx.getAttributes(userID)
-          val attrEnum = attrs.getAll()
-          while (attrEnum.hasMoreElements) {
-            values += attrEnum.nextElement.asInstanceOf[Attribute].get()
-          }
-        }
-      } catch {
-        case e: NamingException => e.printStackTrace()
+  override def getAttributes(userDN: String, attributeNames: String*): collection.Map[String, Any] = {
+    val result = Collections.newMap[String, Buffer[Any]]
+    val ctx = contextSource.get()
+    try {
+      val userID = new CompositeName(userDN)
+      val attrs =
+        if (attributeNames.length > 0) ctx.getAttributes(userID, attributeNames.toArray)
+        else ctx.getAttributes(userID)
+      val attrEnum = attrs.getAll()
+      while (attrEnum.hasMoreElements) {
+        val attr = attrEnum.nextElement.asInstanceOf[Attribute]
+        val values = result.getOrElseUpdate(attr.getID, new collection.mutable.ArrayBuffer[Any])
+        values += attr.get()
       }
+    } catch {
+      case e: NamingException => e.printStackTrace()
+    } finally {
+      contextSource.release(ctx)
     }
-    values.toSet
+    result.map(e => (e._1, if (e._2.size == 1) e._2.head else e._2))
   }
 
-  private def enviroment: jl.Hashtable[String, String] = {
-    val env = new jl.Hashtable[String, String]
-    env.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory")
-    env.put("java.naming.provider.url", url)
-    env.put("java.naming.security.authentication", "simple")
-    env.put("java.naming.security.principal", userName)
-    env.put("java.naming.security.credentials", password)
-    env
+  override def updatePassword(userDN: String, passwd: String): Unit = {
+    updateAttribute(userDN, LdapUserStore.UserPassword, DefaultPasswordEncoder.generate(passwd, null, "sha").getBytes)
   }
 
-  private def connect(): DirContext = {
-    synchronized {
-      val env = enviroment
-      env.putAll(properties)
-      try {
-        ctx = new InitialDirContext(env)
-        logger.debug("Ldap server connect success.")
-      } catch {
-        case e: Exception => logger.error("Ldap server connect failure", e)
-      }
-      ctx
-    }
-  }
-
-  def disConnect() {
-    synchronized {
-      if (ctx != null) try {
-        ctx.close()
-        ctx = null
-        logger.debug("Ldap connect closed.")
-      } catch {
-        case e: Exception => logger.error("Failure to close ldap connection.", e)
-      }
+  override def updateAttribute(userDN: String, attribute: String, value: AnyRef): Unit = {
+    val ctx = contextSource.get()
+    try {
+      val userID = new CompositeName(userDN)
+      val attrs = new BasicAttributes
+      attrs.put(attribute, value)
+      val action = if (null == value) DirContext.REMOVE_ATTRIBUTE else DirContext.REPLACE_ATTRIBUTE
+      ctx.modifyAttributes(userID, action, attrs)
+    } catch {
+      case e: NamingException => e.printStackTrace()
+    } finally {
+      contextSource.release(ctx)
     }
   }
-
-  private def context: DirContext = {
-    if (null == ctx) connect() else ctx
-  }
-
-  override def destroy(): Unit = this.disConnect()
 
   override def load(principal: Any): Option[Account] = {
-    val dn = getUserDN(principal.toString)
-    if (null != dn) {
-      val account = new DefaultAccount(principal, dn)
-      Some(account)
-    } else None
+    getUserDN(principal.toString).map(dn => new DefaultAccount(principal, dn))
+  }
+
+  //FIXME 
+  def create(user: Account, password: String): Unit = {
+    val attrs = new BasicAttributes();
+    attrs.put("cn", user.description)
+    attrs.put("sn", user.description)
+    attrs.put(uidName, user.principal.toString)
+    attrs.put(LdapUserStore.UserPassword, password.getBytes)
   }
 }

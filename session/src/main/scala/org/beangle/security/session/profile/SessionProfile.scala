@@ -18,6 +18,8 @@
  */
 package org.beangle.security.session.profile
 
+import java.time.Duration
+
 import org.beangle.commons.lang.Objects
 import org.beangle.security.session.Session
 
@@ -28,7 +30,7 @@ trait SessionProfile {
   def id: Int
   def capacity: Int
   def maxSession: Int
-  def timeout: Short
+  def timeout: Duration
 }
 
 object DefaultSessionProfile extends DefaultSessionProfile(1) {
@@ -40,7 +42,7 @@ object DefaultSessionProfile extends DefaultSessionProfile(1) {
 class DefaultSessionProfile(val id: Int) extends SessionProfile {
   var capacity: Int = _
   var maxSession: Int = _
-  var timeout: Short = _
+  var timeout: Duration = _
 
   override def toString(): String = {
     Objects.toStringBuilder(this).add("id", id)

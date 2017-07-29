@@ -21,13 +21,13 @@ package org.beangle.security.realm.ldap
 import org.beangle.security.authc.CredentialsChecker
 import org.beangle.security.codec.DefaultPasswordEncoder
 
-class DefaultCredentialsChecker(ldapUserService: LdapUserService) extends CredentialsChecker {
+class DefaultCredentialsChecker(ldapUserStore: LdapUserStore) extends CredentialsChecker {
 
   override def check(principal: Any, credential: Any): Boolean = {
     val uid = principal.toString
-    ldapUserService.getUserDN(uid) match {
+    ldapUserStore.getUserDN(uid) match {
       case Some(dn) =>
-        ldapUserService.getPassword(dn) match {
+        ldapUserStore.getPassword(dn) match {
           case Some(p) => DefaultPasswordEncoder.verify(p, credential.toString)
           case None    => false
         }
