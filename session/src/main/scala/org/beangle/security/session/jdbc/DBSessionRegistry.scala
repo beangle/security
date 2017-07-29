@@ -217,7 +217,7 @@ class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer,
         x.setString(5, ac.agent)
         x.setString(6, ac.os)
         x.setTimestamp(7, Timestamp.from(s.loginAt))
-        x.setInt(8, s.timeout.getSeconds.asInstanceOf[Int])
+        x.setLong(8, s.timeout.getSeconds)
         x.setTimestamp(9, Timestamp.from(s.status.lastAccessAt))
         x.setLong(10, profileProvider.getProfile(s.principal).id.longValue)
         ParamSetter.setParam(x, 11,
