@@ -75,10 +75,8 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
   private def doAuthenticate(token: PreauthToken, request: HttpServletRequest, response: HttpServletResponse): Unit = {
     try {
       val newSessionId = securityManager.sessionIdPolicy.newId(request, response)
-      val session = securityManager.login(newSessionId, token, WebClient.get(request, token.credentials))
+      val session = securityManager.login(newSessionId, token, WebClient.get(request))
       SecurityContext.session = session
-      val httpSession = request.getSession(false)
-      if (null != httpSession) httpSession.setMaxInactiveInterval(session.timeout.getSeconds.asInstanceOf[Int])
     } catch {
       case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
       case e: Throwable                    => throw e
@@ -96,11 +94,9 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
         SecurityContext.getSession match {
           case None => resovleToken(req, res, newer)
           case Some(s) =>
-            val client = s.client
-            if (client.isInstanceOf[Session.SsoClient]) {
-              if (newer == client.asInstanceOf[Session.SsoClient].token) None else resovleToken(req, res, newer)
-            } else {
-              resovleToken(req, res, newer)
+            s.principal.remoteToken match {
+              case Some(token) => if (newer == token) None else resovleToken(req, res, newer)
+              case None        => resovleToken(req, res, newer)
             }
         }
     }

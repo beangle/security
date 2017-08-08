@@ -22,46 +22,15 @@ import java.time.{ Duration, Instant }
 
 import org.beangle.security.authc.Account
 
-trait SessionRegistry {
-
+trait SessionRepo {
   def get(sessionId: String): Option[Session]
+
+  def access(sessionId: String, accessAt: Instant): Option[Session]
+}
+
+trait SessionRegistry extends SessionRepo {
 
   def register(sessionId: String, info: Account, client: Session.Client): Session
 
   def remove(sessionId: String): Option[Session]
-
-  def access(sessionId: String, accessAt: Instant, accessed: String): Option[Session]
-}
-
-trait LimitedSessionRegistry extends SessionRegistry {
-
-  protected def getMaxSession(auth: Account): Int
-
-  protected def getTimeout(auth: Account): Duration
-
-  protected def allocate(auth: Account, sessionId: String): Boolean
-  /**
-   * release slot for user
-   */
-  protected def release(session: Session)
-
-  def getByPrincipal(principal: String): Seq[Session]
-  /**
-   * allocate a slot for user
-   */
-  protected def tryAllocate(sessionId: String, auth: Account): Unit = {
-    val limit = getMaxSession(auth)
-    if (limit == -1) {
-      if (!allocate(auth, sessionId)) throw new OvermaxSessionException(limit, auth)
-    } else {
-      val sessions = getByPrincipal(auth.getName)
-      if (sessions.size < limit) {
-        if (!allocate(auth, sessionId)) throw new OvermaxSessionException(limit, auth)
-      } else {
-        // Determine least recently used session, and stop it
-        sessions.minBy(_.loginAt).stop()
-      }
-    }
-  }
-
 }

@@ -27,7 +27,7 @@ trait SessionIdPolicy {
 
   def idName: String
 
-  def getId(request: HttpServletRequest): String
+  def getId(request: HttpServletRequest): Option[String]
 
   def newId(request: HttpServletRequest, response: HttpServletResponse): String
 

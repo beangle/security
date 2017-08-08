@@ -34,85 +34,31 @@ object Session {
     def ip: String
   }
 
-  trait Status extends Serializable {
-    def lastAccessAt: Instant
-  }
-
-  class Data(val account: Account, val client: Client, val loginAt: Instant, val timeout: Duration) extends Serializable
-
   class AgentClient(val agent: String, val ip: String, val os: String) extends Client
 
-  class SsoClient(val token: Any, agent: String, ip: String, os: String) extends AgentClient(agent, ip, os)
-
-  class DefaultStatus(val lastAccessAt: Instant) extends Status
 }
 
-trait Session {
+trait Session extends java.io.Serializable {
 
   def id: String
 
   def principal: Account
 
-  def client: Session.Client
-
-  def status: Session.Status
-
   def loginAt: Instant
 
-  def timeout: Duration
+  def lastAccessAt: Instant
 
-  def stop(): Unit
-
-}
-
-class DefaultSession(val id: String, registry: SessionRegistry, val data: Session.Data, val status: Session.Status) extends Session {
-
-  override def principal: Account = {
-    data.account
-  }
-
-  override def client: Session.Client = {
-    data.client
-  }
-
-  override def loginAt: Instant = {
-    data.loginAt
-  }
-
-  override def timeout: Duration = {
-    data.timeout
-  }
-
-  override def stop(): Unit = {
-    registry.remove(id)
-  }
-
-  def onlineTime: Duration = {
-    Duration.ofSeconds(Instant.now().getEpochSecond - loginAt.getEpochSecond)
-  }
-
-  def clone(newer: Session.Status): Session = {
-    new DefaultSession(id, registry, data, newer)
-  }
+  def lastAccessAt_=(newAccessed: Instant): Unit
 }
 
 trait SessionBuilder {
-  def build(key: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Instant, timeout: Duration): Session
-  def build(key: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session
-  def build(old: Session, status: Session.Status): Session
+  def build(id: String, principal: Account, loginAt: Instant): Session
 }
 
-object DefaultSessionBuilder extends SessionBuilder {
+class SimpleSession(val id: String, val principal: Account, val loginAt: Instant, var lastAccessAt: Instant) extends Session
 
-  override def build(sessionId: String, registry: SessionRegistry, auth: Account, agent: Session.Client, loginAt: Instant, timeout: Duration): Session = {
-    new DefaultSession(sessionId, registry, new Session.Data(auth, agent, loginAt, timeout), new Session.DefaultStatus(Instant.now))
-  }
-
-  override def build(sessionId: String, registry: SessionRegistry, data: Session.Data, status: Session.Status): Session = {
-    new DefaultSession(sessionId, registry, data, status)
-  }
-
-  def build(old: Session, status: Session.Status): Session = {
-    old.asInstanceOf[DefaultSession].clone(status)
+object SimpleSessionBuilder extends SessionBuilder {
+  def build(id: String, principal: Account, loginAt: Instant): Session = {
+    new SimpleSession(id, principal, loginAt, loginAt)
   }
 }

@@ -29,7 +29,7 @@ trait SecurityManager {
 
   def authorizer: Authorizer
 
-  def sessionRegistry: SessionRegistry
+  def registry: SessionRegistry
 
   def isPermitted(session: Option[Session], request: Request): Boolean = {
     authorizer.isPermitted(session, request)
@@ -38,5 +38,7 @@ trait SecurityManager {
   //@throw(classOfAuthenticationException])
   def login(sessionId: String, token: AuthenticationToken, client: Session.Client): Session
 
-  def logout(session: Session): Unit = session.stop()
+  def logout(session: Session): Unit = {
+    this.registry.remove(session.id)
+  }
 }

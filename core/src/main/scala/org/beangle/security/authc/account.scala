@@ -37,6 +37,8 @@ trait Account extends AuthorizationInfo with Principal with Serializable {
 
   def description: String
 
+  def remoteToken: Option[String]
+
   def details: Map[String, Any]
 
   def accountExpired: Boolean
@@ -66,6 +68,8 @@ object DefaultAccount {
 }
 
 class DefaultAccount(val principal: Any, val description: String) extends Account {
+
+  var remoteToken: Option[String] = None
 
   var status: Int = _
 
@@ -140,13 +144,16 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         throw new BadCredentialsException("Incorrect credentials", token, null)
     }
 
-    loadAccount(principal) match {
+    val rs = loadAccount(principal) match {
       case Some(account) =>
         additionalCheck(token, account)
         account
       case None =>
         throw new UsernameNotFoundException(s"Cannot find account data for $token", token)
     }
+
+    rs.asInstanceOf[DefaultAccount].details ++= token.details
+    rs
   }
 
   protected def additionalCheck(token: AuthenticationToken, ac: Account) {
