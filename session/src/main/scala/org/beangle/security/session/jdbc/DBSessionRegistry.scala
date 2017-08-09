@@ -35,12 +35,13 @@ import org.beangle.security.session.{ LoginEvent, LogoutEvent, Session }
 import javax.sql.DataSource
 import org.beangle.security.session.SessionRegistry
 import org.beangle.security.session.util.SessionDaemon
+import org.beangle.commons.io.DefaultBinarySerializer
 
 /**
  * 基于数据库的session注册表
  */
-class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer, sessionCacheManager: CacheManager)
-    extends DBSessionRepo(dataSource, serializer, sessionCacheManager)
+class DBSessionRegistry(dataSource: DataSource, sessionCacheManager: CacheManager)
+    extends DBSessionRepo(dataSource, sessionCacheManager)
     with EventPublisher with SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,data"
@@ -89,13 +90,13 @@ class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer, se
       .prepare(x => {
         x.setString(1, sessionId)
         x.setString(2, s.principal.getName)
-        x.setString(3, s.principal.description)
+        x.setString(3, s.principal.asInstanceOf[Account].description)
         x.setString(4, client.ip)
         x.setString(5, ac.agent)
         x.setString(6, ac.os)
         x.setTimestamp(7, Timestamp.from(s.loginAt))
         x.setTimestamp(8, Timestamp.from(s.loginAt))
-        ParamSetter.setParam(x, 9, serializer.serialize(s, Map.empty), Types.BINARY)
+        ParamSetter.setParam(x, 9, DefaultBinarySerializer.serialize(s, Map.empty), Types.BINARY)
       }).execute()
     put(s)
   }

@@ -99,7 +99,9 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   /**
    * Contacts the CAS Server to retrieve the response for the ticket validation.
    */
-  protected def retrieveResponse(url: URL, ticket: String): String = HttpUtils.getResponseText(url, hostnameVerifier, encoding)
+  protected def retrieveResponse(url: URL, ticket: String): String = {
+    HttpUtils.getResponseText(url, hostnameVerifier, encoding).orNull
+  }
 
   def validate(ticket: String, service: String): String = {
     val validationUrl = constructValidationUrl(ticket, service)

@@ -22,6 +22,7 @@ import java.time.{ Duration, Instant }
 
 import org.beangle.security.authc.Account
 import org.beangle.security.context.SecurityContext
+import java.security.Principal
 
 object Session {
   val DefaultTimeOut = Duration.ofSeconds(30 * 60)
@@ -38,11 +39,11 @@ object Session {
 
 }
 
-trait Session extends java.io.Serializable {
+trait Session extends java.io.Externalizable {
 
   def id: String
 
-  def principal: Account
+  def principal: Principal
 
   def loginAt: Instant
 
@@ -52,13 +53,5 @@ trait Session extends java.io.Serializable {
 }
 
 trait SessionBuilder {
-  def build(id: String, principal: Account, loginAt: Instant): Session
-}
-
-class SimpleSession(val id: String, val principal: Account, val loginAt: Instant, var lastAccessAt: Instant) extends Session
-
-object SimpleSessionBuilder extends SessionBuilder {
-  def build(id: String, principal: Account, loginAt: Instant): Session = {
-    new SimpleSession(id, principal, loginAt, loginAt)
-  }
+  def build(id: String, principal: Principal, loginAt: Instant): Session
 }

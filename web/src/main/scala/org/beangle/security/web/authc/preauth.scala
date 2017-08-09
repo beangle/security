@@ -21,11 +21,9 @@ package org.beangle.security.web.authc
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
-import org.beangle.security.authc.{ AuthenticationException, AuthenticationToken }
+import org.beangle.security.authc.{ Account, AuthenticationException, AuthenticationToken }
 import org.beangle.security.context.SecurityContext
-import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.Session
-import org.beangle.security.web.session.SessionIdPolicy
 import org.beangle.security.web.WebSecurityManager
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
@@ -94,7 +92,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
         SecurityContext.getSession match {
           case None => resovleToken(req, res, newer)
           case Some(s) =>
-            s.principal.remoteToken match {
+            s.principal.asInstanceOf[Account].remoteToken match {
               case Some(token) => if (newer == token) None else resovleToken(req, res, newer)
               case None        => resovleToken(req, res, newer)
             }
