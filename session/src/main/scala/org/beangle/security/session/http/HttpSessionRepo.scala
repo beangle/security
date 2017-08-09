@@ -1,13 +1,12 @@
 package org.beangle.security.session.http
 
+import java.io.ObjectInputStream
+import java.net.{ HttpURLConnection, URL }
+
 import org.beangle.cache.CacheManager
+import org.beangle.commons.net.http.HttpUtils
 import org.beangle.security.session.Session
 import org.beangle.security.session.cache.CacheSessionRepo
-import org.beangle.commons.net.http.HttpUtils
-import java.net.HttpURLConnection
-import java.net.URL
-import org.beangle.commons.io.DefaultBinarySerializer
-import java.io.ObjectInputStream
 
 class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cacheManager) {
 
