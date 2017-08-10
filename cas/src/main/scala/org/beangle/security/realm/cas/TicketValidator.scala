@@ -21,7 +21,7 @@ package org.beangle.security.realm.cas
 import java.net.{ MalformedURLException, URL, URLEncoder }
 
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.web.util.HttpUtils
+import org.beangle.commons.net.http.HttpUtils
 
 import javax.net.ssl.HostnameVerifier
 
