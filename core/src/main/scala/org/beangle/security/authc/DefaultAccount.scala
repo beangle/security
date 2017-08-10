@@ -25,9 +25,9 @@ final class DefaultAccount extends Account {
 
   var status: Int = _
 
-  var authorities: String = _
+  var authorities: Set[Long] = _
 
-  var permissions: String = _
+  var permissions: Set[Long] = _
 
   var details: Map[String, String] = Map.empty
 
@@ -91,8 +91,18 @@ final class DefaultAccount extends Account {
     out.writeObject(description)
     out.writeObject(remoteToken.orNull)
     out.writeInt(status)
-    out.writeObject(authorities)
-    out.writeObject(permissions)
+    if (authorities == null) {
+      out.writeInt(0)
+    } else {
+      out.writeInt(authorities.size)
+      authorities.foreach(out.writeLong(_))
+    }
+    if (permissions == null) {
+      out.writeInt(0)
+    } else {
+      out.writeInt(permissions.size)
+      permissions.foreach(out.writeLong(_))
+    }
     out.writeInt(details.size)
     details foreach {
       case (k, v) =>
@@ -106,8 +116,14 @@ final class DefaultAccount extends Account {
     description = in.readObject.toString
     remoteToken = Option(in.readObject.asInstanceOf[String])
     status = in.readInt()
-    authorities = in.readObject.asInstanceOf[String]
-    permissions = in.readObject.asInstanceOf[String]
+    val authoritieSize = in.readInt()
+    if (authoritieSize > 0) {
+      authorities = ((0 until authoritieSize) map (i => in.readLong())).toSet
+    }
+    val permissionSize = in.readInt()
+    if (permissionSize > 0) {
+      permissions = ((0 until permissionSize) map (i => in.readLong())).toSet
+    }
     val mapSize = in.readInt()
     val temp = Collections.newMap[String, String]
     (0 until mapSize) foreach { i =>
