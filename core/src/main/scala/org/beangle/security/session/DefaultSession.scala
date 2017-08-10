@@ -48,7 +48,7 @@ class DefaultSession extends Session {
   }
 
   def writeExternal(out: ObjectOutput) {
-    out.writeChars(id)
+    out.writeObject(id)
     principal.writeExternal(out)
     out.writeLong(loginAt.getEpochSecond)
     out.writeLong(lastAccessAt.getEpochSecond)
