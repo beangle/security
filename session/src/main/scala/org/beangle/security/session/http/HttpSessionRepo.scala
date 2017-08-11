@@ -14,7 +14,7 @@ class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cache
   var accessUrl: String = _
 
   protected def getInternal(sessionId: String): Option[Session] = {
-    HttpUtils.getResponseData(geturl.replace("{id}", sessionId)) match {
+    HttpUtils.getData(geturl.replace("{id}", sessionId)) match {
       case Some(is) =>
         val ois = new ObjectInputStream(is)
         val rs = Some(ois.readObject().asInstanceOf[Session])

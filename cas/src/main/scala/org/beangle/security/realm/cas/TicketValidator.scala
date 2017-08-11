@@ -38,9 +38,6 @@ trait TicketValidator {
  */
 abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
-  /** Hostname verifier used when making an SSL request to the CAS server. */
-  var hostnameVerifier: HostnameVerifier = _
-
   var config: CasConfig = _
 
   var encoding: String = _
@@ -100,7 +97,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
    * Contacts the CAS Server to retrieve the response for the ticket validation.
    */
   protected def retrieveResponse(url: URL, ticket: String): String = {
-    HttpUtils.getResponseText(url, hostnameVerifier, encoding).orNull
+    HttpUtils.getText(url, null, encoding).orNull
   }
 
   def validate(ticket: String, service: String): String = {
