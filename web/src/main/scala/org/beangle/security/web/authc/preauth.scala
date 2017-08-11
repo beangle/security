@@ -21,38 +21,13 @@ package org.beangle.security.web.authc
 import org.beangle.commons.lang.{ Objects, Strings }
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
-import org.beangle.security.authc.{ Account, AuthenticationException, AuthenticationToken }
+import org.beangle.security.authc.{ Account, AuthenticationException, AuthenticationToken, PreauthToken }
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.Session
 import org.beangle.security.web.WebSecurityManager
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-
-/**
- * Preauth Authentication Token
- */
-class PreauthToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
-
-  var details: Map[String, Any] = Map.empty
-
-  override def trusted: Boolean = {
-    true
-  }
-
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case test: PreauthToken =>
-        Objects.equalsBuilder.add(principal, test.principal)
-          .add(details, test.details).add(credentials, test.credentials).isEquals
-      case _ => false
-    }
-  }
-
-  override def toString: String = {
-    principal.toString
-  }
-}
 
 abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter with Logging {
 

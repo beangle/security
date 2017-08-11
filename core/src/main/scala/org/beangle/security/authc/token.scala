@@ -84,3 +84,28 @@ object AnonymousToken extends AuthenticationToken {
   def details: Map[String, Any] = Map.empty
 
 }
+
+/**
+ * Preauth Authentication Token
+ */
+class PreauthToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
+
+  var details: Map[String, Any] = Map.empty
+
+  override def trusted: Boolean = {
+    true
+  }
+
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case test: PreauthToken =>
+        Objects.equalsBuilder.add(principal, test.principal)
+          .add(details, test.details).add(credentials, test.credentials).isEquals
+      case _ => false
+    }
+  }
+
+  override def toString: String = {
+    principal.toString
+  }
+}

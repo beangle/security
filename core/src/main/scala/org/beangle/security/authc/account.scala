@@ -60,7 +60,6 @@ trait Account extends AuthorizationInfo with Principal with Externalizable {
     name
   }
 
-  def addDetails(added: Map[String, Any]): Unit
 }
 
 trait AccountStore {
@@ -84,15 +83,18 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         throw new BadCredentialsException("Incorrect credentials", token, null)
     }
 
-    val rs = loadAccount(principal) match {
+    loadAccount(principal) match {
       case Some(account) =>
         additionalCheck(token, account)
-        account
+        val da = new DefaultAccount(account)
+        token match {
+          case p: PreauthToken => da.addRemoteToken(p.credentials)
+          case _               =>
+        }
+        da
       case None =>
         throw new UsernameNotFoundException(s"Cannot find account data for $token", token)
     }
-    rs.addDetails(token.details)
-    rs
   }
 
   protected def additionalCheck(token: AuthenticationToken, ac: Account) {

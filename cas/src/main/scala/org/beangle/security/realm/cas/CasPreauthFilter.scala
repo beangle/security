@@ -18,14 +18,12 @@
  */
 package org.beangle.security.realm.cas
 
-import org.beangle.security.web.authc.PreauthToken
-import org.beangle.security.web.authc.AbstractPreauthFilter
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpServletRequest
-import org.beangle.security.mgt.SecurityManager
-import CasConfig._
-import org.beangle.security.context.SecurityContext
+import org.beangle.security.authc.PreauthToken
 import org.beangle.security.web.WebSecurityManager
+import org.beangle.security.web.authc.AbstractPreauthFilter
+
+import CasConfig.{ TicketName, getLocalServer }
+import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 /**
  * Processes a CAS service ticket.

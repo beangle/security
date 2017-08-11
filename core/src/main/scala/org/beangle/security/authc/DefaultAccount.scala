@@ -37,6 +37,22 @@ final class DefaultAccount extends Account {
     this.description = description
   }
 
+  def this(account: Account) {
+    this(account.name, account.description)
+    account match {
+      case da: DefaultAccount =>
+        this.status = da.status
+      case _ =>
+        this.accountExpired = account.accountExpired
+        this.accountLocked = account.accountLocked
+        this.disabled = account.disabled
+        this.credentialExpired = account.credentialExpired
+    }
+    if (account.authorities != null) this.authorities = account.authorities.toString
+    if (account.permissions != null) this.permissions = account.permissions.toString
+    this.addDetails(account.details)
+  }
+
   private def change(value: Boolean, mask: Int): Unit = {
     if (value) status = status | mask
     else {
@@ -62,11 +78,19 @@ final class DefaultAccount extends Account {
 
   def disabled_=(value: Boolean): Unit = change(value, Disabled)
 
-  def addDetails(added: Map[String, Any]): Unit = {
-    added foreach {
-      case (a, b) =>
-        details += (a -> b.toString)
+  def addDetails(added: Map[String, Any]): this.type = {
+    if (null != added) {
+      added foreach {
+        case (a, b) =>
+          details += (a -> b.toString)
+      }
     }
+    this
+  }
+
+  def addRemoteToken(token: Any): this.type = {
+    this.remoteToken = if (token == null) None else Some(token.toString)
+    this
   }
 
   override def toString(): String = {
