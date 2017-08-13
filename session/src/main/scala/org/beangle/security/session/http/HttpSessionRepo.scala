@@ -1,12 +1,12 @@
 package org.beangle.security.session.http
 
-import org.beangle.security.session.cache.CacheSessionRepo
+import java.net.{ HttpURLConnection, URL }
+
 import org.beangle.cache.CacheManager
+import org.beangle.commons.io.DefaultBinarySerializer
+import org.beangle.commons.net.http.{ HttpMethods, HttpUtils }
 import org.beangle.security.session.Session
-import java.net.URL
-import java.net.HttpURLConnection
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import org.beangle.security.session.cache.CacheSessionRepo
 
 class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cacheManager) {
 
@@ -14,25 +14,8 @@ class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cache
   var accessUrl: String = _
 
   protected def getInternal(sessionId: String): Option[Session] = {
-    var surl = geturl.replace("{id}", sessionId)
-    val url = new URL(surl)
-    val hc = url.openConnection().asInstanceOf[HttpURLConnection]
-    hc.setRequestMethod("get")
-    if (hc.getResponseCode == 200) {
-      var in: BufferedReader = null
-      in = new BufferedReader(new InputStreamReader(hc.getInputStream, "utf-8"))
-      var line: String = in.readLine()
-      val stringBuffer = new StringBuffer(255)
-      stringBuffer.synchronized {
-        while (line != null) {
-          stringBuffer.append(line)
-          stringBuffer.append("\n")
-          line = in.readLine()
-        }
-        stringBuffer.toString
-      }
-    } else {
-      None
+    HttpUtils.getData(geturl.replace("{id}", sessionId)) map { is =>
+      DefaultBinarySerializer.deserialize(is, Map.empty).asInstanceOf[Session]
     }
   }
 
@@ -41,7 +24,7 @@ class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cache
     surl = surl.replace("{time}", session.lastAccessAt.getEpochSecond.toString)
     val url = new URL(surl)
     val hc = url.openConnection().asInstanceOf[HttpURLConnection]
-    hc.setRequestMethod("get")
+    hc.setRequestMethod(HttpMethods.GET)
     hc.getResponseCode == 200
   }
 }
