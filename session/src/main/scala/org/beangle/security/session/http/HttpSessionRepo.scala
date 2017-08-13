@@ -4,9 +4,10 @@ import java.io.ObjectInputStream
 import java.net.{ HttpURLConnection, URL }
 
 import org.beangle.cache.CacheManager
-import org.beangle.commons.net.http.HttpUtils
 import org.beangle.security.session.Session
 import org.beangle.security.session.cache.CacheSessionRepo
+import org.beangle.commons.net.http.HttpUtils
+import org.beangle.commons.io.DefaultBinarySerializer
 
 class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cacheManager) {
 
@@ -14,13 +15,8 @@ class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cache
   var accessUrl: String = _
 
   protected def getInternal(sessionId: String): Option[Session] = {
-    HttpUtils.getData(geturl.replace("{id}", sessionId)) match {
-      case Some(is) =>
-        val ois = new ObjectInputStream(is)
-        val rs = Some(ois.readObject().asInstanceOf[Session])
-        ois.close()
-        rs
-      case None => None
+    HttpUtils.getData(geturl.replace("{id}", sessionId)) map { is =>
+      DefaultBinarySerializer.deserialize(is, Map.empty).asInstanceOf[Session]
     }
   }
 
