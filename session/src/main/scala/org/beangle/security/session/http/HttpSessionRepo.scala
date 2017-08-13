@@ -1,13 +1,12 @@
 package org.beangle.security.session.http
 
-import java.io.ObjectInputStream
 import java.net.{ HttpURLConnection, URL }
 
 import org.beangle.cache.CacheManager
+import org.beangle.commons.io.DefaultBinarySerializer
+import org.beangle.commons.net.http.{ HttpMethods, HttpUtils }
 import org.beangle.security.session.Session
 import org.beangle.security.session.cache.CacheSessionRepo
-import org.beangle.commons.net.http.HttpUtils
-import org.beangle.commons.io.DefaultBinarySerializer
 
 class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cacheManager) {
 
@@ -25,7 +24,7 @@ class HttpSessionRepo(cacheManager: CacheManager) extends CacheSessionRepo(cache
     surl = surl.replace("{time}", session.lastAccessAt.getEpochSecond.toString)
     val url = new URL(surl)
     val hc = url.openConnection().asInstanceOf[HttpURLConnection]
-    hc.setRequestMethod("get")
+    hc.setRequestMethod(HttpMethods.GET)
     hc.getResponseCode == 200
   }
 }
