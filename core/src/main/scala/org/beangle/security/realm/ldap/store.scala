@@ -138,7 +138,7 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
   }
 
   override def load(principal: Any): Option[Account] = {
-    getUserDN(principal.toString).map(dn => new DefaultAccount(principal, dn))
+    getUserDN(principal.toString).map(dn => new DefaultAccount(principal.toString, dn))
   }
 
   //FIXME 
@@ -146,7 +146,7 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
     val attrs = new BasicAttributes();
     attrs.put("cn", user.description)
     attrs.put("sn", user.description)
-    attrs.put(uidName, user.principal.toString)
+    attrs.put(uidName, user.name)
     attrs.put(LdapUserStore.UserPassword, password.getBytes)
   }
 }

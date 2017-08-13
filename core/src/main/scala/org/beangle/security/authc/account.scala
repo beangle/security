@@ -26,16 +26,21 @@ import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
 
 import DefaultAccount.StatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
+import java.io.Externalizable
+import java.io.ObjectOutput
+import java.io.ObjectInput
 
 /**
  * Authentication Information
  * @author chaostone
  */
-trait Account extends AuthorizationInfo with Principal with Serializable {
+trait Account extends AuthorizationInfo with Principal with Externalizable {
 
-  def principal: Any
+  def name: String
 
   def description: String
+
+  def remoteToken: Option[String]
 
   def details: Map[String, Any]
 
@@ -48,73 +53,11 @@ trait Account extends AuthorizationInfo with Principal with Serializable {
   def disabled: Boolean
 
   override def hashCode: Int = {
-    if (null == principal) 629 else principal.hashCode()
+    if (null == name) 629 else name.hashCode()
   }
 
   def getName: String = {
-    principal.toString
-  }
-}
-
-object DefaultAccount {
-  object StatusMask {
-    val Locked = 1
-    val Disabled = 2
-    val AccountExpired = 4
-    val CredentialExpired = 8
-  }
-}
-
-class DefaultAccount(val principal: Any, val description: String) extends Account {
-
-  var status: Int = _
-
-  var authorities: Any = _
-
-  var permissions: Any = _
-
-  var details: Map[String, Any] = Map.empty
-
-  private def change(value: Boolean, mask: Int): Unit = {
-    if (value) status = status | mask
-    else {
-      if ((status & mask) > 0) status = status ^ mask
-    }
-  }
-
-  private def get(mask: Int): Boolean = (status & mask) > 0
-
-  def accountExpired: Boolean = get(AccountExpired)
-
-  def accountExpired_=(value: Boolean) = change(value, AccountExpired)
-
-  def accountLocked: Boolean = get(Locked)
-
-  def accountLocked_=(locked: Boolean): Unit = change(locked, Locked)
-
-  def credentialExpired: Boolean = get(CredentialExpired)
-
-  def credentialExpired_=(expired: Boolean): Unit = change(expired, CredentialExpired)
-
-  def disabled: Boolean = get(Disabled)
-
-  def disabled_=(value: Boolean): Unit = change(value, Disabled)
-
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case test: DefaultAccount => Objects.equalsBuilder.add(principal, test.principal).isEquals
-      case _                    => false
-    }
-  }
-
-  override def toString(): String = {
-    Objects.toStringBuilder(this).add("Principal:", principal)
-      .add("AccountExpired: ", accountExpired)
-      .add("credentialExpired: ", credentialExpired)
-      .add("AccountLocked: ", accountLocked)
-      .add("Disabled: ", disabled)
-      .add("Authorities: ", authorities)
-      .add("Permissions: ", permissions).toString
+    name
   }
 
 }
@@ -143,7 +86,12 @@ abstract class AbstractAccountRealm extends Realm with Logging {
     loadAccount(principal) match {
       case Some(account) =>
         additionalCheck(token, account)
-        account
+        val da = new DefaultAccount(account)
+        token match {
+          case p: PreauthToken => da.addRemoteToken(p.credentials)
+          case _               =>
+        }
+        da
       case None =>
         throw new UsernameNotFoundException(s"Cannot find account data for $token", token)
     }

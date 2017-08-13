@@ -29,9 +29,8 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
  */
 abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name) with SessionIdPolicy with Initializing {
 
-  override def getId(request: HttpServletRequest): String = {
-    val sid = CookieUtils.getCookieValue(request, name)
-    if (null == sid) null else sid
+  override def getId(request: HttpServletRequest): Option[String] = {
+    Option(CookieUtils.getCookieValue(request, name))
   }
 
   override def newId(request: HttpServletRequest, response: HttpServletResponse): String = {

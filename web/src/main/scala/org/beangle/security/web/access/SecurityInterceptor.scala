@@ -27,15 +27,15 @@ import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
-import org.beangle.security.session.SessionRegistry
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.authc.LogoutHandler
 import org.beangle.security.web.session.SessionIdPolicy
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.session.SessionRepo
 
-class SecurityInterceptor(val filters: List[SecurityFilter], val registry: SessionRegistry, val entryPoint: EntryPoint,
+class SecurityInterceptor(val filters: List[SecurityFilter], val repo: SessionRepo, val entryPoint: EntryPoint,
     val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
 
   private val hasFilter = !filters.isEmpty
@@ -45,8 +45,10 @@ class SecurityInterceptor(val filters: List[SecurityFilter], val registry: Sessi
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      val sid = sessionIdPolicy.getId(req)
-      SecurityContext.session = registry.access(sid, Instant.now, RequestUtils.getServletPath(req)).orNull
+      SecurityContext.session = sessionIdPolicy.getId(req) match {
+        case Some(sid) => repo.access(sid, Instant.now).orNull
+        case None      => null
+      }
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {

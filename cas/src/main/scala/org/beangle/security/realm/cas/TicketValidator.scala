@@ -21,7 +21,7 @@ package org.beangle.security.realm.cas
 import java.net.{ MalformedURLException, URL, URLEncoder }
 
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.web.util.HttpUtils
+import org.beangle.commons.net.http.HttpUtils
 
 import javax.net.ssl.HostnameVerifier
 
@@ -37,9 +37,6 @@ trait TicketValidator {
  * Abstarct Ticket Validator
  */
 abstract class AbstractTicketValidator extends TicketValidator with Logging {
-
-  /** Hostname verifier used when making an SSL request to the CAS server. */
-  var hostnameVerifier: HostnameVerifier = _
 
   var config: CasConfig = _
 
@@ -99,7 +96,9 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   /**
    * Contacts the CAS Server to retrieve the response for the ticket validation.
    */
-  protected def retrieveResponse(url: URL, ticket: String): String = HttpUtils.getResponseText(url, hostnameVerifier, encoding)
+  protected def retrieveResponse(url: URL, ticket: String): String = {
+    HttpUtils.getText(url, null, encoding).orNull
+  }
 
   def validate(ticket: String, service: String): String = {
     val validationUrl = constructValidationUrl(ticket, service)
