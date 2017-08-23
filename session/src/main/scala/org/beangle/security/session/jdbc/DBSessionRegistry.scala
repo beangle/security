@@ -35,8 +35,8 @@ import javax.sql.DataSource
 /**
  * 基于数据库的session注册表
  */
-class DBSessionRegistry(dataSource: DataSource, serializer: BinarySerializer, sessionCacheManager: CacheManager)
-    extends DBSessionRepo(dataSource, serializer, sessionCacheManager)
+class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
+    extends DBSessionRepo(dataSource, cacheManager, serializer)
     with EventPublisher with SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,data"

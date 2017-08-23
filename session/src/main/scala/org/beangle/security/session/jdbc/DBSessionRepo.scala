@@ -11,7 +11,7 @@ import org.beangle.security.session.cache.CacheSessionRepo
 
 import javax.sql.DataSource
 
-class DBSessionRepo(dataSource: DataSource, serializer: BinarySerializer, cacheManager: CacheManager)
+class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
     extends CacheSessionRepo(cacheManager) {
 
   protected val executor = new JdbcExecutor(dataSource)
