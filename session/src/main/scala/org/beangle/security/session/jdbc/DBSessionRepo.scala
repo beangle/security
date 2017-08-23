@@ -6,7 +6,7 @@ import java.sql.Timestamp
 import org.beangle.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.data.jdbc.query.JdbcExecutor
-import org.beangle.security.session.{ DefaultSessionBuilder, Session, SessionBuilder }
+import org.beangle.security.session.{ DefaultSessionBuilder, Session, DefaultSession, SessionBuilder }
 import org.beangle.security.session.cache.CacheSessionRepo
 
 import javax.sql.DataSource
@@ -26,8 +26,8 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
       None
     } else {
       val data = datas.head.head match {
-        case is: InputStream => serializer.deserialize(classOf[Session], is, Map.empty)
-        case ba: Array[Byte] => serializer.asObject(classOf[Session], ba)
+        case is: InputStream => serializer.deserialize(classOf[DefaultSession], is, Map.empty)
+        case ba: Array[Byte] => serializer.asObject(classOf[DefaultSession], ba)
       }
       Some(data)
     }
