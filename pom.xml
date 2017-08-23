@@ -9,12 +9,13 @@
   <artifactId>beangle-security-parent_2.12</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.1.1-SNAPSHOT</version>
+  <version>4.1.1</version>
 
   <properties>
-    <beangle.commons.version>5.0.0.M5</beangle.commons.version>
-    <beangle.data.version>5.0.0.M5</beangle.data.version>
-    <beangle.cache.version>0.0.7</beangle.cache.version>
+    <beangle.commons.version>5.0.0.M6</beangle.commons.version>
+    <beangle.data.version>5.0.0.M6</beangle.data.version>
+    <beangle.cache.version>0.0.9</beangle.cache.version>
+    <beangle.serializer.version>0.0.3</beangle.serializer.version>
   </properties>
 
   <modules>
@@ -22,6 +23,7 @@
     <module>cas</module>
     <module>web</module>
     <module>session</module>
+    <module>protobuf</module>
   </modules>
 
   <dependencyManagement>
@@ -60,6 +62,11 @@
         <groupId>org.beangle.security</groupId>
         <artifactId>beangle-security-session_2.12</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.beangle.serializer</groupId>
+        <artifactId>beangle-serializer-protobuf_2.12</artifactId>
+        <version>${beangle.serializer.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

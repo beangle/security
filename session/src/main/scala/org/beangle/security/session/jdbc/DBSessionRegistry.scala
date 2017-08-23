@@ -20,28 +20,23 @@ package org.beangle.security.session.jdbc
 
 import java.sql.{ Timestamp, Types }
 import java.time.Instant
-import java.util.Timer
 
 import org.beangle.cache.CacheManager
-import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
-import org.beangle.commons.logging.Logging
 import org.beangle.data.jdbc.query.ParamSetter
 import org.beangle.security.authc.Account
-import org.beangle.security.session.{ LoginEvent, LogoutEvent, Session }
+import org.beangle.security.session.{ LoginEvent, LogoutEvent, Session, SessionRegistry }
+import org.beangle.security.session.util.SessionDaemon
 
 import javax.sql.DataSource
-import org.beangle.security.session.SessionRegistry
-import org.beangle.security.session.util.SessionDaemon
-import org.beangle.commons.io.DefaultBinarySerializer
 
 /**
  * 基于数据库的session注册表
  */
-class DBSessionRegistry(dataSource: DataSource, sessionCacheManager: CacheManager)
-    extends DBSessionRepo(dataSource, sessionCacheManager)
+class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
+    extends DBSessionRepo(dataSource, cacheManager, serializer)
     with EventPublisher with SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,data"
@@ -96,7 +91,7 @@ class DBSessionRegistry(dataSource: DataSource, sessionCacheManager: CacheManage
         x.setString(6, ac.os)
         x.setTimestamp(7, Timestamp.from(s.loginAt))
         x.setTimestamp(8, Timestamp.from(s.loginAt))
-        ParamSetter.setParam(x, 9, DefaultBinarySerializer.serialize(s, Map.empty), Types.BINARY)
+        ParamSetter.setParam(x, 9, serializer.asBytes(s), Types.BINARY)
       }).execute()
     put(s)
   }
