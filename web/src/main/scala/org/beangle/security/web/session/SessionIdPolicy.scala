@@ -21,13 +21,11 @@ package org.beangle.security.web.session
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-object SessionIdPolicy {
+object SessionIdReader {
   val SessionIdName = "sid_name"
 }
 
 trait SessionIdPolicy extends SessionIdReader {
-
-  def idName: String
 
   def newId(request: HttpServletRequest, response: HttpServletResponse): String
 
@@ -35,6 +33,8 @@ trait SessionIdPolicy extends SessionIdReader {
 }
 
 trait SessionIdReader {
+
+  def idName: String
 
   def getId(request: HttpServletRequest): Option[String]
 

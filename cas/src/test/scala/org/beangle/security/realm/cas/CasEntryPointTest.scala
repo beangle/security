@@ -46,7 +46,7 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       val config = new CasConfig("https://cas")
       config.renew = false
       val ep = new CasEntryPoint(config)
-      ep.sessionIdPolicy = new ParamSessionIdPolicy
+      ep.sessionIdReader = new ParamSessionIdPolicy
       val request = mock(classOf[HttpServletRequest])
       when(request.getRequestURI()).thenReturn("/bigWebApp/some_path")
       when(request.getServerName()).thenReturn("mycompany.com")
@@ -64,7 +64,7 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
       val config = new CasConfig("https://cas")
       config.renew = true
       val ep = new CasEntryPoint(config)
-      ep.sessionIdPolicy = new ParamSessionIdPolicy
+      ep.sessionIdReader = new ParamSessionIdPolicy
       val request = mock(classOf[HttpServletRequest])
       when(request.getRequestURI()).thenReturn("/bigWebApp/some_path")
       when(request.getServerName()).thenReturn("mycompany.com")
