@@ -20,16 +20,22 @@ package org.beangle.security.web.session
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-object SessionIdPolicy {
+
+object SessionIdReader {
   val SessionIdName = "sid_name"
 }
-trait SessionIdPolicy {
+
+trait SessionIdPolicy extends SessionIdReader {
+
+  def newId(request: HttpServletRequest, response: HttpServletResponse): String
+
+  def delId(request: HttpServletRequest, response: HttpServletResponse): Unit
+}
+
+trait SessionIdReader {
 
   def idName: String
 
   def getId(request: HttpServletRequest): Option[String]
 
-  def newId(request: HttpServletRequest, response: HttpServletResponse): String
-
-  def delId(request: HttpServletRequest, response: HttpServletResponse): Unit
 }

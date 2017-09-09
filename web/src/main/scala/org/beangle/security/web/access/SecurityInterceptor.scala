@@ -29,7 +29,7 @@ import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.authc.LogoutHandler
-import org.beangle.security.web.session.SessionIdPolicy
+import org.beangle.security.web.session.SessionIdReader
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
@@ -41,11 +41,11 @@ class SecurityInterceptor(val filters: List[SecurityFilter], val repo: SessionRe
   private val hasFilter = !filters.isEmpty
   var expiredUrl: String = _
   var logoutHandler: LogoutHandler = _
-  var sessionIdPolicy: SessionIdPolicy = _
+  var sessionIdReader: SessionIdReader = _
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      SecurityContext.session = sessionIdPolicy.getId(req) match {
+      SecurityContext.session = sessionIdReader.getId(req) match {
         case Some(sid) => repo.access(sid, Instant.now).orNull
         case None      => null
       }
