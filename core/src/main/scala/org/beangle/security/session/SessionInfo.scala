@@ -16,26 +16,17 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Beangle.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.web.session
+package org.beangle.security.session
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import java.time.{ Duration, Instant }
 
-object SessionIdReader {
-  val SessionIdName = "sid_name"
-}
-
-trait SessionIdPolicy extends SessionIdReader {
-
-  def newId(request: HttpServletRequest, response: HttpServletResponse): String
-
-  def delId(request: HttpServletRequest, response: HttpServletResponse): Unit
-}
-
-trait SessionIdReader {
-
-  def idName: String
-
-  def getId(request: HttpServletRequest): Option[String]
-
+class SessionInfo extends Serializable {
+  var id: String = _
+  var principal: String = _
+  var description: Option[String] = _
+  var ip: Option[String] = _
+  var agent: Option[String] = _
+  var os: Option[String] = _
+  var loginAt: Instant = _
+  var lastAccessAt: Instant = _
 }

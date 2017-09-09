@@ -21,7 +21,7 @@ package org.beangle.security.web.access
 import org.beangle.commons.web.access.DefaultAccessRequestBuilder
 import org.beangle.security.session.SessionRegistry
 import javax.servlet.http.HttpServletRequest
-import org.beangle.security.web.session.SessionIdPolicy
+import org.beangle.security.web.session.SessionIdReader
 import org.beangle.commons.web.access.AccessRequest
 import org.beangle.commons.web.util.RequestUtils
 import org.beangle.commons.lang.Strings
@@ -34,10 +34,10 @@ import org.beangle.commons.lang.Strings
  */
 class SecurityAccessRequestBuilder(val registry: SessionRegistry) extends DefaultAccessRequestBuilder {
 
-  var sessionIdPolicy: SessionIdPolicy = _
+  var sessionIdReader: SessionIdReader = _
 
   override def build(request: HttpServletRequest): AccessRequest = {
-    sessionIdPolicy.getId(request) match {
+    sessionIdReader.getId(request) match {
       case Some(sid) =>
         registry.get(sid) match {
           case Some(s) =>

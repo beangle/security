@@ -55,3 +55,4 @@ trait Session extends java.io.Externalizable {
 trait SessionBuilder {
   def build(id: String, principal: Principal, loginAt: Instant): Session
 }
+
