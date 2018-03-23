@@ -55,10 +55,11 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      val session: Session = sessionIdReader.getId(req) match {
-        case Some(sid) => repo.access(sid, Instant.now).orNull
-        case None      => null
-      }
+      val session =
+        sessionIdReader.getId(req) match {
+          case Some(sid) => repo.access(sid, Instant.now)
+          case None      => None
+        }
       val ctx = SecurityContextBuilder.build(req, authorizer, requestConvertor, session)
       SecurityContext.set(ctx)
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)

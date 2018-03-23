@@ -83,7 +83,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
    */
   protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
     logger.debug(s"PreAuthentication success: $session")
-    val ctx = SecurityContextBuilder.build(req, securityManager.authorizer, securityManager.requestConvertor, session)
+    val ctx = SecurityContextBuilder.build(req, securityManager.authorizer, securityManager.requestConvertor, Some(session))
     SecurityContext.set(ctx)
   }
 

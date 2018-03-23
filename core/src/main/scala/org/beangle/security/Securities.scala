@@ -23,20 +23,19 @@ import org.beangle.security.context.SecurityContext
 
 object Securities {
   def session: Option[Session] = {
-    val context = SecurityContext.get
-    Option(context.session)
+    SecurityContext.get.session
   }
 
   def user: String = {
     val context = SecurityContext.get
-    if (null == context.session) {
-      SecurityContext.Anonymous
-    } else {
-      if (context.root && context.runAs.isDefined) {
-        context.runAs.get
-      } else {
-        context.session.principal.getName
-      }
+    context.session match {
+      case None => SecurityContext.Anonymous
+      case Some(session) =>
+        if (context.root && context.runAs.isDefined) {
+          context.runAs.get
+        } else {
+          session.principal.getName
+        }
     }
   }
 

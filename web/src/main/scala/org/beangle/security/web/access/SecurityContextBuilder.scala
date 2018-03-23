@@ -28,10 +28,10 @@ import org.beangle.security.authz.Authorizer
 object SecurityContextBuilder {
 
   def build(request: HttpServletRequest, authorizer: Authorizer,
-    requestConvertor: RequestConvertor, session: Session): SecurityContext = {
+    requestConvertor: RequestConvertor, session: Option[Session]): SecurityContext = {
     var isRoot = false;
-    if (null != session) {
-      isRoot = authorizer.isRoot(session.principal.getName)
+    session foreach { s =>
+      isRoot = authorizer.isRoot(s.principal.getName)
     }
     var runAs: String = null
     if (isRoot) {

@@ -64,10 +64,10 @@ object SecurityContext {
   }
 }
 
-class SecurityContext(val session: Session, val request: Request, val root: Boolean, val runAs: Option[String]) {
+class SecurityContext(val session: Option[Session], val request: Request, val root: Boolean, val runAs: Option[String]) {
 
   def isValid: Boolean = {
-    null != session
+    session.isDefined
   }
 }
 /**
