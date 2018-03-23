@@ -28,6 +28,8 @@ import org.beangle.security.web.WebSecurityManager
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.security.Securities
+import org.beangle.security.web.access.SecurityContextBuilder
 
 abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter with Logging {
 
@@ -49,7 +51,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
     try {
       val newSessionId = securityManager.sessionIdPolicy.newId(request, response)
       val session = securityManager.login(newSessionId, token, WebClient.get(request))
-      SecurityContext.session = session
+      successfulAuthentication(request, response, session)
     } catch {
       case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
       case e: Throwable                    => throw e
@@ -64,7 +66,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
     getCredentials(req) match {
       case None => None
       case Some(newer) =>
-        SecurityContext.getSession match {
+        Securities.session match {
           case None => resovleToken(req, res, newer)
           case Some(s) =>
             s.principal.asInstanceOf[Account].remoteToken match {
@@ -81,7 +83,8 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
    */
   protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
     logger.debug(s"PreAuthentication success: $session")
-    SecurityContext.session = session
+    val ctx = SecurityContextBuilder.build(req, securityManager.authorizer, securityManager.requestConvertor, session)
+    SecurityContext.set(ctx)
   }
 
   /**
@@ -92,7 +95,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
    */
   protected def unsuccessfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, failed: AuthenticationException) {
     logger.debug("Cleared security context due to exception", failed)
-    SecurityContext.session = null
+    SecurityContext.clear()
     if (null != failed) throw failed
   }
 }

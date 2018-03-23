@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.mgt
+package org.beangle.security.web.access
 
-import org.beangle.commons.security.Request
-import org.beangle.security.authc.{ AuthenticationToken, Authenticator }
-import org.beangle.security.authz.Authorizer
-import org.beangle.security.session.{ Session, SessionRegistry }
 import org.beangle.security.context.SecurityContext
+import javax.servlet.http.HttpServletRequest
+import org.beangle.commons.web.util.CookieUtils
+import org.beangle.security.session.Session
+import org.beangle.commons.web.security.RequestConvertor
+import org.beangle.security.authz.Authorizer
 
-trait SecurityManager {
+object SecurityContextBuilder {
 
-  def authenticator: Authenticator
-
-  def authorizer: Authorizer
-
-  def registry: SessionRegistry
-
-  def isPermitted(context: SecurityContext): Boolean = {
-    authorizer.isPermitted(context)
-  }
-
-  //@throw(classOfAuthenticationException])
-  def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session
-
-  def logout(session: Session): Unit = {
-    this.registry.remove(session.id)
+  def build(request: HttpServletRequest, authorizer: Authorizer,
+    requestConvertor: RequestConvertor, session: Session): SecurityContext = {
+    var isRoot = false;
+    if (null != session) {
+      isRoot = authorizer.isRoot(session.principal.getName)
+    }
+    var runAs: String = null
+    if (isRoot) {
+      runAs = CookieUtils.getCookieValue(request, "beangle.security.runAs")
+    }
+    new SecurityContext(session, requestConvertor.convert(request), isRoot, Option(runAs))
   }
 }

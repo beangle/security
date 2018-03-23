@@ -26,10 +26,15 @@ import org.beangle.security.web.authc.WebClient
 import org.beangle.security.web.session.SessionIdPolicy
 
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import org.beangle.commons.web.security.RequestConvertor
 
-class WebSecurityManager(val authenticator: Authenticator, val authorizer: Authorizer,
-  val registry: SessionRegistry, val sessionIdPolicy: SessionIdPolicy)
-  extends SecurityManager {
+class WebSecurityManager extends SecurityManager {
+
+  var authenticator: Authenticator = _
+  var authorizer: Authorizer = _
+  var registry: SessionRegistry = _
+  var sessionIdPolicy: SessionIdPolicy = _
+  var requestConvertor: RequestConvertor = _
 
   override def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session = {
     registry.register(sessionId, authenticator.authenticate(token), client)
