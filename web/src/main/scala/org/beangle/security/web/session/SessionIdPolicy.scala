@@ -20,6 +20,7 @@ package org.beangle.security.web.session
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import org.beangle.commons.web.util.CookieUtils
 
 object SessionIdReader {
   val SessionIdName = "sid_name"
@@ -37,5 +38,13 @@ trait SessionIdReader {
   def idName: String
 
   def getId(request: HttpServletRequest): Option[String]
+
+}
+
+class CookieSessionIdReader(val idName: String) extends SessionIdReader {
+
+  override def getId(request: HttpServletRequest): Option[String] = {
+    Option(CookieUtils.getCookieValue(request, idName))
+  }
 
 }
