@@ -18,11 +18,10 @@
  */
 package org.beangle.security.session
 
+import java.security.Principal
 import java.time.{ Duration, Instant }
 
-import org.beangle.security.authc.Account
 import org.beangle.security.context.SecurityContext
-import java.security.Principal
 
 object Session {
   val DefaultTimeOut = Duration.ofSeconds(30 * 60)
@@ -31,11 +30,7 @@ object Session {
     SecurityContext.session.principal.getName
   }
 
-  trait Client extends Serializable {
-    def ip: String
-  }
-
-  class AgentClient(val agent: String, val ip: String, val os: String) extends Client
+  class Agent(val name: String, val ip: String, val os: String) extends Serializable
 
 }
 
@@ -47,11 +42,13 @@ trait Session extends java.io.Externalizable {
 
   def loginAt: Instant
 
+  def agent: Session.Agent
+
   def lastAccessAt: Instant
 
   def lastAccessAt_=(newAccessed: Instant): Unit
 }
 
 trait SessionBuilder {
-  def build(id: String, principal: Principal, loginAt: Instant): Session
+  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent): Session
 }

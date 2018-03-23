@@ -30,7 +30,7 @@ trait SessionRepo {
 
 trait SessionRegistry extends SessionRepo {
 
-  def register(sessionId: String, info: Account, client: Session.Client): Session
+  def register(sessionId: String, info: Account, client: Session.Agent): Session
 
   def remove(sessionId: String): Option[Session]
 }

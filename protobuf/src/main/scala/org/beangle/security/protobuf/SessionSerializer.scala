@@ -33,13 +33,14 @@ object SessionSerializer extends ObjectSerializer {
     builder.setPrincipal(AccountSerializer.toMessage(session.principal))
     builder.setLoginAt(session.loginAt.getEpochSecond)
     builder.setLastAccessAt(session.lastAccessAt.getEpochSecond)
+    builder.setAgent(AgentSerializer.toMessage(session.agent))
     builder.build().writeTo(os)
   }
 
   override def deserialize(is: InputStream, params: Map[String, Any]): Any = {
     val s = Model.Session.parseFrom(is)
     val session = new DefaultSession(s.getId, AccountSerializer.fromMessage(s.getPrincipal),
-      Instant.ofEpochSecond(s.getLoginAt))
+      Instant.ofEpochSecond(s.getLoginAt), AgentSerializer.fromMessage(s.getAgent))
     session.lastAccessAt = Instant.ofEpochSecond(s.getLastAccessAt)
     session
   }

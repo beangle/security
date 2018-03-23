@@ -21,7 +21,7 @@ package org.beangle.security.session
 import org.beangle.commons.event.Event
 
 @SerialVersionUID(-6802410177820837015L)
-class LoginEvent(src: Session, val client: Session.Client) extends Event(src) {
+class LoginEvent(src: Session) extends Event(src) {
   def session: Session = source.asInstanceOf[Session]
 }
 

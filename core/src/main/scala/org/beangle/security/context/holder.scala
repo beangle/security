@@ -25,6 +25,8 @@ import org.beangle.security.SecurityException
 object SecurityContext {
   val Anonymous = "anonymous"
 
+  private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
+
   /**
    * <ul>
    * <li> threadLocal
@@ -34,9 +36,9 @@ object SecurityContext {
    */
   private def buildHolder(strategyName: String): SecurityContextHolder = {
     strategyName match {
-      case "threadLocal" => new ThreadLocalHolder(false)
+      case "threadLocal"            => new ThreadLocalHolder(false)
       case "inheritableThreadLocal" => new ThreadLocalHolder(true)
-      case "global" => GlobalHolder
+      case "global"                 => GlobalHolder
       case _ => {
         try {
           val clazz = Class.forName(strategyName).asInstanceOf[Class[SecurityContextHolder]]
@@ -48,7 +50,6 @@ object SecurityContext {
       }
     }
   }
-  private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
 
   def session_=(session: Session): Unit = {
     holder.session = session
@@ -59,7 +60,7 @@ object SecurityContext {
   }
 
   def session: Session = {
-    if (null == holder.session) throw new SecurityException("Not Login",null) else holder.session
+    if (null == holder.session) throw new SecurityException("Not Login", null) else holder.session
   }
 
   def hasValidContext: Boolean = {
@@ -68,7 +69,7 @@ object SecurityContext {
   }
 
   def principal: Any = getSession match {
-    case None => SecurityContext.Anonymous
+    case None          => SecurityContext.Anonymous
     case Some(session) => session.principal
   }
 }

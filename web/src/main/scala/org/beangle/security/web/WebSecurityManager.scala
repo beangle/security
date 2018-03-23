@@ -29,9 +29,9 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 class WebSecurityManager(val authenticator: Authenticator, val authorizer: Authorizer,
   val registry: SessionRegistry, val sessionIdPolicy: SessionIdPolicy)
-    extends SecurityManager {
+  extends SecurityManager {
 
-  override def login(sessionId: String, token: AuthenticationToken, client: Session.Client): Session = {
+  override def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session = {
     registry.register(sessionId, authenticator.authenticate(token), client)
   }
 
