@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.protobuf;
+package org.beangle.security.session.protobuf;
 
 public final class Model {
   private Model() {}
@@ -236,7 +236,7 @@ public final class Model {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beangle.security.protobuf.Model.internal_static_Account_descriptor;
+      return org.beangle.security.session.protobuf.Model.internal_static_Account_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -252,9 +252,9 @@ public final class Model {
     }
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beangle.security.protobuf.Model.internal_static_Account_fieldAccessorTable
+      return org.beangle.security.session.protobuf.Model.internal_static_Account_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beangle.security.protobuf.Model.Account.class, org.beangle.security.protobuf.Model.Account.Builder.class);
+              org.beangle.security.session.protobuf.Model.Account.class, org.beangle.security.session.protobuf.Model.Account.Builder.class);
     }
 
     private int bitField0_;
@@ -443,7 +443,7 @@ public final class Model {
           java.lang.String, java.lang.String> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, java.lang.String>newDefaultInstance(
-                  org.beangle.security.protobuf.Model.internal_static_Account_DetailsEntry_descriptor,
+                  org.beangle.security.session.protobuf.Model.internal_static_Account_DetailsEntry_descriptor,
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.STRING,
@@ -596,10 +596,10 @@ public final class Model {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beangle.security.protobuf.Model.Account)) {
+      if (!(obj instanceof org.beangle.security.session.protobuf.Model.Account)) {
         return super.equals(obj);
       }
-      org.beangle.security.protobuf.Model.Account other = (org.beangle.security.protobuf.Model.Account) obj;
+      org.beangle.security.session.protobuf.Model.Account other = (org.beangle.security.session.protobuf.Model.Account) obj;
 
       boolean result = true;
       result = result && getName()
@@ -648,69 +648,69 @@ public final class Model {
       return hash;
     }
 
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(byte[] data)
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(java.io.InputStream input)
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Account parseDelimitedFrom(java.io.InputStream input)
+    public static org.beangle.security.session.protobuf.Model.Account parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Account parseDelimitedFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Account parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Account parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -722,7 +722,7 @@ public final class Model {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beangle.security.protobuf.Model.Account prototype) {
+    public static Builder newBuilder(org.beangle.security.session.protobuf.Model.Account prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -742,10 +742,10 @@ public final class Model {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:Account)
-        org.beangle.security.protobuf.Model.AccountOrBuilder {
+        org.beangle.security.session.protobuf.Model.AccountOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beangle.security.protobuf.Model.internal_static_Account_descriptor;
+        return org.beangle.security.session.protobuf.Model.internal_static_Account_descriptor;
       }
 
       @SuppressWarnings({"rawtypes"})
@@ -772,12 +772,12 @@ public final class Model {
       }
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beangle.security.protobuf.Model.internal_static_Account_fieldAccessorTable
+        return org.beangle.security.session.protobuf.Model.internal_static_Account_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beangle.security.protobuf.Model.Account.class, org.beangle.security.protobuf.Model.Account.Builder.class);
+                org.beangle.security.session.protobuf.Model.Account.class, org.beangle.security.session.protobuf.Model.Account.Builder.class);
       }
 
-      // Construct using org.beangle.security.protobuf.Model.Account.newBuilder()
+      // Construct using org.beangle.security.session.protobuf.Model.Account.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -812,23 +812,23 @@ public final class Model {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beangle.security.protobuf.Model.internal_static_Account_descriptor;
+        return org.beangle.security.session.protobuf.Model.internal_static_Account_descriptor;
       }
 
-      public org.beangle.security.protobuf.Model.Account getDefaultInstanceForType() {
-        return org.beangle.security.protobuf.Model.Account.getDefaultInstance();
+      public org.beangle.security.session.protobuf.Model.Account getDefaultInstanceForType() {
+        return org.beangle.security.session.protobuf.Model.Account.getDefaultInstance();
       }
 
-      public org.beangle.security.protobuf.Model.Account build() {
-        org.beangle.security.protobuf.Model.Account result = buildPartial();
+      public org.beangle.security.session.protobuf.Model.Account build() {
+        org.beangle.security.session.protobuf.Model.Account result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.beangle.security.protobuf.Model.Account buildPartial() {
-        org.beangle.security.protobuf.Model.Account result = new org.beangle.security.protobuf.Model.Account(this);
+      public org.beangle.security.session.protobuf.Model.Account buildPartial() {
+        org.beangle.security.session.protobuf.Model.Account result = new org.beangle.security.session.protobuf.Model.Account(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         result.name_ = name_;
@@ -871,16 +871,16 @@ public final class Model {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beangle.security.protobuf.Model.Account) {
-          return mergeFrom((org.beangle.security.protobuf.Model.Account)other);
+        if (other instanceof org.beangle.security.session.protobuf.Model.Account) {
+          return mergeFrom((org.beangle.security.session.protobuf.Model.Account)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beangle.security.protobuf.Model.Account other) {
-        if (other == org.beangle.security.protobuf.Model.Account.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beangle.security.session.protobuf.Model.Account other) {
+        if (other == org.beangle.security.session.protobuf.Model.Account.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
           onChanged();
@@ -919,11 +919,11 @@ public final class Model {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.beangle.security.protobuf.Model.Account parsedMessage = null;
+        org.beangle.security.session.protobuf.Model.Account parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.protobuf.Model.Account) e.getUnfinishedMessage();
+          parsedMessage = (org.beangle.security.session.protobuf.Model.Account) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1441,12 +1441,12 @@ public final class Model {
     }
 
     // @@protoc_insertion_point(class_scope:Account)
-    private static final org.beangle.security.protobuf.Model.Account DEFAULT_INSTANCE;
+    private static final org.beangle.security.session.protobuf.Model.Account DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beangle.security.protobuf.Model.Account();
+      DEFAULT_INSTANCE = new org.beangle.security.session.protobuf.Model.Account();
     }
 
-    public static org.beangle.security.protobuf.Model.Account getDefaultInstance() {
+    public static org.beangle.security.session.protobuf.Model.Account getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1469,7 +1469,7 @@ public final class Model {
       return PARSER;
     }
 
-    public org.beangle.security.protobuf.Model.Account getDefaultInstanceForType() {
+    public org.beangle.security.session.protobuf.Model.Account getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1590,14 +1590,14 @@ public final class Model {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beangle.security.protobuf.Model.internal_static_Agent_descriptor;
+      return org.beangle.security.session.protobuf.Model.internal_static_Agent_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beangle.security.protobuf.Model.internal_static_Agent_fieldAccessorTable
+      return org.beangle.security.session.protobuf.Model.internal_static_Agent_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beangle.security.protobuf.Model.Agent.class, org.beangle.security.protobuf.Model.Agent.Builder.class);
+              org.beangle.security.session.protobuf.Model.Agent.class, org.beangle.security.session.protobuf.Model.Agent.Builder.class);
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
@@ -1750,10 +1750,10 @@ public final class Model {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beangle.security.protobuf.Model.Agent)) {
+      if (!(obj instanceof org.beangle.security.session.protobuf.Model.Agent)) {
         return super.equals(obj);
       }
-      org.beangle.security.protobuf.Model.Agent other = (org.beangle.security.protobuf.Model.Agent) obj;
+      org.beangle.security.session.protobuf.Model.Agent other = (org.beangle.security.session.protobuf.Model.Agent) obj;
 
       boolean result = true;
       result = result && getName()
@@ -1784,69 +1784,69 @@ public final class Model {
       return hash;
     }
 
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(byte[] data)
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(java.io.InputStream input)
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseDelimitedFrom(java.io.InputStream input)
+    public static org.beangle.security.session.protobuf.Model.Agent parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseDelimitedFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Agent parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1858,7 +1858,7 @@ public final class Model {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beangle.security.protobuf.Model.Agent prototype) {
+    public static Builder newBuilder(org.beangle.security.session.protobuf.Model.Agent prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -1878,20 +1878,20 @@ public final class Model {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:Agent)
-        org.beangle.security.protobuf.Model.AgentOrBuilder {
+        org.beangle.security.session.protobuf.Model.AgentOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beangle.security.protobuf.Model.internal_static_Agent_descriptor;
+        return org.beangle.security.session.protobuf.Model.internal_static_Agent_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beangle.security.protobuf.Model.internal_static_Agent_fieldAccessorTable
+        return org.beangle.security.session.protobuf.Model.internal_static_Agent_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beangle.security.protobuf.Model.Agent.class, org.beangle.security.protobuf.Model.Agent.Builder.class);
+                org.beangle.security.session.protobuf.Model.Agent.class, org.beangle.security.session.protobuf.Model.Agent.Builder.class);
       }
 
-      // Construct using org.beangle.security.protobuf.Model.Agent.newBuilder()
+      // Construct using org.beangle.security.session.protobuf.Model.Agent.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1919,23 +1919,23 @@ public final class Model {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beangle.security.protobuf.Model.internal_static_Agent_descriptor;
+        return org.beangle.security.session.protobuf.Model.internal_static_Agent_descriptor;
       }
 
-      public org.beangle.security.protobuf.Model.Agent getDefaultInstanceForType() {
-        return org.beangle.security.protobuf.Model.Agent.getDefaultInstance();
+      public org.beangle.security.session.protobuf.Model.Agent getDefaultInstanceForType() {
+        return org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance();
       }
 
-      public org.beangle.security.protobuf.Model.Agent build() {
-        org.beangle.security.protobuf.Model.Agent result = buildPartial();
+      public org.beangle.security.session.protobuf.Model.Agent build() {
+        org.beangle.security.session.protobuf.Model.Agent result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.beangle.security.protobuf.Model.Agent buildPartial() {
-        org.beangle.security.protobuf.Model.Agent result = new org.beangle.security.protobuf.Model.Agent(this);
+      public org.beangle.security.session.protobuf.Model.Agent buildPartial() {
+        org.beangle.security.session.protobuf.Model.Agent result = new org.beangle.security.session.protobuf.Model.Agent(this);
         result.name_ = name_;
         result.ip_ = ip_;
         result.os_ = os_;
@@ -1970,16 +1970,16 @@ public final class Model {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beangle.security.protobuf.Model.Agent) {
-          return mergeFrom((org.beangle.security.protobuf.Model.Agent)other);
+        if (other instanceof org.beangle.security.session.protobuf.Model.Agent) {
+          return mergeFrom((org.beangle.security.session.protobuf.Model.Agent)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beangle.security.protobuf.Model.Agent other) {
-        if (other == org.beangle.security.protobuf.Model.Agent.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beangle.security.session.protobuf.Model.Agent other) {
+        if (other == org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
           onChanged();
@@ -2005,11 +2005,11 @@ public final class Model {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.beangle.security.protobuf.Model.Agent parsedMessage = null;
+        org.beangle.security.session.protobuf.Model.Agent parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.protobuf.Model.Agent) e.getUnfinishedMessage();
+          parsedMessage = (org.beangle.security.session.protobuf.Model.Agent) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2239,12 +2239,12 @@ public final class Model {
     }
 
     // @@protoc_insertion_point(class_scope:Agent)
-    private static final org.beangle.security.protobuf.Model.Agent DEFAULT_INSTANCE;
+    private static final org.beangle.security.session.protobuf.Model.Agent DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beangle.security.protobuf.Model.Agent();
+      DEFAULT_INSTANCE = new org.beangle.security.session.protobuf.Model.Agent();
     }
 
-    public static org.beangle.security.protobuf.Model.Agent getDefaultInstance() {
+    public static org.beangle.security.session.protobuf.Model.Agent getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2267,7 +2267,7 @@ public final class Model {
       return PARSER;
     }
 
-    public org.beangle.security.protobuf.Model.Agent getDefaultInstanceForType() {
+    public org.beangle.security.session.protobuf.Model.Agent getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2294,11 +2294,11 @@ public final class Model {
     /**
      * <code>.Account principal = 2;</code>
      */
-    org.beangle.security.protobuf.Model.Account getPrincipal();
+    org.beangle.security.session.protobuf.Model.Account getPrincipal();
     /**
      * <code>.Account principal = 2;</code>
      */
-    org.beangle.security.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder();
+    org.beangle.security.session.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder();
 
     /**
      * <code>int64 loginAt = 3;</code>
@@ -2317,11 +2317,11 @@ public final class Model {
     /**
      * <code>.Agent agent = 5;</code>
      */
-    org.beangle.security.protobuf.Model.Agent getAgent();
+    org.beangle.security.session.protobuf.Model.Agent getAgent();
     /**
      * <code>.Agent agent = 5;</code>
      */
-    org.beangle.security.protobuf.Model.AgentOrBuilder getAgentOrBuilder();
+    org.beangle.security.session.protobuf.Model.AgentOrBuilder getAgentOrBuilder();
   }
   /**
    * Protobuf type {@code Session}
@@ -2379,11 +2379,11 @@ public final class Model {
               break;
             }
             case 18: {
-              org.beangle.security.protobuf.Model.Account.Builder subBuilder = null;
+              org.beangle.security.session.protobuf.Model.Account.Builder subBuilder = null;
               if (principal_ != null) {
                 subBuilder = principal_.toBuilder();
               }
-              principal_ = input.readMessage(org.beangle.security.protobuf.Model.Account.parser(), extensionRegistry);
+              principal_ = input.readMessage(org.beangle.security.session.protobuf.Model.Account.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(principal_);
                 principal_ = subBuilder.buildPartial();
@@ -2402,11 +2402,11 @@ public final class Model {
               break;
             }
             case 42: {
-              org.beangle.security.protobuf.Model.Agent.Builder subBuilder = null;
+              org.beangle.security.session.protobuf.Model.Agent.Builder subBuilder = null;
               if (agent_ != null) {
                 subBuilder = agent_.toBuilder();
               }
-              agent_ = input.readMessage(org.beangle.security.protobuf.Model.Agent.parser(), extensionRegistry);
+              agent_ = input.readMessage(org.beangle.security.session.protobuf.Model.Agent.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(agent_);
                 agent_ = subBuilder.buildPartial();
@@ -2428,14 +2428,14 @@ public final class Model {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.beangle.security.protobuf.Model.internal_static_Session_descriptor;
+      return org.beangle.security.session.protobuf.Model.internal_static_Session_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.beangle.security.protobuf.Model.internal_static_Session_fieldAccessorTable
+      return org.beangle.security.session.protobuf.Model.internal_static_Session_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.beangle.security.protobuf.Model.Session.class, org.beangle.security.protobuf.Model.Session.Builder.class);
+              org.beangle.security.session.protobuf.Model.Session.class, org.beangle.security.session.protobuf.Model.Session.Builder.class);
     }
 
     public static final int ID_FIELD_NUMBER = 1;
@@ -2473,7 +2473,7 @@ public final class Model {
     }
 
     public static final int PRINCIPAL_FIELD_NUMBER = 2;
-    private org.beangle.security.protobuf.Model.Account principal_;
+    private org.beangle.security.session.protobuf.Model.Account principal_;
     /**
      * <code>.Account principal = 2;</code>
      */
@@ -2483,13 +2483,13 @@ public final class Model {
     /**
      * <code>.Account principal = 2;</code>
      */
-    public org.beangle.security.protobuf.Model.Account getPrincipal() {
-      return principal_ == null ? org.beangle.security.protobuf.Model.Account.getDefaultInstance() : principal_;
+    public org.beangle.security.session.protobuf.Model.Account getPrincipal() {
+      return principal_ == null ? org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
     }
     /**
      * <code>.Account principal = 2;</code>
      */
-    public org.beangle.security.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder() {
+    public org.beangle.security.session.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder() {
       return getPrincipal();
     }
 
@@ -2512,7 +2512,7 @@ public final class Model {
     }
 
     public static final int AGENT_FIELD_NUMBER = 5;
-    private org.beangle.security.protobuf.Model.Agent agent_;
+    private org.beangle.security.session.protobuf.Model.Agent agent_;
     /**
      * <code>.Agent agent = 5;</code>
      */
@@ -2522,13 +2522,13 @@ public final class Model {
     /**
      * <code>.Agent agent = 5;</code>
      */
-    public org.beangle.security.protobuf.Model.Agent getAgent() {
-      return agent_ == null ? org.beangle.security.protobuf.Model.Agent.getDefaultInstance() : agent_;
+    public org.beangle.security.session.protobuf.Model.Agent getAgent() {
+      return agent_ == null ? org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
     }
     /**
      * <code>.Agent agent = 5;</code>
      */
-    public org.beangle.security.protobuf.Model.AgentOrBuilder getAgentOrBuilder() {
+    public org.beangle.security.session.protobuf.Model.AgentOrBuilder getAgentOrBuilder() {
       return getAgent();
     }
 
@@ -2596,10 +2596,10 @@ public final class Model {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.beangle.security.protobuf.Model.Session)) {
+      if (!(obj instanceof org.beangle.security.session.protobuf.Model.Session)) {
         return super.equals(obj);
       }
-      org.beangle.security.protobuf.Model.Session other = (org.beangle.security.protobuf.Model.Session) obj;
+      org.beangle.security.session.protobuf.Model.Session other = (org.beangle.security.session.protobuf.Model.Session) obj;
 
       boolean result = true;
       result = result && getId()
@@ -2650,69 +2650,69 @@ public final class Model {
       return hash;
     }
 
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(byte[] data)
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(java.io.InputStream input)
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Session parseDelimitedFrom(java.io.InputStream input)
+    public static org.beangle.security.session.protobuf.Model.Session parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Session parseDelimitedFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.beangle.security.protobuf.Model.Session parseFrom(
+    public static org.beangle.security.session.protobuf.Model.Session parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2724,7 +2724,7 @@ public final class Model {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.beangle.security.protobuf.Model.Session prototype) {
+    public static Builder newBuilder(org.beangle.security.session.protobuf.Model.Session prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -2744,20 +2744,20 @@ public final class Model {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:Session)
-        org.beangle.security.protobuf.Model.SessionOrBuilder {
+        org.beangle.security.session.protobuf.Model.SessionOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.beangle.security.protobuf.Model.internal_static_Session_descriptor;
+        return org.beangle.security.session.protobuf.Model.internal_static_Session_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.beangle.security.protobuf.Model.internal_static_Session_fieldAccessorTable
+        return org.beangle.security.session.protobuf.Model.internal_static_Session_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.beangle.security.protobuf.Model.Session.class, org.beangle.security.protobuf.Model.Session.Builder.class);
+                org.beangle.security.session.protobuf.Model.Session.class, org.beangle.security.session.protobuf.Model.Session.Builder.class);
       }
 
-      // Construct using org.beangle.security.protobuf.Model.Session.newBuilder()
+      // Construct using org.beangle.security.session.protobuf.Model.Session.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2797,23 +2797,23 @@ public final class Model {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.beangle.security.protobuf.Model.internal_static_Session_descriptor;
+        return org.beangle.security.session.protobuf.Model.internal_static_Session_descriptor;
       }
 
-      public org.beangle.security.protobuf.Model.Session getDefaultInstanceForType() {
-        return org.beangle.security.protobuf.Model.Session.getDefaultInstance();
+      public org.beangle.security.session.protobuf.Model.Session getDefaultInstanceForType() {
+        return org.beangle.security.session.protobuf.Model.Session.getDefaultInstance();
       }
 
-      public org.beangle.security.protobuf.Model.Session build() {
-        org.beangle.security.protobuf.Model.Session result = buildPartial();
+      public org.beangle.security.session.protobuf.Model.Session build() {
+        org.beangle.security.session.protobuf.Model.Session result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.beangle.security.protobuf.Model.Session buildPartial() {
-        org.beangle.security.protobuf.Model.Session result = new org.beangle.security.protobuf.Model.Session(this);
+      public org.beangle.security.session.protobuf.Model.Session buildPartial() {
+        org.beangle.security.session.protobuf.Model.Session result = new org.beangle.security.session.protobuf.Model.Session(this);
         result.id_ = id_;
         if (principalBuilder_ == null) {
           result.principal_ = principal_;
@@ -2858,16 +2858,16 @@ public final class Model {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.beangle.security.protobuf.Model.Session) {
-          return mergeFrom((org.beangle.security.protobuf.Model.Session)other);
+        if (other instanceof org.beangle.security.session.protobuf.Model.Session) {
+          return mergeFrom((org.beangle.security.session.protobuf.Model.Session)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.beangle.security.protobuf.Model.Session other) {
-        if (other == org.beangle.security.protobuf.Model.Session.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.beangle.security.session.protobuf.Model.Session other) {
+        if (other == org.beangle.security.session.protobuf.Model.Session.getDefaultInstance()) return this;
         if (!other.getId().isEmpty()) {
           id_ = other.id_;
           onChanged();
@@ -2897,11 +2897,11 @@ public final class Model {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.beangle.security.protobuf.Model.Session parsedMessage = null;
+        org.beangle.security.session.protobuf.Model.Session parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.protobuf.Model.Session) e.getUnfinishedMessage();
+          parsedMessage = (org.beangle.security.session.protobuf.Model.Session) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2980,9 +2980,9 @@ public final class Model {
         return this;
       }
 
-      private org.beangle.security.protobuf.Model.Account principal_ = null;
+      private org.beangle.security.session.protobuf.Model.Account principal_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.beangle.security.protobuf.Model.Account, org.beangle.security.protobuf.Model.Account.Builder, org.beangle.security.protobuf.Model.AccountOrBuilder> principalBuilder_;
+          org.beangle.security.session.protobuf.Model.Account, org.beangle.security.session.protobuf.Model.Account.Builder, org.beangle.security.session.protobuf.Model.AccountOrBuilder> principalBuilder_;
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -2992,9 +2992,9 @@ public final class Model {
       /**
        * <code>.Account principal = 2;</code>
        */
-      public org.beangle.security.protobuf.Model.Account getPrincipal() {
+      public org.beangle.security.session.protobuf.Model.Account getPrincipal() {
         if (principalBuilder_ == null) {
-          return principal_ == null ? org.beangle.security.protobuf.Model.Account.getDefaultInstance() : principal_;
+          return principal_ == null ? org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
         } else {
           return principalBuilder_.getMessage();
         }
@@ -3002,7 +3002,7 @@ public final class Model {
       /**
        * <code>.Account principal = 2;</code>
        */
-      public Builder setPrincipal(org.beangle.security.protobuf.Model.Account value) {
+      public Builder setPrincipal(org.beangle.security.session.protobuf.Model.Account value) {
         if (principalBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3019,7 +3019,7 @@ public final class Model {
        * <code>.Account principal = 2;</code>
        */
       public Builder setPrincipal(
-          org.beangle.security.protobuf.Model.Account.Builder builderForValue) {
+          org.beangle.security.session.protobuf.Model.Account.Builder builderForValue) {
         if (principalBuilder_ == null) {
           principal_ = builderForValue.build();
           onChanged();
@@ -3032,11 +3032,11 @@ public final class Model {
       /**
        * <code>.Account principal = 2;</code>
        */
-      public Builder mergePrincipal(org.beangle.security.protobuf.Model.Account value) {
+      public Builder mergePrincipal(org.beangle.security.session.protobuf.Model.Account value) {
         if (principalBuilder_ == null) {
           if (principal_ != null) {
             principal_ =
-              org.beangle.security.protobuf.Model.Account.newBuilder(principal_).mergeFrom(value).buildPartial();
+              org.beangle.security.session.protobuf.Model.Account.newBuilder(principal_).mergeFrom(value).buildPartial();
           } else {
             principal_ = value;
           }
@@ -3064,7 +3064,7 @@ public final class Model {
       /**
        * <code>.Account principal = 2;</code>
        */
-      public org.beangle.security.protobuf.Model.Account.Builder getPrincipalBuilder() {
+      public org.beangle.security.session.protobuf.Model.Account.Builder getPrincipalBuilder() {
 
         onChanged();
         return getPrincipalFieldBuilder().getBuilder();
@@ -3072,23 +3072,23 @@ public final class Model {
       /**
        * <code>.Account principal = 2;</code>
        */
-      public org.beangle.security.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder() {
+      public org.beangle.security.session.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder() {
         if (principalBuilder_ != null) {
           return principalBuilder_.getMessageOrBuilder();
         } else {
           return principal_ == null ?
-              org.beangle.security.protobuf.Model.Account.getDefaultInstance() : principal_;
+              org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
         }
       }
       /**
        * <code>.Account principal = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.beangle.security.protobuf.Model.Account, org.beangle.security.protobuf.Model.Account.Builder, org.beangle.security.protobuf.Model.AccountOrBuilder>
+          org.beangle.security.session.protobuf.Model.Account, org.beangle.security.session.protobuf.Model.Account.Builder, org.beangle.security.session.protobuf.Model.AccountOrBuilder>
           getPrincipalFieldBuilder() {
         if (principalBuilder_ == null) {
           principalBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              org.beangle.security.protobuf.Model.Account, org.beangle.security.protobuf.Model.Account.Builder, org.beangle.security.protobuf.Model.AccountOrBuilder>(
+              org.beangle.security.session.protobuf.Model.Account, org.beangle.security.session.protobuf.Model.Account.Builder, org.beangle.security.session.protobuf.Model.AccountOrBuilder>(
                   getPrincipal(),
                   getParentForChildren(),
                   isClean());
@@ -3149,9 +3149,9 @@ public final class Model {
         return this;
       }
 
-      private org.beangle.security.protobuf.Model.Agent agent_ = null;
+      private org.beangle.security.session.protobuf.Model.Agent agent_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.beangle.security.protobuf.Model.Agent, org.beangle.security.protobuf.Model.Agent.Builder, org.beangle.security.protobuf.Model.AgentOrBuilder> agentBuilder_;
+          org.beangle.security.session.protobuf.Model.Agent, org.beangle.security.session.protobuf.Model.Agent.Builder, org.beangle.security.session.protobuf.Model.AgentOrBuilder> agentBuilder_;
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3161,9 +3161,9 @@ public final class Model {
       /**
        * <code>.Agent agent = 5;</code>
        */
-      public org.beangle.security.protobuf.Model.Agent getAgent() {
+      public org.beangle.security.session.protobuf.Model.Agent getAgent() {
         if (agentBuilder_ == null) {
-          return agent_ == null ? org.beangle.security.protobuf.Model.Agent.getDefaultInstance() : agent_;
+          return agent_ == null ? org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
         } else {
           return agentBuilder_.getMessage();
         }
@@ -3171,7 +3171,7 @@ public final class Model {
       /**
        * <code>.Agent agent = 5;</code>
        */
-      public Builder setAgent(org.beangle.security.protobuf.Model.Agent value) {
+      public Builder setAgent(org.beangle.security.session.protobuf.Model.Agent value) {
         if (agentBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -3188,7 +3188,7 @@ public final class Model {
        * <code>.Agent agent = 5;</code>
        */
       public Builder setAgent(
-          org.beangle.security.protobuf.Model.Agent.Builder builderForValue) {
+          org.beangle.security.session.protobuf.Model.Agent.Builder builderForValue) {
         if (agentBuilder_ == null) {
           agent_ = builderForValue.build();
           onChanged();
@@ -3201,11 +3201,11 @@ public final class Model {
       /**
        * <code>.Agent agent = 5;</code>
        */
-      public Builder mergeAgent(org.beangle.security.protobuf.Model.Agent value) {
+      public Builder mergeAgent(org.beangle.security.session.protobuf.Model.Agent value) {
         if (agentBuilder_ == null) {
           if (agent_ != null) {
             agent_ =
-              org.beangle.security.protobuf.Model.Agent.newBuilder(agent_).mergeFrom(value).buildPartial();
+              org.beangle.security.session.protobuf.Model.Agent.newBuilder(agent_).mergeFrom(value).buildPartial();
           } else {
             agent_ = value;
           }
@@ -3233,7 +3233,7 @@ public final class Model {
       /**
        * <code>.Agent agent = 5;</code>
        */
-      public org.beangle.security.protobuf.Model.Agent.Builder getAgentBuilder() {
+      public org.beangle.security.session.protobuf.Model.Agent.Builder getAgentBuilder() {
 
         onChanged();
         return getAgentFieldBuilder().getBuilder();
@@ -3241,23 +3241,23 @@ public final class Model {
       /**
        * <code>.Agent agent = 5;</code>
        */
-      public org.beangle.security.protobuf.Model.AgentOrBuilder getAgentOrBuilder() {
+      public org.beangle.security.session.protobuf.Model.AgentOrBuilder getAgentOrBuilder() {
         if (agentBuilder_ != null) {
           return agentBuilder_.getMessageOrBuilder();
         } else {
           return agent_ == null ?
-              org.beangle.security.protobuf.Model.Agent.getDefaultInstance() : agent_;
+              org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
         }
       }
       /**
        * <code>.Agent agent = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.beangle.security.protobuf.Model.Agent, org.beangle.security.protobuf.Model.Agent.Builder, org.beangle.security.protobuf.Model.AgentOrBuilder>
+          org.beangle.security.session.protobuf.Model.Agent, org.beangle.security.session.protobuf.Model.Agent.Builder, org.beangle.security.session.protobuf.Model.AgentOrBuilder>
           getAgentFieldBuilder() {
         if (agentBuilder_ == null) {
           agentBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              org.beangle.security.protobuf.Model.Agent, org.beangle.security.protobuf.Model.Agent.Builder, org.beangle.security.protobuf.Model.AgentOrBuilder>(
+              org.beangle.security.session.protobuf.Model.Agent, org.beangle.security.session.protobuf.Model.Agent.Builder, org.beangle.security.session.protobuf.Model.AgentOrBuilder>(
                   getAgent(),
                   getParentForChildren(),
                   isClean());
@@ -3279,12 +3279,12 @@ public final class Model {
     }
 
     // @@protoc_insertion_point(class_scope:Session)
-    private static final org.beangle.security.protobuf.Model.Session DEFAULT_INSTANCE;
+    private static final org.beangle.security.session.protobuf.Model.Session DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.beangle.security.protobuf.Model.Session();
+      DEFAULT_INSTANCE = new org.beangle.security.session.protobuf.Model.Session();
     }
 
-    public static org.beangle.security.protobuf.Model.Session getDefaultInstance() {
+    public static org.beangle.security.session.protobuf.Model.Session getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3307,7 +3307,7 @@ public final class Model {
       return PARSER;
     }
 
-    public org.beangle.security.protobuf.Model.Session getDefaultInstanceForType() {
+    public org.beangle.security.session.protobuf.Model.Session getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3342,19 +3342,19 @@ public final class Model {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n8main/resources/org/beangle/security/pr" +
-      "otobuf/model.proto\"\323\001\n\007Account\022\014\n\004name\030\001" +
-      " \001(\t\022\023\n\013description\030\002 \001(\t\022\023\n\013remoteToken" +
-      "\030\003 \001(\t\022\016\n\006status\030\004 \001(\005\022\023\n\013authorities\030\005 " +
-      "\001(\t\022\023\n\013permissions\030\006 \001(\t\022&\n\007details\030\007 \003(" +
-      "\0132\025.Account.DetailsEntry\032.\n\014DetailsEntry" +
-      "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"-\n\005Agen" +
-      "t\022\014\n\004name\030\001 \001(\t\022\n\n\002ip\030\002 \001(\t\022\n\n\002os\030\003 \001(\t\"" +
-      "p\n\007Session\022\n\n\002id\030\001 \001(\t\022\033\n\tprincipal\030\002 \001(" +
-      "\0132\010.Account\022\017\n\007loginAt\030\003 \001(\003\022\024\n\014lastAcce" +
-      "ssAt\030\004 \001(\003\022\025\n\005agent\030\005 \001(\0132\006.AgentB&\n\035org" +
-      ".beangle.security.protobufB\005Modelb\006proto" +
-      "3"
+      "\n@main/resources/org/beangle/security/se" +
+      "ssion/protobuf/model.proto\"\323\001\n\007Account\022\014" +
+      "\n\004name\030\001 \001(\t\022\023\n\013description\030\002 \001(\t\022\023\n\013rem" +
+      "oteToken\030\003 \001(\t\022\016\n\006status\030\004 \001(\005\022\023\n\013author" +
+      "ities\030\005 \001(\t\022\023\n\013permissions\030\006 \001(\t\022&\n\007deta" +
+      "ils\030\007 \003(\0132\025.Account.DetailsEntry\032.\n\014Deta" +
+      "ilsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001" +
+      "\"-\n\005Agent\022\014\n\004name\030\001 \001(\t\022\n\n\002ip\030\002 \001(\t\022\n\n\002o" +
+      "s\030\003 \001(\t\"p\n\007Session\022\n\n\002id\030\001 \001(\t\022\033\n\tprinci" +
+      "pal\030\002 \001(\0132\010.Account\022\017\n\007loginAt\030\003 \001(\003\022\024\n\014" +
+      "lastAccessAt\030\004 \001(\003\022\025\n\005agent\030\005 \001(\0132\006.Agen" +
+      "tB.\n%org.beangle.security.session.protob" +
+      "ufB\005Modelb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

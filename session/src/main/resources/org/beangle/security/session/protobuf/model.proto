@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-option java_package = "org.beangle.security.protobuf"; 
-option java_outer_classname = "Model"; 
+option java_package = "org.beangle.security.session.protobuf";
+option java_outer_classname = "Model";
 
 message Account {
     string name=1;

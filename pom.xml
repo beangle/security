@@ -23,7 +23,6 @@
     <module>cas</module>
     <module>web</module>
     <module>session</module>
-    <module>protobuf</module>
   </modules>
 
   <dependencyManagement>

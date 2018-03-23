@@ -64,7 +64,7 @@ class SecurityInterceptor(val filters: List[SecurityFilter], val repo: SessionRe
         logger.debug("Authentication exception occurred", ae)
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
-        if (SecurityContext.hasValidContext) accessDeniedHandler.handle(request, response, ade)
+        if (SecurityContext.isValid) accessDeniedHandler.handle(request, response, ade)
         else sendStartAuthentication(request, response, new AuthenticationException("access denied", ade));
     }
   }

@@ -63,7 +63,7 @@ object SecurityContext {
     if (null == holder.session) throw new SecurityException("Not Login", null) else holder.session
   }
 
-  def hasValidContext: Boolean = {
+  def isValid: Boolean = {
     val sess = getSession
     !sess.isEmpty && Anonymous != sess.get.principal
   }

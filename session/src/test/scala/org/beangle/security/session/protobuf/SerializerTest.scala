@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.protobuf
+package org.beangle.security.session.protobuf
 
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.DefaultAccount
@@ -27,6 +27,9 @@ import org.scalatest.{ FunSpec, Matchers }
 import org.scalatest.junit.JUnitRunner
 import java.time.Instant
 import org.beangle.security.session.Session
+import org.beangle.security.session.protobuf.AccountSerializer
+import org.beangle.security.session.protobuf.SessionSerializer
+import org.beangle.security.session.protobuf.AgentSerializer
 
 @RunWith(classOf[JUnitRunner])
 class SerializerTest extends FunSpec with Matchers with Logging {

@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.protobuf
+package org.beangle.security.session.protobuf
 
 import java.io.{ InputStream, OutputStream }
-
 import org.beangle.commons.io.ObjectSerializer
 import org.beangle.security.session.Session
 
