@@ -26,12 +26,7 @@ import org.beangle.security.context.SecurityContext
 object Session {
   val DefaultTimeOut = Duration.ofSeconds(30 * 60)
 
-  def user: String = {
-    SecurityContext.session.principal.getName
-  }
-
   class Agent(val name: String, val ip: String, val os: String) extends Serializable
-
 }
 
 trait Session extends java.io.Externalizable {

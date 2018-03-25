@@ -27,9 +27,6 @@ import org.scalatest.{ FunSpec, Matchers }
 import org.scalatest.junit.JUnitRunner
 import java.time.Instant
 import org.beangle.security.session.Session
-import org.beangle.security.session.protobuf.AccountSerializer
-import org.beangle.security.session.protobuf.SessionSerializer
-import org.beangle.security.session.protobuf.AgentSerializer
 
 @RunWith(classOf[JUnitRunner])
 class SerializerTest extends FunSpec with Matchers with Logging {

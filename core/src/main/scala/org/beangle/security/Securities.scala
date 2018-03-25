@@ -16,30 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.mgt
+package org.beangle.security
 
-import org.beangle.commons.security.Request
-import org.beangle.security.authc.{ AuthenticationToken, Authenticator }
-import org.beangle.security.authz.Authorizer
-import org.beangle.security.session.{ Session, SessionRegistry }
+import org.beangle.security.session.Session
 import org.beangle.security.context.SecurityContext
 
-trait SecurityManager {
-
-  def authenticator: Authenticator
-
-  def authorizer: Authorizer
-
-  def registry: SessionRegistry
-
-  def isPermitted(context: SecurityContext): Boolean = {
-    authorizer.isPermitted(context)
+object Securities {
+  def session: Option[Session] = {
+    SecurityContext.get.session
   }
 
-  //@throw(classOfAuthenticationException])
-  def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session
-
-  def logout(session: Session): Unit = {
-    this.registry.remove(session.id)
+  def user: String = {
+    val context = SecurityContext.get
+    context.session match {
+      case None => SecurityContext.Anonymous
+      case Some(session) =>
+        if (context.root && context.runAs.isDefined) {
+          context.runAs.get
+        } else {
+          session.principal.getName
+        }
+    }
   }
+
 }
