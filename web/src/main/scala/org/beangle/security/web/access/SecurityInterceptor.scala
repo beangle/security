@@ -36,32 +36,19 @@ import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 class SecurityInterceptor extends Interceptor with Logging with Initializing {
-
-  var repo: SessionRepo = _
-  var sessionIdReader: SessionIdReader = _
-
+  var securityContextBuilder: SecurityContextBuilder = _
   var entryPoint: EntryPoint = _
   var accessDeniedHandler: AccessDeniedHandler = _
-
-  var requestConvertor: RequestConvertor = _
-  var authorizer: Authorizer = _
-
   var filters: List[SecurityFilter] = _
   var hasFilter = false
 
   override def init() {
-    hasFilter = !filters.isEmpty
+    hasFilter = (null!=filters && !filters.isEmpty)
   }
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      val session =
-        sessionIdReader.getId(req) match {
-          case Some(sid) => repo.access(sid, Instant.now)
-          case None      => None
-        }
-      val ctx = SecurityContextBuilder.build(req, authorizer, requestConvertor, session)
-      SecurityContext.set(ctx)
+      SecurityContext.set(securityContextBuilder.find(req))
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {

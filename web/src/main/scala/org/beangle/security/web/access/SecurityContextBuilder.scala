@@ -18,17 +18,42 @@
  */
 package org.beangle.security.web.access
 
-import org.beangle.security.context.SecurityContext
-import javax.servlet.http.HttpServletRequest
-import org.beangle.commons.web.util.CookieUtils
-import org.beangle.security.session.Session
+import java.time.Instant
+
 import org.beangle.commons.web.security.RequestConvertor
+import org.beangle.commons.web.util.CookieUtils
 import org.beangle.security.authz.Authorizer
+import org.beangle.security.context.SecurityContext
+import org.beangle.security.session.SessionRepo
+import org.beangle.security.web.session.SessionIdReader
 
-object SecurityContextBuilder {
+import javax.servlet.http.HttpServletRequest
+import org.beangle.security.session.Session
 
-  def build(request: HttpServletRequest, authorizer: Authorizer,
-    requestConvertor: RequestConvertor, session: Option[Session]): SecurityContext = {
+trait SecurityContextBuilder {
+
+  def find(request: HttpServletRequest): SecurityContext
+
+  def build(request: HttpServletRequest, session: Option[Session]): SecurityContext
+}
+
+class DefaultSecurityContextBuilder extends SecurityContextBuilder {
+  var authorizer: Authorizer = _
+  var requestConvertor: RequestConvertor = _
+
+  var repo: SessionRepo = _
+  var sessionIdReader: SessionIdReader = _
+
+  def find(request: HttpServletRequest): SecurityContext = {
+    val session =
+      sessionIdReader.getId(request) match {
+        case Some(sid) => repo.access(sid, Instant.now)
+        case None      => None
+      }
+    build(request, session)
+  }
+
+  def build(request: HttpServletRequest, session: Option[Session]): SecurityContext = {
     var isRoot = false;
     session foreach { s =>
       isRoot = authorizer.isRoot(s.principal.getName)

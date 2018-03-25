@@ -33,6 +33,7 @@ import org.beangle.security.web.access.SecurityContextBuilder
 
 abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter with Logging {
 
+  var securityContextBuilder: SecurityContextBuilder = _
   /**
    * Try to authenticate a pre-authenticated user if the
    * user has not yet been authenticated.
@@ -83,8 +84,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
    */
   protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
     logger.debug(s"PreAuthentication success: $session")
-    val ctx = SecurityContextBuilder.build(req, securityManager.authorizer, securityManager.requestConvertor, Some(session))
-    SecurityContext.set(ctx)
+    SecurityContext.set(securityContextBuilder.build(req,Some(session)))
   }
 
   /**
