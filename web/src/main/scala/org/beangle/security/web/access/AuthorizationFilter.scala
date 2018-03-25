@@ -26,11 +26,10 @@ import org.beangle.security.context.SecurityContext
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.HttpServletRequest
 
-class AuthorizationFilter(val authorizer: Authorizer, val requestConvertor: RequestConvertor)
-    extends GenericHttpFilter with SecurityFilter {
+class AuthorizationFilter(val authorizer: Authorizer) extends GenericHttpFilter with SecurityFilter {
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-    if (!authorizer.isPermitted(SecurityContext.getSession, requestConvertor.convert(request.asInstanceOf[HttpServletRequest])))
+    if (!authorizer.isPermitted(SecurityContext.get))
       throw new AccessDeniedException(request, "access denied", null)
     chain.doFilter(request, response)
   }

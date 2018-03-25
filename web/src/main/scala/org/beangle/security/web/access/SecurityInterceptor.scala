@@ -20,35 +20,35 @@ package org.beangle.security.web.access
 
 import java.time.Instant
 
+import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.intercept.Interceptor
-import org.beangle.commons.web.util.RequestUtils
+import org.beangle.commons.web.security.RequestConvertor
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
-import org.beangle.security.authz.AccessDeniedException
+import org.beangle.security.authz.{ AccessDeniedException, Authorizer }
 import org.beangle.security.context.SecurityContext
+import org.beangle.security.session.{ Session, SessionRepo }
 import org.beangle.security.web.EntryPoint
-import org.beangle.security.web.authc.LogoutHandler
 import org.beangle.security.web.session.SessionIdReader
 
 import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.security.session.SessionRepo
 
-class SecurityInterceptor(val filters: List[SecurityFilter], val repo: SessionRepo, val entryPoint: EntryPoint,
-    val accessDeniedHandler: AccessDeniedHandler) extends Interceptor with Logging {
+class SecurityInterceptor extends Interceptor with Logging with Initializing {
+  var securityContextBuilder: SecurityContextBuilder = _
+  var entryPoint: EntryPoint = _
+  var accessDeniedHandler: AccessDeniedHandler = _
+  var filters: List[SecurityFilter] = _
+  var hasFilter = false
 
-  private val hasFilter = !filters.isEmpty
-  var expiredUrl: String = _
-  var logoutHandler: LogoutHandler = _
-  var sessionIdReader: SessionIdReader = _
+  override def init() {
+    hasFilter = (null!=filters && !filters.isEmpty)
+  }
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      SecurityContext.session = sessionIdReader.getId(req) match {
-        case Some(sid) => repo.access(sid, Instant.now).orNull
-        case None      => null
-      }
+      SecurityContext.set(securityContextBuilder.find(req))
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {
@@ -61,16 +61,15 @@ class SecurityInterceptor(val filters: List[SecurityFilter], val repo: SessionRe
   private def handleException(request: ServletRequest, response: ServletResponse, exception: SecurityException): Unit = {
     exception match {
       case ae: AuthenticationException =>
-        logger.debug("Authentication exception occurred", ae)
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
-        if (SecurityContext.hasValidContext) accessDeniedHandler.handle(request, response, ade)
+        if (SecurityContext.get.isValid) accessDeniedHandler.handle(request, response, ade)
         else sendStartAuthentication(request, response, new AuthenticationException("access denied", ade));
     }
   }
 
   private def sendStartAuthentication(request: ServletRequest, response: ServletResponse, reason: AuthenticationException): Unit = {
-    SecurityContext.session = null
+    SecurityContext.clear()
     entryPoint.commence(request.asInstanceOf[HttpServletRequest], response.asInstanceOf[HttpServletResponse], reason);
   }
 

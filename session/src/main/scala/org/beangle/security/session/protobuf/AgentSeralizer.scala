@@ -16,18 +16,31 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.web.authc
+package org.beangle.security.session.protobuf
 
-import org.beangle.commons.web.util.RequestUtils
-import javax.servlet.http.HttpServletRequest
+import java.io.{ InputStream, OutputStream }
+import org.beangle.commons.io.ObjectSerializer
 import org.beangle.security.session.Session
 
-object WebClient {
+object AgentSerializer extends ObjectSerializer {
 
-  def get(request: HttpServletRequest): Session.Agent = {
-    val agent = RequestUtils.getUserAgent(request)
-    val server = request.getLocalAddr() + ":" + request.getLocalPort()
-    val ip = RequestUtils.getIpAddr(request)
-    new Session.Agent(agent.browser.toString, ip, agent.os.toString)
+  def toMessage(agent: Session.Agent): Model.Agent = {
+    val builder = Model.Agent.newBuilder()
+    builder.setName(agent.name)
+    builder.setIp(agent.ip)
+    builder.setOs(agent.os)
+    builder.build()
+  }
+
+  def fromMessage(a: Model.Agent): Session.Agent = {
+    new Session.Agent(a.getName(), a.getIp(), a.getOs)
+  }
+
+  override def serialize(data: Any, os: OutputStream, params: Map[String, Any]): Unit = {
+    toMessage(data.asInstanceOf[Session.Agent]).writeTo(os)
+  }
+
+  override def deserialize(is: InputStream, params: Map[String, Any]): Any = {
+    fromMessage(Model.Agent.parseFrom(is))
   }
 }

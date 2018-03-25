@@ -20,20 +20,31 @@ package org.beangle.security.authz
 
 import org.beangle.commons.security.Request
 import org.beangle.security.session.Session
+import org.beangle.security.context.SecurityContext
 
 trait Authorizer {
 
-  def isPermitted(session: Option[Session], request: Request): Boolean
+  def isPermitted(context: SecurityContext): Boolean
+
+  def isRoot(user: String): Boolean
 }
 
 object PublicAuthorizer extends Authorizer {
-  def isPermitted(session: Option[Session], request: Request): Boolean = {
+  def isPermitted(context: SecurityContext): Boolean = {
     true
+  }
+
+  def isRoot(user: String): Boolean = {
+    false
   }
 }
 
 object ProtectedAuthorizer extends Authorizer {
-  def isPermitted(session: Option[Session], request: Request): Boolean = {
-    session.isDefined
+  def isPermitted(context: SecurityContext): Boolean = {
+    context.isValid
+  }
+
+  def isRoot(user: String): Boolean = {
+    false
   }
 }

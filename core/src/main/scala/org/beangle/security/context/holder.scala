@@ -21,9 +21,12 @@ package org.beangle.security.context
 import org.beangle.commons.lang.Throwables
 import org.beangle.security.session.Session
 import org.beangle.security.SecurityException
+import org.beangle.commons.security.Request
 
 object SecurityContext {
   val Anonymous = "anonymous"
+
+  private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
 
   /**
    * <ul>
@@ -34,9 +37,9 @@ object SecurityContext {
    */
   private def buildHolder(strategyName: String): SecurityContextHolder = {
     strategyName match {
-      case "threadLocal" => new ThreadLocalHolder(false)
+      case "threadLocal"            => new ThreadLocalHolder(false)
       case "inheritableThreadLocal" => new ThreadLocalHolder(true)
-      case "global" => GlobalHolder
+      case "global"                 => GlobalHolder
       case _ => {
         try {
           val clazz = Class.forName(strategyName).asInstanceOf[Class[SecurityContextHolder]]
@@ -48,31 +51,25 @@ object SecurityContext {
       }
     }
   }
-  private val holder = buildHolder(System.getProperty("beangle.security.holder", "threadLocal"))
 
-  def session_=(session: Session): Unit = {
-    holder.session = session
+  def clear(): Unit = {
+    holder.set(null)
+  }
+  def set(ctx: SecurityContext): Unit = {
+    holder.set(ctx)
   }
 
-  def getSession: Option[Session] = {
-    if (null == holder.session) None else Some(holder.session)
-  }
-
-  def session: Session = {
-    if (null == holder.session) throw new SecurityException("Not Login",null) else holder.session
-  }
-
-  def hasValidContext: Boolean = {
-    val sess = getSession
-    !sess.isEmpty && Anonymous != sess.get.principal
-  }
-
-  def principal: Any = getSession match {
-    case None => SecurityContext.Anonymous
-    case Some(session) => session.principal
+  def get: SecurityContext = {
+    holder.get
   }
 }
 
+class SecurityContext(val session: Option[Session], val request: Request, val root: Boolean, val runAs: Option[String]) {
+
+  def isValid: Boolean = {
+    session.isDefined
+  }
+}
 /**
  * A holder for storing security context information against a thread.
  * <p>
@@ -83,9 +80,9 @@ object SecurityContext {
  */
 trait SecurityContextHolder {
 
-  def session: Session
+  def get: SecurityContext
 
-  def session_=(session: Session)
+  def set(context: SecurityContext)
 }
 
 /**
@@ -93,7 +90,14 @@ trait SecurityContextHolder {
  */
 object GlobalHolder extends SecurityContextHolder {
 
-  var session: Session = _
+  var context: SecurityContext = _
+
+  def get: SecurityContext = {
+    context
+  }
+  def set(context: SecurityContext): Unit = {
+    this.context = context
+  }
 }
 
 /**
@@ -101,9 +105,17 @@ object GlobalHolder extends SecurityContextHolder {
  */
 class ThreadLocalHolder(inheritable: Boolean) extends SecurityContextHolder {
 
-  private val sessions = if (inheritable) new ThreadLocal[Session] else new InheritableThreadLocal[Session]
+  private val context =
+    if (inheritable) {
+      new ThreadLocal[SecurityContext]
+    } else {
+      new InheritableThreadLocal[SecurityContext]
+    }
 
-  def session: Session = sessions.get
-
-  def session_=(newSession: Session): Unit = sessions.set(newSession)
+  def get: SecurityContext = {
+    context.get
+  }
+  def set(ctx: SecurityContext): Unit = {
+    context.set(ctx)
+  }
 }

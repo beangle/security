@@ -38,20 +38,16 @@ class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
       throw new BadCredentialsException("Rejected", token, null)
     }
   }
-  val securityManager = new WebSecurityManager(authenticator, null, null, new ParamSessionIdPolicy)
+  val sm = new WebSecurityManager()
+  sm.authenticator = authenticator
+  sm.sessionIdPolicy = new ParamSessionIdPolicy
 
-  val filter = new CasPreauthFilter(securityManager, new CasConfig("http://localhost/cas"), null)
+  val filter = new CasPreauthFilter(sm, new CasConfig("http://localhost/cas"), null)
 
   describe("CasPreauthFilter") {
     it("Normal operation") {
       assert(null != filter.getCredentials(mockRequest()))
     }
-
-    //    it("Null Service Ticket Handled Gracefully") {
-    //      intercept[BadCredentialsException] {
-    //        filter.doFilter(mockRequest(), mock(classOf[HttpServletResponse]), mock(classOf[FilterChain]))
-    //      }
-    //    }
   }
 
   private def mockRequest(): HttpServletRequest = {

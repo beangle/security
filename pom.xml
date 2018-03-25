@@ -9,7 +9,7 @@
   <artifactId>beangle-security-parent_2.12</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.1.4</version>
+  <version>4.2.0</version>
 
   <properties>
     <beangle.commons.version>5.1.0.M2</beangle.commons.version>
@@ -23,7 +23,6 @@
     <module>cas</module>
     <module>web</module>
     <module>session</module>
-    <module>protobuf</module>
   </modules>
 
   <dependencyManagement>

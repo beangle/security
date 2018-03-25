@@ -16,17 +16,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.session
+package org.beangle.security
 
-import java.time.{ Duration, Instant }
+import org.beangle.security.session.Session
+import org.beangle.security.context.SecurityContext
 
-class SessionInfo extends Serializable {
-  var id: String = _
-  var principal: String = _
-  var description: Option[String] = _
-  var ip: Option[String] = _
-  var agent: Option[String] = _
-  var os: Option[String] = _
-  var loginAt: Instant = _
-  var lastAccessAt: Instant = _
+object Securities {
+  def session: Option[Session] = {
+    SecurityContext.get.session
+  }
+
+  def user: String = {
+    val context = SecurityContext.get
+    context.session match {
+      case None => SecurityContext.Anonymous
+      case Some(session) =>
+        if (context.root && context.runAs.isDefined) {
+          context.runAs.get
+        } else {
+          session.principal.getName
+        }
+    }
+  }
+
 }

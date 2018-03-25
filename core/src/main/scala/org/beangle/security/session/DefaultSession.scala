@@ -28,8 +28,8 @@ import org.beangle.security.authc.DefaultAccount
 import java.security.Principal
 
 object DefaultSessionBuilder extends SessionBuilder {
-  def build(id: String, principal: Principal, loginAt: Instant): Session = {
-    new DefaultSession(id, principal.asInstanceOf[DefaultAccount], loginAt)
+  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent): Session = {
+    new DefaultSession(id, principal.asInstanceOf[DefaultAccount], loginAt, agent)
   }
 }
 
@@ -38,13 +38,15 @@ class DefaultSession extends Session {
   var principal: DefaultAccount = _
   var loginAt: Instant = _
   var lastAccessAt: Instant = _
+  var agent: Session.Agent = _
 
-  def this(id: String, principal: DefaultAccount, loginAt: Instant) {
+  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent) {
     this()
     this.id = id
     this.principal = principal
     this.loginAt = loginAt
     this.lastAccessAt = loginAt
+    this.agent = agent;
   }
 
   def writeExternal(out: ObjectOutput) {
@@ -52,13 +54,22 @@ class DefaultSession extends Session {
     principal.writeExternal(out)
     out.writeLong(loginAt.getEpochSecond)
     out.writeLong(lastAccessAt.getEpochSecond)
+    out.writeObject(agent.name)
+    out.writeObject(agent.ip)
+    out.writeObject(agent.os)
   }
 
   def readExternal(in: ObjectInput) {
-    id = in.readObject.asInstanceOf[String]
+    id = readString(in)
     principal = new DefaultAccount()
     principal.readExternal(in)
     loginAt = Instant.ofEpochSecond(in.readLong)
     lastAccessAt = Instant.ofEpochSecond(in.readLong)
+    agent = new Session.Agent(readString(in), readString(in), readString(in))
+  }
+
+  @inline
+  private def readString(in: ObjectInput): String = {
+    in.readObject.asInstanceOf[String]
   }
 }

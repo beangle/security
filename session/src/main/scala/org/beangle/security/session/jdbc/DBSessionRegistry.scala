@@ -36,8 +36,8 @@ import javax.sql.DataSource
  * 基于数据库的session注册表
  */
 class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
-    extends DBSessionRepo(dataSource, cacheManager, serializer)
-    with EventPublisher with SessionRegistry {
+  extends DBSessionRepo(dataSource, cacheManager, serializer)
+  with EventPublisher with SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,data"
 
@@ -45,7 +45,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
     SessionDaemon.start(heartbeatIntervalMillis, this.heartbeatReporter, new DBSessionCleaner(this))
   }
 
-  override def register(sessionId: String, info: Account, client: Session.Client): Session = {
+  override def register(sessionId: String, info: Account, agent: Session.Agent): Session = {
     val existed = get(sessionId).orNull
     val principal = info.getName
     // 是否为重复注册
@@ -53,9 +53,9 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
       existed
     } else {
       if (null != existed) remove(sessionId, " expired by replacement."); // 注销同会话的其它账户
-      val session = builder.build(sessionId, info, Instant.now) // 新生
-      save(session, client)
-      publish(new LoginEvent(session, client))
+      val session = builder.build(sessionId, info, Instant.now, agent) // 新生
+      save(session)
+      publish(new LoginEvent(session))
       session
     }
   }
@@ -78,16 +78,16 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
     s
   }
 
-  private def save(s: Session, client: Session.Client): Unit = {
+  private def save(s: Session): Unit = {
     val sessionId = s.id
-    val ac = client.asInstanceOf[Session.AgentClient]
+    val ac = s.agent
     executor.statement(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?)")
       .prepare(x => {
         x.setString(1, sessionId)
         x.setString(2, s.principal.getName)
         x.setString(3, s.principal.asInstanceOf[Account].description)
-        x.setString(4, client.ip)
-        x.setString(5, ac.agent)
+        x.setString(4, ac.ip)
+        x.setString(5, ac.name)
         x.setString(6, ac.os)
         x.setTimestamp(7, Timestamp.from(s.loginAt))
         x.setTimestamp(8, Timestamp.from(s.loginAt))

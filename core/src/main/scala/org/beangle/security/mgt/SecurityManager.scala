@@ -19,9 +19,10 @@
 package org.beangle.security.mgt
 
 import org.beangle.commons.security.Request
-import org.beangle.security.authc.{ AuthenticationException, AuthenticationToken, Authenticator }
+import org.beangle.security.authc.{ AuthenticationToken, Authenticator }
 import org.beangle.security.authz.Authorizer
 import org.beangle.security.session.{ Session, SessionRegistry }
+import org.beangle.security.context.SecurityContext
 
 trait SecurityManager {
 
@@ -31,12 +32,12 @@ trait SecurityManager {
 
   def registry: SessionRegistry
 
-  def isPermitted(session: Option[Session], request: Request): Boolean = {
-    authorizer.isPermitted(session, request)
+  def isPermitted(context: SecurityContext): Boolean = {
+    authorizer.isPermitted(context)
   }
 
   //@throw(classOfAuthenticationException])
-  def login(sessionId: String, token: AuthenticationToken, client: Session.Client): Session
+  def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session
 
   def logout(session: Session): Unit = {
     this.registry.remove(session.id)
