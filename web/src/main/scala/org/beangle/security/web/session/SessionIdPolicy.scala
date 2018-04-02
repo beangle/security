@@ -37,14 +37,6 @@ trait SessionIdReader {
 
   def idName: String
 
-  def getId(request: HttpServletRequest): Option[String]
-
-}
-
-class CookieSessionIdReader(val idName: String) extends SessionIdReader {
-
-  override def getId(request: HttpServletRequest): Option[String] = {
-    Option(CookieUtils.getCookieValue(request, idName))
-  }
+  def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String]
 
 }

@@ -19,33 +19,29 @@
 package org.beangle.security.web.session
 
 import javax.servlet.http.HttpServletRequest
+import org.beangle.commons.web.util.CookieUtils
 import javax.servlet.http.HttpServletResponse
+import org.beangle.commons.lang.annotation.value
 
-class ParamSessionIdPolicy(val sessionIdParam: String = "JSESSIONID") extends SessionIdPolicy {
+class CookieSessionIdReader(val idName: String) extends SessionIdReader {
 
-  override def getId(req: HttpServletRequest, res: HttpServletResponse): Option[String] = {
-    var sid: String = null
-    if (null != sessionIdParam) {
-      sid = req.getParameter(sessionIdParam)
-    } else {
-      val hs = req.getSession(false)
-      if (null != hs) sid = hs.getId
+  override def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String] = {
+    Option(CookieUtils.getCookieValue(request, idName))
+  }
+
+}
+
+class CookieParamSessionIdReader(val idName: String) extends SessionIdReader {
+
+  override def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String] = {
+    var sid = CookieUtils.getCookieValue(request, idName)
+    if (null == sid) {
+      sid = request.getParameter(idName)
+      if (null != sid) {
+        CookieUtils.addCookie(request, response, idName, sid, -1)
+      }
     }
     Option(sid)
   }
 
-  override def newId(req: HttpServletRequest, res: HttpServletResponse): String = {
-    if (null == sessionIdParam) {
-      req.getSession(true).getId
-    } else {
-      null
-    }
-  }
-
-  override def delId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
-  }
-
-  override def idName: String = {
-    sessionIdParam
-  }
 }
