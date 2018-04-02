@@ -24,15 +24,14 @@ import org.beangle.commons.web.security.RequestConvertor
 import org.beangle.commons.web.util.CookieUtils
 import org.beangle.security.authz.Authorizer
 import org.beangle.security.context.SecurityContext
-import org.beangle.security.session.SessionRepo
+import org.beangle.security.session.{ Session, SessionRepo }
 import org.beangle.security.web.session.SessionIdReader
 
-import javax.servlet.http.HttpServletRequest
-import org.beangle.security.session.Session
+import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 trait SecurityContextBuilder {
 
-  def find(request: HttpServletRequest): SecurityContext
+  def find(request: HttpServletRequest, response: HttpServletResponse): SecurityContext
 
   def build(request: HttpServletRequest, session: Option[Session]): SecurityContext
 }
@@ -44,9 +43,9 @@ class DefaultSecurityContextBuilder extends SecurityContextBuilder {
   var repo: SessionRepo = _
   var sessionIdReader: SessionIdReader = _
 
-  def find(request: HttpServletRequest): SecurityContext = {
+  def find(request: HttpServletRequest, response: HttpServletResponse): SecurityContext = {
     val session =
-      sessionIdReader.getId(request) match {
+      sessionIdReader.getId(request, response) match {
         case Some(sid) => repo.access(sid, Instant.now)
         case None      => None
       }

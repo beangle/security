@@ -48,7 +48,7 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      SecurityContext.set(securityContextBuilder.find(req))
+      SecurityContext.set(securityContextBuilder.find(req,res))
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {

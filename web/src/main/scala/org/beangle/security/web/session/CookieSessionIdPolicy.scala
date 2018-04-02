@@ -29,7 +29,7 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
  */
 abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name) with SessionIdPolicy with Initializing {
 
-  override def getId(request: HttpServletRequest): Option[String] = {
+  override def getId(request: HttpServletRequest, res: HttpServletResponse): Option[String] = {
     Option(CookieUtils.getCookieValue(request, name))
   }
 

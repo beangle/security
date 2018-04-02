@@ -18,13 +18,12 @@
  */
 package org.beangle.security.session.cache
 
-import org.beangle.cache.Cache
-import org.beangle.security.session.Session
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
-import java.util.HashSet
+
+import org.beangle.cache.Cache
 import org.beangle.commons.collection.Collections
-import java.util.TimerTask
+import org.beangle.security.session.Session
 import org.beangle.security.session.util.Task
 
 /**

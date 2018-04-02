@@ -18,15 +18,13 @@
  */
 package org.beangle.security.session.cache
 
-import org.beangle.security.session.SessionRepo
-import org.beangle.cache.CacheManager
-import org.beangle.security.session.Session
 import java.time.Instant
-import org.beangle.security.session.util.UpdateDelayGenerator
-import java.sql.Timestamp
-import org.beangle.security.session.util.SessionDaemon
+
+import org.beangle.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
+import org.beangle.security.session.{ Session, SessionRepo }
+import org.beangle.security.session.util.{ SessionDaemon, UpdateDelayGenerator }
 
 abstract class CacheSessionRepo(val cacheManager: CacheManager)
     extends SessionRepo with Initializing with Logging {

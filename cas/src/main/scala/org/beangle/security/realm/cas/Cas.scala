@@ -16,27 +16,28 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.web.session
+package org.beangle.security.realm.cas
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import org.beangle.commons.web.util.CookieUtils
+import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
-object SessionIdReader {
-  val SessionIdName = "sid_name"
-}
+object Cas {
 
-trait SessionIdPolicy extends SessionIdReader {
-
-  def newId(request: HttpServletRequest, response: HttpServletResponse): String
-
-  def delId(request: HttpServletRequest, response: HttpServletResponse): Unit
-}
-
-trait SessionIdReader {
-
-  def idName: String
-
-  def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String]
-
+  def cleanup(casConfig: CasConfig, request: HttpServletRequest, response: HttpServletResponse): String = {
+    val cookies = request.getCookies
+    if (cookies != null) {
+      var i = 0
+      while (i < cookies.length) {
+        val c = cookies(i)
+        if (c.getMaxAge < 0) {
+          val domain = c.getDomain
+          if (null == domain || domain == request.getServerName) {
+            c.setMaxAge(0)
+            response.addCookie(c)
+          }
+        }
+        i += 1
+      }
+    }
+    casConfig.casServer + casConfig.logoutUri
+  }
 }

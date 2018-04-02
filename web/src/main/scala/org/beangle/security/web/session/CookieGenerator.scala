@@ -23,8 +23,10 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 
 /**
+ *
  * @author chaostone
  */
+@deprecated("Using CookieGenderator within beangle-common-web_2.12:5.1.0.M3")
 class CookieGenerator(val name: String) {
   var domain: String = _
   var path: String = _
