@@ -29,10 +29,12 @@ import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
  * Processes a CAS service ticket.
  */
 class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, ticketValidator: TicketValidator)
-    extends AbstractPreauthFilter(securityManager) {
+  extends AbstractPreauthFilter(securityManager) {
+
+  var casEntryPoint: CasEntryPoint = _
 
   protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
-    val url = CasEntryPoint.constructServiceUrl(req, res, null, getLocalServer(req), TicketName)
+    val url = casEntryPoint.constructServiceUrl(req, res, null, getLocalServer(req))
     Some(new PreauthToken(ticketValidator.validate(credentials.toString(), url), credentials))
   }
 
