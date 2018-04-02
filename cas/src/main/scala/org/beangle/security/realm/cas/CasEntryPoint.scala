@@ -30,25 +30,33 @@ import org.beangle.security.web.session.SessionIdReader
 
 object CasEntryPoint {
 
-  def constructServiceUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String, ticketName: String): String = {
+  def constructServiceUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String,
+    ticketName: String): String = {
     if (Strings.isNotBlank(service)) return res.encodeURL(service)
 
     val buffer = new StringBuilder()
-    if (!serverName.startsWith("https://") && !serverName.startsWith("http://"))
+    if (!serverName.startsWith("https://") && !serverName.startsWith("http://")) {
       buffer.append(if (req.isSecure) "https://" else "http://")
+    }
 
     buffer.append(serverName).append(req.getRequestURI)
-    if (Strings.isNotBlank(req.getQueryString)) {
-      val location = req.getQueryString.indexOf(ticketName + "=")
-      if (location != 0) {
-        buffer.append("?")
-        if (location == -1) {
-          buffer.append(req.getQueryString)
-        } else if (location > 0) {
-          val actualLocation = req.getQueryString().indexOf("&" + ticketName + "=")
-          if (actualLocation == -1) buffer.append(req.getQueryString)
-          else if (actualLocation > 0) buffer.append(req.getQueryString().substring(0, actualLocation))
+    val reservedKeys = Set(SessionIdReader.SessionIdName, ticketName)
+    val queryString = req.getQueryString
+    if (Strings.isNotBlank(queryString)) {
+      val parts = Strings.split(queryString, '&')
+      val paramBuf = new StringBuilder
+      parts foreach { part =>
+        val equIdx = part.indexOf('=')
+        if (equIdx > 0) {
+          val key = part.substring(0, equIdx)
+          if (!reservedKeys.contains(key)) {
+            paramBuf.append("&").append(key).append(part.substring(equIdx))
+          }
         }
+      }
+      if (!paramBuf.isEmpty) {
+        paramBuf.deleteCharAt(0)
+        buffer.append(paramBuf)
       }
     }
     res.encodeURL(buffer.toString)
@@ -63,7 +71,9 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   var sessionIdReader: SessionIdReader = _
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
-    if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException] || ae.isInstanceOf[SessionException])) {
+    Cas.cleanup(config, req, res)
+    if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException]
+      || ae.isInstanceOf[SessionException])) {
       res.getWriter().append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
     } else {
       if (null != localLogin) {
@@ -83,7 +93,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     }
   }
 
-  def constructLocalLoginUrl(req: HttpServletRequest, res: HttpServletResponse, service: String, serverName: String): String = {
+  def constructLocalLoginUrl(req: HttpServletRequest, res: HttpServletResponse,
+    service: String, serverName: String): String = {
     if (Strings.isNotBlank(service)) {
       res.encodeURL(service)
     } else {
@@ -97,8 +108,10 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   /**
    * Constructs the URL to use to redirect to the CAS server.
    */
-  def constructLoginUrl(loginUrl: String, serviceName: String, serviceUrl: String, renew: Boolean, gateway: Boolean): String = {
-    loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") + serviceName + "=" + URLEncoder.encode(serviceUrl, "UTF-8") +
+  def constructLoginUrl(loginUrl: String, serviceName: String, serviceUrl: String,
+    renew: Boolean, gateway: Boolean): String = {
+    loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") + serviceName + "=" +
+      URLEncoder.encode(serviceUrl, "UTF-8") +
       (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "") +
       "&" + SessionIdReader.SessionIdName + "=" + sessionIdReader.idName
   }
