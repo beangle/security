@@ -12,10 +12,10 @@
   <version>4.2.2-SNAPSHOT</version>
 
   <properties>
-    <beangle.commons.version>5.1.0.M2</beangle.commons.version>
-    <beangle.data.version>5.0.2</beangle.data.version>
+    <beangle.commons.version>5.1.0.M3-SNAPSHOT</beangle.commons.version>
+    <beangle.data.version>5.0.3-SNAPSHOT</beangle.data.version>
     <beangle.cache.version>0.0.12</beangle.cache.version>
-    <beangle.serializer.version>0.0.5</beangle.serializer.version>
+    <beangle.serializer.version>0.0.6-SNAPSHOT</beangle.serializer.version>
   </properties>
 
   <modules>
