@@ -110,7 +110,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
         }
       }
       if (!paramBuf.isEmpty) {
-        paramBuf.deleteCharAt(0)
+        paramBuf.setCharAt(0, '?')
         buffer.append(paramBuf)
       }
     }

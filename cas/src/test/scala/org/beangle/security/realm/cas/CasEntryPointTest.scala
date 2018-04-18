@@ -82,10 +82,13 @@ class CasEntryPointTest extends FunSpec with Matchers with Logging {
     it("constuct service url") {
       val config = new CasConfig("http://www.mycompany.com/cas")
       val request = mock(classOf[HttpServletRequest])
+      when(request.getServerName).thenReturn("localhost")
       when(request.getRequestURI()).thenReturn("/demo/home.action")
       when(request.getServletPath()).thenReturn("/home.action")
       when(request.getContextPath()).thenReturn("/demo")
+      when(request.getServerPort()).thenReturn(8080)
       when(request.getScheme()).thenReturn("http")
+      when(request.getQueryString()).thenReturn("a=1&b=2");
 
       val entryPoint = new CasEntryPoint(config)
       val response = mock(classOf[HttpServletResponse])

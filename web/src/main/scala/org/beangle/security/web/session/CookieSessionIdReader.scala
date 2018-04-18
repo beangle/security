@@ -26,22 +26,17 @@ import org.beangle.commons.lang.annotation.value
 class CookieSessionIdReader(val idName: String) extends SessionIdReader {
 
   override def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String] = {
-    Option(CookieUtils.getCookieValue(request, idName))
-  }
+    val csid = CookieUtils.getCookieValue(request, idName)
+    val psid = request.getParameter(idName)
 
-}
-
-class CookieParamSessionIdReader(val idName: String) extends SessionIdReader {
-
-  override def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String] = {
-    var sid = CookieUtils.getCookieValue(request, idName)
-    if (null == sid) {
-      sid = request.getParameter(idName)
-      if (null != sid) {
-        CookieUtils.addCookie(request, response, idName, sid, -1)
+    if (null != psid) {
+      if (null == csid || psid != csid) {
+        CookieUtils.addCookie(request, response, idName, psid, -1)
       }
+      Some(psid)
+    } else {
+      Option(csid)
     }
-    Option(sid)
   }
 
 }
