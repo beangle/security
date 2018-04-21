@@ -56,7 +56,14 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     }
 
     val msgDigest = MessageDigest.getInstance(alg)
-    val hs = split(Base64.decode(digestContent.toCharArray), size)
+
+    val hs =
+      if (alg.contains("MD5")) {
+        split(Hex.decode(digestContent), size)
+      } else {
+        split(Base64.decode(digestContent.toCharArray), size)
+      }
+
     msgDigest.reset()
     msgDigest.update(password.getBytes)
     msgDigest.update(hs._2)
@@ -80,7 +87,13 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     msgDigest.update(salt)
     val pwhash = msgDigest.digest()
     val digest = new StringBuilder(if (null == label) "" else label)
-    digest.append(Base64.encode(Arrays.concat(pwhash, salt)))
+    val hash =
+      if (alg.contains("MD5")) {
+        Hex.encode(Arrays.concat(pwhash, salt), true)
+      } else {
+        Base64.encode(Arrays.concat(pwhash, salt))
+      }
+    digest.append(hash)
     digest.toString
   }
 

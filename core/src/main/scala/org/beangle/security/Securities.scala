@@ -39,4 +39,9 @@ object Securities {
     }
   }
 
+  def resource: String = {
+    val context = SecurityContext.get
+    context.request.resource.toString();
+  }
+
 }

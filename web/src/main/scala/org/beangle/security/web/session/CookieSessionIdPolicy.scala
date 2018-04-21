@@ -20,7 +20,7 @@ package org.beangle.security.web.session
 
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.web.context.ServletContextHolder
-import org.beangle.commons.web.util.{ CookieUtils }
+import org.beangle.commons.web.util.{ CookieUtils, CookieGenerator }
 
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
@@ -40,9 +40,14 @@ abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name)
   }
 
   def init(): Unit = {
-    if (null == path) {
-      val contextPath = ServletContextHolder.context.getContextPath
-      path = if (!contextPath.endsWith("/")) contextPath + "/" else contextPath
+    if (null == this.path) {
+      val c = ServletContextHolder.context
+      if (c == null) {
+        this.path = "/"
+      } else {
+        val contextPath = c.getContextPath
+        this.path = if (!contextPath.endsWith("/")) contextPath + "/" else contextPath
+      }
     }
   }
 

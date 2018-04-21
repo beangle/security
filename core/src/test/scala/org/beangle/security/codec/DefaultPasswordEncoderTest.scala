@@ -30,7 +30,15 @@ import org.scalatest.junit.JUnitRunner
 class DefaultPasswordEncoderTest extends FunSpec with Matchers with Logging {
 
   describe("DefaultPasswordEncoder generate and verfity") {
-    println(DefaultPasswordEncoder.generate("1", null, "sha"))
-    println(DefaultPasswordEncoder.verify("{SHA}NWoZK3kTsExUV00Ywo1G5jlUKKs=", "2"))
+    it("generate sha") {
+      val hash = "{SHA}NWoZK3kTsExUV00Ywo1G5jlUKKs="
+      DefaultPasswordEncoder.generate("1", null, "sha") should be equals hash
+      DefaultPasswordEncoder.verify(hash, "2") should be(false)
+    }
+    it("generate md5") {
+      val hash = "{MD5}c4ca4238a0b923820dcc509a6f75849b"
+      DefaultPasswordEncoder.generate("1", null, "md5") should be equals hash
+      DefaultPasswordEncoder.verify("{MD5}c4ca4238a0b923820dcc509a6f75849b", "1") should be(true)
+    }
   }
 }
