@@ -41,8 +41,12 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,data"
 
+  /** 默认过期时间 45分钟 */
+  var ttiMinutes: Int = 45
+
   override def init() {
-    SessionDaemon.start(heartbeatIntervalMillis, this.heartbeatReporter, new DBSessionCleaner(this))
+    SessionDaemon.start(heartbeatSeconds, heartbeatReporter,
+      new DBSessionCleaner(this, ttiMinutes))
   }
 
   override def register(sessionId: String, info: Account, agent: Session.Agent): Session = {

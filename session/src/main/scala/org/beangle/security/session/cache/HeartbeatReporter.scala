@@ -27,16 +27,16 @@ import org.beangle.security.session.Session
 import org.beangle.security.session.util.Task
 
 /**
- * Report heartbeat every 5 min.
+ * Report heartbeat.
  */
 class HeartbeatReporter(sessions: Cache[String, Session], repo: CacheSessionRepo) extends Task {
 
   private var lastReportAt: Instant = Instant.now
 
-  private val sessionIds = new ConcurrentHashMap[String, Boolean]
+  private val sessionIds = new ConcurrentHashMap[String, Instant]
 
-  def addSessionId(sessionId: String): Unit = {
-    sessionIds.put(sessionId, true)
+  def addSessionId(sessionId: String, accessAt: Instant): Unit = {
+    sessionIds.put(sessionId, accessAt)
   }
 
   def run() {
