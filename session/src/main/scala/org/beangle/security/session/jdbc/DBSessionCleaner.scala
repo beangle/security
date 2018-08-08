@@ -34,10 +34,8 @@ import org.beangle.security.session.util.Task
  * </ul>
  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple  deployed.
  */
-class DBSessionCleaner(val registry: DBSessionRegistry) extends Logging with Task {
-
-  /** 默认过期时间 30分钟 */
-  var expiredMinutes = 30
+class DBSessionCleaner(val registry: DBSessionRegistry, val ttiMinutes: Int)
+  extends Logging with Task {
 
   def run() {
     val watch = new Stopwatch(true)
@@ -45,7 +43,7 @@ class DBSessionCleaner(val registry: DBSessionRegistry) extends Logging with Tas
     val calendar = ju.Calendar.getInstance()
     try {
       var removed = 0
-      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -expiredMinutes).toInstant) foreach { sid =>
+      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -ttiMinutes).toInstant) foreach { sid =>
         registry.remove(sid) foreach (olds => removed += 1)
       }
       if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")

@@ -27,21 +27,21 @@ import org.beangle.security.session.{ Session, SessionRepo }
 import org.beangle.security.session.util.{ SessionDaemon, UpdateDelayGenerator }
 
 abstract class CacheSessionRepo(val cacheManager: CacheManager)
-    extends SessionRepo with Initializing with Logging {
+  extends SessionRepo with Initializing with Logging {
 
   private val sessions = cacheManager.getCache("sessions", classOf[String], classOf[Session])
 
-  private val accessDelaySeconds = new UpdateDelayGenerator(60, 120).generateDelaySeconds()
+  private val accessDelaySeconds = new UpdateDelayGenerator(20, 60).generateDelaySeconds()
 
   protected val heartbeatReporter = new HeartbeatReporter(sessions, this)
 
   /**
-   * interval (5 min) report heartbeat.
+   * interval (3 min) report heartbeat.
    */
-  var heartbeatIntervalMillis = 5 * 60 * 1000
+  var heartbeatSeconds = 3 * 60
 
   override def init() {
-    SessionDaemon.start(heartbeatIntervalMillis, this.heartbeatReporter)
+    SessionDaemon.start(heartbeatSeconds, this.heartbeatReporter)
   }
 
   override def get(sessionId: String): Option[Session] = {
@@ -61,7 +61,7 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
     a foreach { s =>
       if ((accessAt.getEpochSecond - s.lastAccessAt.getEpochSecond) > accessDelaySeconds) {
         s.lastAccessAt = accessAt
-        heartbeatReporter.addSessionId(s.id)
+        heartbeatReporter.addSessionId(s.id, accessAt)
       }
     }
     a

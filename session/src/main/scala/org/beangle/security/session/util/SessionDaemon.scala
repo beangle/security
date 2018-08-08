@@ -21,12 +21,14 @@ package org.beangle.security.session.util
 import java.util.{ Timer, TimerTask }
 
 object SessionDaemon {
-  def start(interval: Int, tasks: Task*): Unit = {
-    println(s"Starting Beangle Session Daemon after ${interval/1000} seconds")
+
+  def start(intervalSeconds: Int, tasks: Task*): Unit = {
+    println(s"Starting Beangle Session Daemon after ${intervalSeconds} seconds")
     val daemon = new SessionDaemon(tasks)
-    new Timer("Beangle Session Daemon", true).schedule(daemon,
-      new java.util.Date(System.currentTimeMillis + interval),
-      interval)
+    new Timer("Beangle Session Daemon", true).schedule(
+      daemon,
+      new java.util.Date(System.currentTimeMillis + intervalSeconds * 1000),
+      intervalSeconds * 1000)
   }
 }
 
