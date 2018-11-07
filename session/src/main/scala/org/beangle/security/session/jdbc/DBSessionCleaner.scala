@@ -18,12 +18,10 @@
  */
 package org.beangle.security.session.jdbc
 
-import org.beangle.commons.lang.Dates
-import org.beangle.commons.logging.Logging
+import java.time.Instant
+
 import org.beangle.commons.lang.time.Stopwatch
-import java.{ util => ju }
-import java.util.TimerTask
-import org.beangle.security.session.util.UpdateDelayGenerator
+import org.beangle.commons.logging.Logging
 import org.beangle.security.session.util.Task
 
 /**
@@ -40,10 +38,9 @@ class DBSessionCleaner(val registry: DBSessionRegistry, val ttiMinutes: Int)
   def run() {
     val watch = new Stopwatch(true)
     logger.debug("starting clean up over expired time sessions ...")
-    val calendar = ju.Calendar.getInstance()
     try {
       var removed = 0
-      registry.getBeforeAccessAt(Dates.rollMinutes(calendar.getTime(), -ttiMinutes).toInstant) foreach { sid =>
+      registry.getBeforeAccessAt(Instant.now.minusSeconds(ttiMinutes * 60)) foreach { sid =>
         registry.remove(sid) foreach (olds => removed += 1)
       }
       if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")
