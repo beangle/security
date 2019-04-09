@@ -20,6 +20,7 @@ package org.beangle.security.realm.cas
 
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.lang.{ Assert, Strings }
+import org.beangle.commons.web.util.RequestUtils
 
 import javax.servlet.http.HttpServletRequest
 
@@ -27,8 +28,8 @@ object CasConfig {
 
   def getLocalServer(request: HttpServletRequest): String = {
     val sb = new StringBuilder()
-    val scheme = request.getScheme()
-    val port = request.getServerPort()
+    val scheme = if (RequestUtils.isHttps(request)) "https" else "http"
+    val port = RequestUtils.getServetPort(request)
     val serverName = request.getServerName()
     var includePort = true
     if (null != scheme) {
@@ -43,6 +44,7 @@ object CasConfig {
   }
 
   val TicketName = "ticket"
+
 }
 
 class CasConfig(server: String) extends Initializing {

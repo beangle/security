@@ -12,7 +12,7 @@
   <version>4.2.7</version>
 
   <properties>
-    <beangle.commons.version>5.1.5</beangle.commons.version>
+    <beangle.commons.version>5.1.6</beangle.commons.version>
     <beangle.data.version>5.1.4</beangle.data.version>
     <beangle.cache.version>0.0.15</beangle.cache.version>
     <beangle.serializer.version>0.0.10</beangle.serializer.version>
