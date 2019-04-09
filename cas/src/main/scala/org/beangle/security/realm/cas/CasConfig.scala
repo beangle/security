@@ -29,7 +29,7 @@ object CasConfig {
   def getLocalServer(request: HttpServletRequest): String = {
     val sb = new StringBuilder()
     val scheme = if (RequestUtils.isHttps(request)) "https" else "http"
-    val port = RequestUtils.getServetPort(request)
+    val port = RequestUtils.getServerPort(request)
     val serverName = request.getServerName()
     var includePort = true
     if (null != scheme) {
