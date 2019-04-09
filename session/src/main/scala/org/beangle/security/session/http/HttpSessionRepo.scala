@@ -23,7 +23,7 @@ import java.net.{ HttpURLConnection, URL }
 import org.beangle.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings.replace
-import org.beangle.commons.net.http.{ HttpMethods, HttpUtils }
+import org.beangle.commons.net.http.{ HttpMethods, HttpUtils,Https }
 import org.beangle.security.session.{ Session, DefaultSession}
 import org.beangle.security.session.cache.CacheSessionRepo
 
@@ -45,6 +45,7 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
     val url = new URL(surl)
     val hc = url.openConnection().asInstanceOf[HttpURLConnection]
     hc.setRequestMethod(HttpMethods.GET)
+    Https.noverify(hc)
     hc.getResponseCode == 200
   }
 }
