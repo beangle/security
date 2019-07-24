@@ -24,14 +24,15 @@ import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.beangle.security.web.WebSecurityManager
 import org.junit.runner.RunWith
 import org.mockito.Mockito.{ mock, when }
-import org.scalatest.{ FunSpec, Matchers }
-import org.scalatest.junit.JUnitRunner
+import org.scalatest.Matchers
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatestplus.junit.JUnitRunner
 
 import javax.servlet.FilterChain
 import javax.servlet.http.{ HttpServletRequest, HttpServletResponse, HttpSession }
 
 @RunWith(classOf[JUnitRunner])
-class CasPreauthFilterTest extends FunSpec with Matchers with Logging {
+class CasPreauthFilterTest extends AnyFunSpec with Matchers with Logging {
 
   val authenticator = new Authenticator() {
     def authenticate(token: AuthenticationToken): Account = {

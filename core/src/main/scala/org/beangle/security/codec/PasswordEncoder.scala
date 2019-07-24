@@ -19,13 +19,16 @@
 package org.beangle.security.codec
 
 import java.security.MessageDigest
-import org.beangle.commons.codec.binary.{ Base64, Hex }
+
+import org.beangle.commons.codec.binary.{Base64, Hex}
 import org.beangle.commons.lang.Arrays
+
 /**
- * @author chaostone
- */
+  * @author chaostone
+  */
 trait PasswordEncoder {
   def verify(digest: String, password: String): Boolean
+
   def generate(password: String, saltHex: String, algorithm: String): String
 }
 
@@ -79,8 +82,12 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     val msgDigest = MessageDigest.getInstance(alg)
     val salt = if (salts == null) new Array[Byte](0) else salts.getBytes
     val label =
-      if (alg.startsWith("SHA")) { if (salt.length <= 0) "{SHA}" else "{SSHA}" }
-      else if (alg.startsWith("MD5")) { if (salt.length <= 0) "{MD5}" else "{SMD5}" }
+      if (alg.startsWith("SHA")) {
+        if (salt.length <= 0) "{SHA}" else "{SSHA}"
+      }
+      else if (alg.startsWith("MD5")) {
+        if (salt.length <= 0) "{MD5}" else "{SMD5}"
+      }
       else null
     msgDigest.reset()
     msgDigest.update(password.getBytes)
@@ -89,7 +96,7 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     val digest = new StringBuilder(if (null == label) "" else label)
     val hash =
       if (alg.contains("MD5")) {
-        Hex.encode(Arrays.concat(pwhash, salt), true)
+        Hex.encode(Arrays.concat(pwhash, salt))
       } else {
         Base64.encode(Arrays.concat(pwhash, salt))
       }
@@ -97,7 +104,7 @@ object DefaultPasswordEncoder extends PasswordEncoder {
     digest.toString
   }
 
-  private def split(src: Array[Byte], n: Int): Tuple2[Array[Byte], Array[Byte]] = {
+  private def split(src: Array[Byte], n: Int): (Array[Byte], Array[Byte]) = {
     var l: Array[Byte] = null
     var r: Array[Byte] = null
     if (src.length <= n) {

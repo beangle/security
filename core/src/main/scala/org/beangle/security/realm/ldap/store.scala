@@ -18,16 +18,15 @@
  */
 package org.beangle.security.realm.ldap
 
-import scala.collection.mutable.Buffer
-
+import javax.naming.directory.{BasicAttributes, DirContext, SearchControls}
+import javax.naming.{CompositeName, NamingException}
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.{ Account, AccountStore, DefaultAccount }
+import org.beangle.security.authc.{Account, AccountStore, DefaultAccount}
 import org.beangle.security.codec.DefaultPasswordEncoder
 
-import javax.naming.{ CompositeName, NamingException }
-import javax.naming.directory.{ Attribute, BasicAttributes, DirContext, SearchControls }
+import scala.collection.mutable
 
 /**
  * Ldap User Store (RFC 4510)
@@ -74,9 +73,9 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
       //@see http://stackoverflow.com/questions/11955041/why-doesnt-dircontext-close-return-the-ldap-connection-to-the-pool
       constraints.setReturningObjFlag(false)
       var results = ctx.search(base, condition, constraints)
-      if (results.hasMore()) {
+      if (results.hasMore) {
         val si = results.next()
-        result = Strings.concat(si.getName(), ",", base)
+        result = Strings.concat(si.getName, ",", base)
       }
       results.close()
       results = null
@@ -97,16 +96,16 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
   }
 
   override def getAttributes(userDN: String, attributeNames: String*): collection.Map[String, Any] = {
-    val result = Collections.newMap[String, Buffer[Any]]
+    val result = Collections.newMap[String, mutable.Buffer[Any]]
     val ctx = contextSource.get()
     try {
       val userID = new CompositeName(userDN)
       val attrs =
-        if (attributeNames.length > 0) ctx.getAttributes(userID, attributeNames.toArray)
+        if (attributeNames.nonEmpty) ctx.getAttributes(userID, attributeNames.toArray)
         else ctx.getAttributes(userID)
-      val attrEnum = attrs.getAll()
+      val attrEnum = attrs.getAll
       while (attrEnum.hasMoreElements) {
-        val attr = attrEnum.nextElement.asInstanceOf[Attribute]
+        val attr = attrEnum.nextElement
         val values = result.getOrElseUpdate(attr.getID, new collection.mutable.ArrayBuffer[Any])
         values += attr.get()
       }
@@ -143,7 +142,7 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
 
   //FIXME
   def create(user: Account, password: String): Unit = {
-    val attrs = new BasicAttributes();
+    val attrs = new BasicAttributes()
     attrs.put("cn", user.description)
     attrs.put("sn", user.description)
     attrs.put(uidName, user.name)

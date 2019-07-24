@@ -18,26 +18,26 @@
  */
 package org.beangle.security.web.authc
 
-import org.beangle.commons.lang.{ Objects, Strings }
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
+import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter
-import org.beangle.security.authc.{ Account, AuthenticationException, AuthenticationToken, PreauthToken }
+import org.beangle.security.Securities
+import org.beangle.security.authc.{Account, AuthenticationException, PreauthToken}
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.Session
 import org.beangle.security.web.WebSecurityManager
-
-import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.security.Securities
 import org.beangle.security.web.access.SecurityContextBuilder
 
 abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter with Logging {
 
   var securityContextBuilder: SecurityContextBuilder = _
+
   /**
-   * Try to authenticate a pre-authenticated user if the
-   * user has not yet been authenticated.
-   */
+    * Try to authenticate a pre-authenticated user if the
+    * user has not yet been authenticated.
+    */
   override final def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain): Unit = {
     val request = req.asInstanceOf[HttpServletRequest]
     val response = res.asInstanceOf[HttpServletResponse]
@@ -55,7 +55,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
       successfulAuthentication(request, response, session)
     } catch {
       case failed: AuthenticationException => unsuccessfulAuthentication(request, response, failed)
-      case e: Throwable                    => throw e
+      case e: Throwable => throw e
     }
   }
 
@@ -72,28 +72,28 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
           case Some(s) =>
             s.principal.asInstanceOf[Account].remoteToken match {
               case Some(token) => if (newer == token) None else resovleToken(req, res, newer)
-              case None        => resovleToken(req, res, newer)
+              case None => resovleToken(req, res, newer)
             }
         }
     }
   }
 
   /**
-   * Puts the <code>Authentication</code> instance returned by the
-   * authentication manager into the secure context.
-   */
+    * Puts the <code>Authentication</code> instance returned by the
+    * authentication manager into the secure context.
+    */
   protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
     logger.debug(s"PreAuthentication success: $session")
-    SecurityContext.set(securityContextBuilder.build(req,Some(session)))
+    SecurityContext.set(securityContextBuilder.build(req, Some(session)))
   }
 
   /**
-   * Ensures the authentication object in the secure context is set to null when authentication
-   * fails.
-   * If username not found or account status exception.just let other know by throw it.
-   * It will be handled by ExceptionTranslationFilter
-   */
-  protected def unsuccessfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, failed: AuthenticationException) {
+    * Ensures the authentication object in the secure context is set to null when authentication
+    * fails.
+    * If username not found or account status exception.just let other know by throw it.
+    * It will be handled by ExceptionTranslationFilter
+    */
+  protected def unsuccessfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, failed: AuthenticationException): Unit = {
     logger.debug("Cleared security context due to exception", failed)
     SecurityContext.clear()
     if (null != failed) throw failed
@@ -106,7 +106,7 @@ class UsernamePreauthFilter(securityManager: WebSecurityManager) extends Abstrac
   protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
     usernameSource.resolveUser(req, credentials) match {
       case Some(username) => if (Strings.isNotBlank(username)) Some(new PreauthToken(username, credentials)) else None
-      case None           => None
+      case None => None
     }
   }
 

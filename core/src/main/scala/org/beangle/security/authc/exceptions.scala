@@ -28,10 +28,10 @@ import org.beangle.security.SecurityException
 @SerialVersionUID(-3529782031102169004L)
 class AuthenticationException(message: String, val principal: Any, cause: Throwable = null) extends SecurityException(message, cause) {
 
-  override def getMessage(): String = {
-    val msg = super.getMessage()
+  override def getMessage: String = {
+    val msg = super.getMessage
     if (null == msg) {
-      Strings.concat("security." + Strings.substringBefore(getClass().getSimpleName(), "Exception"))
+      Strings.concat("security." + Strings.substringBefore(getClass.getSimpleName, "Exception"))
     } else msg
   }
 }

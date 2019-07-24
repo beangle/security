@@ -48,7 +48,7 @@ object AccountSerializer extends ObjectSerializer {
     account.permissions = pa.getPermissions
     account.remoteToken = Option(pa.getRemoteToken)
     val dk = pa.getDetailsMap.entrySet().iterator()
-    while (dk.hasNext()) {
+    while (dk.hasNext) {
       val entry = dk.next()
       account.details += (entry.getKey -> entry.getValue)
     }

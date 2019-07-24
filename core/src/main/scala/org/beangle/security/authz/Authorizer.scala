@@ -18,8 +18,6 @@
  */
 package org.beangle.security.authz
 
-import org.beangle.commons.security.Request
-import org.beangle.security.session.Session
 import org.beangle.security.context.SecurityContext
 
 trait Authorizer {

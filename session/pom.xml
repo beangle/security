@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>org.beangle.security</groupId>
-    <artifactId>beangle-security-parent_2.12</artifactId>
+    <artifactId>beangle-security-parent_2.13</artifactId>
     <version>4.2.8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>beangle-security-session_2.12</artifactId>
+  <artifactId>beangle-security-session_2.13</artifactId>
   <packaging>jar</packaging>
   <name>Beangle Security Session</name>
 
@@ -17,19 +17,19 @@
   <dependencies>
     <dependency>
       <groupId>org.beangle.cache</groupId>
-      <artifactId>beangle-cache-api_2.12</artifactId>
+      <artifactId>beangle-cache-api_2.13</artifactId>
     </dependency>
     <dependency>
       <groupId>org.beangle.security</groupId>
-      <artifactId>beangle-security-core_2.12</artifactId>
+      <artifactId>beangle-security-core_2.13</artifactId>
     </dependency>
     <dependency>
       <groupId>org.beangle.serializer</groupId>
-      <artifactId>beangle-serializer-protobuf_2.12</artifactId>
+      <artifactId>beangle-serializer-protobuf_2.13</artifactId>
     </dependency>
     <dependency>
       <groupId>org.beangle.data</groupId>
-      <artifactId>beangle-data-jdbc_2.12</artifactId>
+      <artifactId>beangle-data-jdbc_2.13</artifactId>
       <version>${beangle.data.version}</version>
     </dependency>
   </dependencies>

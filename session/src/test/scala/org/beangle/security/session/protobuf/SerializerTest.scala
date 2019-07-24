@@ -23,13 +23,14 @@ import org.beangle.security.authc.DefaultAccount
 import org.beangle.security.session.DefaultSession
 import org.beangle.serializer.protobuf.ProtobufSerializer
 import org.junit.runner.RunWith
-import org.scalatest.{ FunSpec, Matchers }
-import org.scalatest.junit.JUnitRunner
+import org.scalatest.Matchers
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatestplus.junit.JUnitRunner
 import java.time.Instant
 import org.beangle.security.session.Session
 
 @RunWith(classOf[JUnitRunner])
-class SerializerTest extends FunSpec with Matchers with Logging {
+class SerializerTest extends AnyFunSpec with Matchers with Logging {
   describe("erializer") {
     it("serializing") {
       val account = new DefaultAccount("0001", "root")

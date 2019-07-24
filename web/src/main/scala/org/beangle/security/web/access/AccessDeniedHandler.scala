@@ -18,16 +18,13 @@
  */
 package org.beangle.security.web.access
 
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import org.beangle.security.authz.AccessDeniedException
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.RequestDispatcher
-import org.beangle.commons.logging.Logging
-import org.beangle.commons.bean.Initializing
-import org.beangle.commons.web.context.ServletContextHolder
 import java.io.File
+
+import javax.servlet.{ServletRequest, ServletResponse}
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.commons.logging.Logging
+import org.beangle.commons.web.context.ServletContextHolder
+import org.beangle.security.authz.AccessDeniedException
 
 /**
  * @author chaostone
@@ -62,7 +59,7 @@ class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHand
 
     if (!response.isCommitted) {
       // Send 403 (we do this after response has been written)
-      response.asInstanceOf[HttpServletResponse].sendError(HttpServletResponse.SC_FORBIDDEN, exception.getMessage())
+      response.asInstanceOf[HttpServletResponse].sendError(HttpServletResponse.SC_FORBIDDEN, exception.getMessage)
     }
   }
 

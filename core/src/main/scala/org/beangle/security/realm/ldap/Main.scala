@@ -45,7 +45,7 @@ object Main {
     }
   }
 
-  private def tryTestPassword(store: LdapUserStore, dn: String, password: String) {
+  private def tryTestPassword(store: LdapUserStore, dn: String, password: String): Unit = {
     val rs = store.getPassword(dn) match {
       case Some(p) => DefaultPasswordEncoder.verify(p, password)
       case None    => false

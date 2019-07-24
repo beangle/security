@@ -18,16 +18,15 @@
  */
 package org.beangle.security.session.jdbc
 
-import java.io.{ InputStream, ObjectInputStream }
+import java.io.InputStream
 import java.sql.Timestamp
 
+import javax.sql.DataSource
 import org.beangle.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.data.jdbc.query.JdbcExecutor
-import org.beangle.security.session.{ DefaultSessionBuilder, Session, DefaultSession, SessionBuilder }
 import org.beangle.security.session.cache.CacheSessionRepo
-
-import javax.sql.DataSource
+import org.beangle.security.session.{DefaultSession, DefaultSessionBuilder, Session, SessionBuilder}
 
 class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
     extends CacheSessionRepo(cacheManager) {

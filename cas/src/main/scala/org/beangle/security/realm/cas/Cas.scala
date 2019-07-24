@@ -18,26 +18,13 @@
  */
 package org.beangle.security.realm.cas
 
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.commons.web.util.CookieUtils
 
 object Cas {
 
   def cleanup(casConfig: CasConfig, request: HttpServletRequest, response: HttpServletResponse): String = {
-    val cookies = request.getCookies
-    if (cookies != null) {
-      var i = 0
-      while (i < cookies.length) {
-        val c = cookies(i)
-        if (c.getMaxAge < 0) {
-          val domain = c.getDomain
-          if (null == domain || domain == request.getServerName) {
-            c.setMaxAge(0)
-            response.addCookie(c)
-          }
-        }
-        i += 1
-      }
-    }
+    CookieUtils.clearSession(request,response)
     casConfig.casServer + casConfig.logoutUri
   }
 }

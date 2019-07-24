@@ -18,10 +18,8 @@
  */
 package org.beangle.security.web.session
 
-import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.web.util.CookieUtils
-import javax.servlet.http.HttpServletResponse
-import org.beangle.commons.lang.annotation.value
 
 class CookieSessionIdReader(val idName: String) extends SessionIdReader {
 

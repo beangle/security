@@ -19,11 +19,12 @@
 package org.beangle.security.authc
 
 import org.beangle.commons.logging.Logging
-import org.beangle.security.session.Session
 import org.beangle.security.realm.Realm
+import org.beangle.security.session.Session
+
 /**
- * Authentication Manager
- */
+  * Authentication Manager
+  */
 trait Authenticator {
 
   @throws(classOf[AuthenticationException])
@@ -31,9 +32,11 @@ trait Authenticator {
 }
 
 trait AuthenticationListener {
-  def onSuccess(token: AuthenticationToken, info: Account)
-  def onFailure(token: AuthenticationToken, cause: AuthenticationException)
-  def onLogout(info: Session)
+  def onSuccess(token: AuthenticationToken, info: Account): Unit
+
+  def onFailure(token: AuthenticationToken, cause: AuthenticationException): Unit
+
+  def onLogout(info: Session): Unit
 }
 
 abstract class AbstractAuthenticator extends Authenticator with Logging {
@@ -42,7 +45,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
 
   override def authenticate(token: AuthenticationToken): Account = {
     try {
-      val info = doAuthenticate(token);
+      val info = doAuthenticate(token)
       if (info == null) throw new AuthenticationException(s"No account information found for authentication token [$token]", token)
       notifySuccess(token, info)
       info
@@ -75,9 +78,8 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
 
 }
 
-/**
- * How we authenticate user within multiple realms
- */
+/** How we authenticate user within multiple realms
+  */
 trait RealmAuthenticationStrategy {
 
   @throws(classOf[AuthenticationException])
@@ -89,9 +91,8 @@ trait RealmAuthenticationStrategy {
   }
 }
 
-/**
- * First win,imply at least one and ignore remainders
- */
+/** First win,imply at least one and ignore remainders
+  */
 object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
 
   override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
@@ -104,10 +105,9 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
         try {
           info = realm.getAccount(token)
         } catch {
-          case t: Throwable => {
+          case t: Throwable =>
             lastException = t
             logger.debug(s"Realm [$realm] threw an exception during a multi-realm authentication attempt:", t)
-          }
         }
       }
     }
@@ -115,11 +115,11 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
   }
 }
 
-/**
- * Realm Authenticator
- */
+/** Realm Authenticator
+  */
 class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator with Logging {
   var strategy: RealmAuthenticationStrategy = FirstSuccessfulStrategy
+
   override def doAuthenticate(token: AuthenticationToken): Account = {
     strategy.authenticate(reams, token)
   }

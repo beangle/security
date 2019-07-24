@@ -33,7 +33,7 @@ object AgentSerializer extends ObjectSerializer {
   }
 
   def fromMessage(a: Model.Agent): Session.Agent = {
-    new Session.Agent(a.getName(), a.getIp(), a.getOs)
+    new Session.Agent(a.getName, a.getIp, a.getOs)
   }
 
   override def serialize(data: Any, os: OutputStream, params: Map[String, Any]): Unit = {

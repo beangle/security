@@ -19,21 +19,21 @@
 package org.beangle.security.realm.cas
 
 import java.net.URLEncoder
-import scala.annotation.elidable
-import scala.annotation.elidable.FINE
+
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.logging.Logging
+import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{ mock, verify, when }
+import org.mockito.Mockito.{mock, verify, when}
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import org.scalatest.{ FunSpec, Matchers }
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.scalatest.junit.JUnitRunner
-import org.beangle.security.web.session.ParamSessionIdPolicy
+import org.scalatest.Matchers
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class CasEntryPointTest extends FunSpec with Matchers with Logging {
+class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
   describe("CasConfig") {
     it("should worked on getter/setter") {
       val config = new CasConfig("https://cas")

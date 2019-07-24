@@ -18,7 +18,7 @@
  */
 package org.beangle.security.session
 
-import java.time.{ Duration, Instant }
+import java.time.Instant
 
 import org.beangle.security.authc.Account
 
