@@ -18,12 +18,11 @@
  */
 package org.beangle.security.realm.cas
 
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.security.authc.PreauthToken
+import org.beangle.security.realm.cas.CasConfig.getLocalServer
 import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.authc.AbstractPreauthFilter
-
-import CasConfig.{ TicketName, getLocalServer }
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 /**
  * Processes a CAS service ticket.
@@ -35,7 +34,7 @@ class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, t
 
   protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
     val url = casEntryPoint.constructServiceUrl(req, res, null, getLocalServer(req))
-    Some(new PreauthToken(ticketValidator.validate(credentials.toString(), url), credentials))
+    Some(new PreauthToken(ticketValidator.validate(credentials.toString, url), credentials))
   }
 
   protected[cas] override def getCredentials(request: HttpServletRequest): Option[Any] = {

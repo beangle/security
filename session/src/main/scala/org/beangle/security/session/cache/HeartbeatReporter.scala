@@ -39,7 +39,7 @@ class HeartbeatReporter(sessions: Cache[String, Session], repo: CacheSessionRepo
     sessionIds.put(sessionId, accessAt)
   }
 
-  def run() {
+  def run(): Unit = {
     val last = lastReportAt
     lastReportAt = Instant.now
     val expired = Collections.newBuffer[String]

@@ -18,15 +18,15 @@
  */
 package org.beangle.security.web
 
-import org.beangle.security.authc.AuthenticationException
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.commons.web.url.UrlBuilder
-import org.beangle.commons.lang.Strings
-import org.beangle.commons.web.util.RedirectUtils
-import javax.servlet.RequestDispatcher
-import org.beangle.commons.logging.Logging
 import java.io.IOException
+
 import javax.servlet.ServletException
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.commons.lang.Strings
+import org.beangle.commons.logging.Logging
+import org.beangle.commons.web.url.UrlBuilder
+import org.beangle.commons.web.util.RedirectUtils
+import org.beangle.security.authc.AuthenticationException
 
 trait EntryPoint {
 

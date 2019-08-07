@@ -18,11 +18,10 @@
  */
 package org.beangle.security.mgt
 
-import org.beangle.commons.security.Request
-import org.beangle.security.authc.{ AuthenticationToken, Authenticator }
+import org.beangle.security.authc.{AuthenticationToken, Authenticator}
 import org.beangle.security.authz.Authorizer
-import org.beangle.security.session.{ Session, SessionRegistry }
 import org.beangle.security.context.SecurityContext
+import org.beangle.security.session.{Session, SessionRegistry}
 
 trait SecurityManager {
 

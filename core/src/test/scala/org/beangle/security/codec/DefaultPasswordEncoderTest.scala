@@ -20,14 +20,15 @@ package org.beangle.security.codec
 
 import org.beangle.commons.logging.Logging
 import org.junit.runner.RunWith
-import org.scalatest.{ FunSpec, Matchers }
-import org.scalatest.junit.JUnitRunner
+import org.scalatest.Matchers
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatestplus.junit.JUnitRunner
 
 /**
  * @author chaostone
  */
 @RunWith(classOf[JUnitRunner])
-class DefaultPasswordEncoderTest extends FunSpec with Matchers with Logging {
+class DefaultPasswordEncoderTest extends AnyFunSpec with Matchers with Logging {
 
   describe("DefaultPasswordEncoder generate and verfity") {
     it("generate sha") {

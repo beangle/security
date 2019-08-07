@@ -2,20 +2,20 @@
   <parent>
     <groupId>org.beangle</groupId>
     <artifactId>beangle-scala</artifactId>
-    <version>25.2</version>
+    <version>26.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.beangle.security</groupId>
-  <artifactId>beangle-security-parent_2.12</artifactId>
+  <artifactId>beangle-security-parent_2.13</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.2.7</version>
+  <version>4.2.8</version>
 
   <properties>
-    <beangle.commons.version>5.1.6</beangle.commons.version>
-    <beangle.data.version>5.1.4</beangle.data.version>
-    <beangle.cache.version>0.0.15</beangle.cache.version>
-    <beangle.serializer.version>0.0.10</beangle.serializer.version>
+    <beangle.commons.version>5.1.8</beangle.commons.version>
+    <beangle.data.version>5.1.8</beangle.data.version>
+    <beangle.cache.version>0.0.16</beangle.cache.version>
+    <beangle.serializer.version>0.0.11</beangle.serializer.version>
   </properties>
 
   <modules>
@@ -29,42 +29,42 @@
     <dependencies>
       <dependency>
         <groupId>org.beangle.commons</groupId>
-        <artifactId>beangle-commons-core_2.12</artifactId>
+        <artifactId>beangle-commons-core_2.13</artifactId>
         <version>${beangle.commons.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.cache</groupId>
-        <artifactId>beangle-cache-api_2.12</artifactId>
+        <artifactId>beangle-cache-api_2.13</artifactId>
         <version>${beangle.cache.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.commons</groupId>
-        <artifactId>beangle-commons-web_2.12</artifactId>
+        <artifactId>beangle-commons-web_2.13</artifactId>
         <version>${beangle.commons.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.data</groupId>
-        <artifactId>beangle-data-hibernate_2.12</artifactId>
+        <artifactId>beangle-data-hibernate_2.13</artifactId>
         <version>${beangle.data.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.security</groupId>
-        <artifactId>beangle-security-core_2.12</artifactId>
+        <artifactId>beangle-security-core_2.13</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.security</groupId>
-        <artifactId>beangle-security-web_2.12</artifactId>
+        <artifactId>beangle-security-web_2.13</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.security</groupId>
-        <artifactId>beangle-security-session_2.12</artifactId>
+        <artifactId>beangle-security-session_2.13</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.beangle.serializer</groupId>
-        <artifactId>beangle-serializer-protobuf_2.12</artifactId>
+        <artifactId>beangle-serializer-protobuf_2.13</artifactId>
         <version>${beangle.serializer.version}</version>
       </dependency>
     </dependencies>
@@ -73,7 +73,7 @@
   <dependencies>
     <dependency>
       <groupId>org.beangle.commons</groupId>
-      <artifactId>beangle-commons-core_2.12</artifactId>
+      <artifactId>beangle-commons-core_2.13</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

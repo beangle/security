@@ -26,7 +26,6 @@ object WebClient {
 
   def get(request: HttpServletRequest): Session.Agent = {
     val agent = RequestUtils.getUserAgent(request)
-    val server = request.getLocalAddr() + ":" + request.getLocalPort()
     val ip = RequestUtils.getIpAddr(request)
     new Session.Agent(agent.browser.toString, ip, agent.os.toString)
   }

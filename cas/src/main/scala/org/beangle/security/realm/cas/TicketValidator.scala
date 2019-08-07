@@ -18,12 +18,10 @@
  */
 package org.beangle.security.realm.cas
 
-import java.net.{ MalformedURLException, URL, URLEncoder }
+import java.net.{MalformedURLException, URL, URLEncoder}
 
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.net.http.HttpUtils
-
-import javax.net.ssl.HostnameVerifier
 
 class TicketValidationException(message: String) extends Exception(message)
 
@@ -34,8 +32,8 @@ trait TicketValidator {
 }
 
 /**
- * Abstarct Ticket Validator
- */
+  * Abstarct Ticket Validator
+  */
 abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
   var config: CasConfig = _
@@ -46,16 +44,16 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   var customParameters: Map[String, String] = _
 
   /**
-   * Template method for ticket validators that need to provide additional parameters to the
-   * validation url.
-   */
-  protected def populateUrlAttributeMap(urlParameters: collection.mutable.Map[String, String]) {
+    * Template method for ticket validators that need to provide additional parameters to the
+    * validation url.
+    */
+  protected def populateUrlAttributeMap(urlParameters: collection.mutable.Map[String, String]): Unit = {
     // nothing to do
   }
 
   /**
-   * Constructs the URL to send the validation request to.
-   */
+    * Constructs the URL to send the validation request to.
+    */
   protected final def constructValidationUrl(ticket: String, serviceUrl: String): String = {
     val urlParameters = new collection.mutable.HashMap[String, String]
     urlParameters.put("ticket", ticket)
@@ -80,22 +78,27 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     }
     buffer.toString
   }
+
   /**
-   * Encodes a URL using the URLEncoder format.
-   */
+    * Encodes a URL using the URLEncoder format.
+    */
   protected def encodeUrl(url: String): String = {
-    if (url == null) null
-    URLEncoder.encode(url, "UTF-8")
+    if (url == null) {
+      null
+    } else {
+      URLEncoder.encode(url, "UTF-8")
+    }
   }
+
   /**
-   * Parses the response from the server into a CAS Assertion.
-   * @throws TicketValidationException
-   */
+    * Parses the response from the server into a CAS Assertion.
+    * @throws TicketValidationException valid ticket
+    */
   protected def parseResponse(ticket: String, response: String): String
 
   /**
-   * Contacts the CAS Server to retrieve the response for the ticket validation.
-   */
+    * Contacts the CAS Server to retrieve the response for the ticket validation.
+    */
   protected def retrieveResponse(url: URL, ticket: String): String = {
     HttpUtils.getText(url, encoding).orNull
   }
@@ -110,18 +113,17 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
       logger.debug(s"Server response: $serverResponse")
       parseResponse(ticket, serverResponse)
     } catch {
-      case e: MalformedURLException => throw new TicketValidationException(e.getMessage())
+      case e: MalformedURLException => throw new TicketValidationException(e.getMessage)
     }
   }
 }
 
-import java.io.{ BufferedReader, StringReader }
+import java.io.StringReader
+
+import javax.xml.parsers.SAXParserFactory
 import org.beangle.commons.lang.Strings
-import org.xml.sax.helpers.XMLReaderFactory
 import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.Attributes
-import org.xml.sax.XMLReader
-import org.xml.sax.InputSource
+import org.xml.sax.{Attributes, InputSource, XMLReader}
 
 class DefaultTicketValidator extends AbstractTicketValidator {
 
@@ -135,17 +137,21 @@ class DefaultTicketValidator extends AbstractTicketValidator {
   }
 
   /**
-   * Get an instance of an XML reader from the XMLReaderFactory.
-   *
-   */
-  def xmlReader: XMLReader = XMLReaderFactory.createXMLReader()
+    * Get an instance of an XML reader from the XMLReaderFactory.
+    *
+    */
+  def xmlReader: XMLReader = {
+    val parserFactory = SAXParserFactory.newInstance
+    val parser = parserFactory.newSAXParser
+    parser.getXMLReader
+  }
 
   class ServiceXmlHandler(ticket: String) extends DefaultHandler {
 
     private var currentText = new java.lang.StringBuffer()
 
     private var authenticationSuccess = false
-    private var userMap = new collection.mutable.HashMap[String, Object]
+    private val userMap = new collection.mutable.HashMap[String, Object]
     private var errorCode: String = _
     private var errorMessage: String = _
     private var pgtIou: String = _
@@ -155,6 +161,7 @@ class DefaultTicketValidator extends AbstractTicketValidator {
     def localName(qualifiedName: String): String = {
       Strings.substringAfter(qualifiedName, ":")
     }
+
     override def startElement(ns: String, lnm: String, qn: String, a: Attributes): Unit = {
       currentText = new StringBuffer()
       localName(qn) match {
@@ -164,7 +171,7 @@ class DefaultTicketValidator extends AbstractTicketValidator {
           errorCode = a.getValue("code")
           if (errorCode != null) errorCode = errorCode.trim()
         case "attribute" => userMap.put(a.getValue("name"), a.getValue("value"))
-        case _           =>
+        case _ =>
       }
     }
 
@@ -175,12 +182,12 @@ class DefaultTicketValidator extends AbstractTicketValidator {
     override def endElement(ns: String, lnm: String, qn: String): Unit = {
       val ln = localName(qn)
       ln match {
-        case "user"                   => user = currentText.toString.trim()
-        case "proxyGrantingTicket"    => pgtIou = currentText.toString.trim()
-        case "authenticationFailure"  => errorMessage = currentText.toString.trim()
-        case "proxy"                  => proxyList += currentText.toString.trim()
+        case "user" => user = currentText.toString.trim()
+        case "proxyGrantingTicket" => pgtIou = currentText.toString.trim()
+        case "authenticationFailure" => errorMessage = currentText.toString.trim()
+        case "proxy" => proxyList += currentText.toString.trim()
         case "attributes" | "proxies" =>
-        case _                        => userMap.put(ln, currentText.toString.trim())
+        case _ => userMap.put(ln, currentText.toString.trim())
       }
     }
 
@@ -189,4 +196,5 @@ class DefaultTicketValidator extends AbstractTicketValidator {
       else throw new TicketValidationException(errorCode + ":" + errorMessage)
     }
   }
+
 }

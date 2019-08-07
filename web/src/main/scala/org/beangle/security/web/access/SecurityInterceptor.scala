@@ -18,22 +18,16 @@
  */
 package org.beangle.security.web.access
 
-import java.time.Instant
-
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.intercept.Interceptor
-import org.beangle.commons.web.security.RequestConvertor
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
-import org.beangle.security.authz.{ AccessDeniedException, Authorizer }
+import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
-import org.beangle.security.session.{ Session, SessionRepo }
 import org.beangle.security.web.EntryPoint
-import org.beangle.security.web.session.SessionIdReader
-
-import javax.servlet.{ FilterChain, ServletRequest, ServletResponse }
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 class SecurityInterceptor extends Interceptor with Logging with Initializing {
   var securityContextBuilder: SecurityContextBuilder = _
@@ -42,13 +36,13 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
   var filters: List[SecurityFilter] = _
   var hasFilter = false
 
-  override def init() {
-    hasFilter = (null!=filters && !filters.isEmpty)
+  override def init(): Unit = {
+    hasFilter = null != filters && filters.nonEmpty
   }
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      SecurityContext.set(securityContextBuilder.find(req,res))
+      SecurityContext.set(securityContextBuilder.find(req, res))
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {
@@ -70,7 +64,7 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
   private def sendStartAuthentication(request: ServletRequest, response: ServletResponse, reason: AuthenticationException): Unit = {
     SecurityContext.clear()
-    entryPoint.commence(request.asInstanceOf[HttpServletRequest], response.asInstanceOf[HttpServletResponse], reason);
+    entryPoint.commence(request.asInstanceOf[HttpServletRequest], response.asInstanceOf[HttpServletResponse], reason)
   }
 
   def postInvoke(request: HttpServletRequest, response: HttpServletResponse): Unit = {

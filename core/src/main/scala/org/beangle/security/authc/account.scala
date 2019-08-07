@@ -18,22 +18,18 @@
  */
 package org.beangle.security.authc
 
+import java.io.Externalizable
 import java.security.Principal
 
-import org.beangle.commons.lang.{ Objects, Strings }
+import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
 
-import DefaultAccount.StatusMask.{ AccountExpired, CredentialExpired, Disabled, Locked }
-import java.io.Externalizable
-import java.io.ObjectOutput
-import java.io.ObjectInput
-
 /**
- * Authentication Information
- * @author chaostone
- */
+  * Authentication Information
+  * @author chaostone
+  */
 trait Account extends AuthorizationInfo with Principal with Externalizable {
 
   def name: String
@@ -89,7 +85,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         val da = new DefaultAccount(account)
         token match {
           case p: PreauthToken => da.addRemoteToken(p.credentials)
-          case _               =>
+          case _ =>
         }
         da
       case None =>
@@ -97,7 +93,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
     }
   }
 
-  protected def additionalCheck(token: AuthenticationToken, ac: Account) {
+  protected def additionalCheck(token: AuthenticationToken, ac: Account): Unit = {
     if (ac.accountLocked)
       throw new LockedException("AccountStatusChecker.locked", token)
     if (ac.disabled)

@@ -18,7 +18,7 @@
  */
 package org.beangle.security.session.jdbc
 
-import java.sql.{ Timestamp, Types }
+import java.sql.{Timestamp, Types}
 import java.time.Instant
 
 import org.beangle.cache.CacheManager
@@ -27,24 +27,24 @@ import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.ParamSetter
 import org.beangle.security.authc.Account
-import org.beangle.security.session.{ LoginEvent, LogoutEvent, Session, SessionRegistry }
+import org.beangle.security.session.{LoginEvent, LogoutEvent, Session, SessionRegistry}
 import org.beangle.security.session.util.SessionDaemon
 
 import javax.sql.DataSource
 
 /**
- * 基于数据库的session注册表
- */
+  * 基于数据库的session注册表
+  */
 class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
   extends DBSessionRepo(dataSource, cacheManager, serializer)
-  with EventPublisher with SessionRegistry {
+    with EventPublisher with SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,data"
 
   /** 默认过期时间 45分钟 */
   var ttiMinutes: Int = 45
 
-  override def init() {
+  override def init(): Unit = {
     SessionDaemon.start(heartbeatSeconds, heartbeatReporter,
       new DBSessionCleaner(this, ttiMinutes))
   }
@@ -68,7 +68,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
     remove(sessionId, null)
   }
 
-  def getBeforeAccessAt(lastAccessAt: Instant): Seq[String] = {
+  def getBeforeAccessAt(lastAccessAt: Instant): collection.Seq[String] = {
     executor.query(s"select id from $sessionTable info where info.last_access_at < ?", Timestamp.from(lastAccessAt)).map { data => data(0).toString }
   }
 

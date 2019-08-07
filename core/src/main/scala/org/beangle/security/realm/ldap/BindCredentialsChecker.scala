@@ -43,15 +43,15 @@ class BindCredentialsChecker(contextSource: ContextSource) extends CredentialsCh
   }
 
   override def check(principal: Any, credential: Any): Boolean = {
-    val name = principal.toString()
-    val password = credential.toString()
+    val name = principal.toString
+    val password = credential.toString
     val env = enviroment(name, password)
     env.putAll(properties)
     try {
       new InitialDirContext(env).close()
       true
     } catch {
-      case e: javax.naming.AuthenticationException => false
+      case _: javax.naming.AuthenticationException => false
     }
   }
 }

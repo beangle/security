@@ -18,20 +18,23 @@
  */
 package org.beangle.security.authc
 
-import java.io.{ ObjectInput, ObjectOutput }
+import java.io.{ObjectInput, ObjectOutput}
 
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Objects
 
 object DefaultAccount {
+
   object StatusMask {
     val Locked = 1
     val Disabled = 2
     val AccountExpired = 4
     val CredentialExpired = 8
   }
+
 }
-import DefaultAccount.StatusMask._
+
+import org.beangle.security.authc.DefaultAccount.StatusMask._
 
 final class DefaultAccount extends Account {
 
@@ -82,7 +85,7 @@ final class DefaultAccount extends Account {
 
   def accountExpired: Boolean = get(AccountExpired)
 
-  def accountExpired_=(value: Boolean) = change(value, AccountExpired)
+  def accountExpired_=(value: Boolean): Unit = change(value, AccountExpired)
 
   def accountLocked: Boolean = get(Locked)
 
@@ -111,7 +114,7 @@ final class DefaultAccount extends Account {
     this
   }
 
-  override def toString(): String = {
+  override def toString: String = {
     Objects.toStringBuilder(this).add("Name:", name)
       .add("AccountExpired: ", accountExpired)
       .add("credentialExpired: ", credentialExpired)
@@ -124,7 +127,7 @@ final class DefaultAccount extends Account {
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: DefaultAccount => Objects.equalsBuilder.add(this.name, test.name).isEquals
-      case _                    => false
+      case _ => false
     }
   }
 
@@ -152,7 +155,7 @@ final class DefaultAccount extends Account {
     permissions = in.readObject.asInstanceOf[String]
     val mapSize = in.readInt()
     val temp = Collections.newMap[String, String]
-    (0 until mapSize) foreach { i =>
+    (0 until mapSize) foreach { _ =>
       val k = in.readObject.toString
       val v = in.readObject.toString
       temp += (k -> v)

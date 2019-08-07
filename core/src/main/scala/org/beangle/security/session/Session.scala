@@ -19,14 +19,13 @@
 package org.beangle.security.session
 
 import java.security.Principal
-import java.time.{ Duration, Instant }
-
-import org.beangle.security.context.SecurityContext
+import java.time.{Duration, Instant}
 
 object Session {
-  val DefaultTimeOut = Duration.ofSeconds(30 * 60)
+  val DefaultTimeOut: Duration = Duration.ofSeconds(30 * 60)
 
   class Agent(val name: String, val ip: String, val os: String) extends Serializable
+
 }
 
 trait Session extends java.io.Externalizable {

@@ -23,8 +23,8 @@ import java.time.Instant
 import org.beangle.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
-import org.beangle.security.session.{ Session, SessionRepo }
-import org.beangle.security.session.util.{ SessionDaemon, UpdateDelayGenerator }
+import org.beangle.security.session.{Session, SessionRepo}
+import org.beangle.security.session.util.{SessionDaemon, UpdateDelayGenerator}
 
 abstract class CacheSessionRepo(val cacheManager: CacheManager)
   extends SessionRepo with Initializing with Logging {
@@ -36,11 +36,11 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
   protected val heartbeatReporter = new HeartbeatReporter(sessions, this)
 
   /**
-   * interval (3 min) report heartbeat.
-   */
-  var heartbeatSeconds = 3 * 60
+    * interval (3 min) report heartbeat.
+    */
+  var heartbeatSeconds: Int = 3 * 60
 
-  override def init() {
+  override def init(): Unit = {
     SessionDaemon.start(heartbeatSeconds, this.heartbeatReporter)
   }
 
@@ -49,7 +49,7 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
     val data = sessions.get(sessionId)
     if (data.isEmpty) {
       val newData = getInternal(sessionId)
-      if (!newData.isEmpty) sessions.putIfAbsent(sessionId, newData.get)
+      if (newData.nonEmpty) sessions.putIfAbsent(sessionId, newData.get)
       newData
     } else {
       data

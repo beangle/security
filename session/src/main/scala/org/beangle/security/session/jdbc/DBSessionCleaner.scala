@@ -25,23 +25,23 @@ import org.beangle.commons.logging.Logging
 import org.beangle.security.session.util.Task
 
 /**
- * Database session registry cleaner.
- * <ul>
- * <li>removed expired session</li>
- * <li>removed long time idle session( now - last access time>expiredTime)</li>
- * </ul>
- * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple  deployed.
- */
+  * Database session registry cleaner.
+  * <ul>
+  * <li>removed expired session</li>
+  * <li>removed long time idle session( now - last access time>expiredTime)</li>
+  * </ul>
+  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple  deployed.
+  */
 class DBSessionCleaner(val registry: DBSessionRegistry, val ttiMinutes: Int)
   extends Logging with Task {
 
-  def run() {
+  def run(): Unit = {
     val watch = new Stopwatch(true)
     logger.debug("starting clean up over expired time sessions ...")
     try {
       var removed = 0
       registry.getBeforeAccessAt(Instant.now.minusSeconds(ttiMinutes * 60)) foreach { sid =>
-        registry.remove(sid) foreach (olds => removed += 1)
+        registry.remove(sid) foreach (_ => removed += 1)
       }
       if (removed > 0) logger.info(s"removed $removed expired sessions in $watch")
     } catch {

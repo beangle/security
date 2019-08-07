@@ -53,7 +53,7 @@ class DefaultSecurityContextBuilder extends SecurityContextBuilder {
   }
 
   def build(request: HttpServletRequest, session: Option[Session]): SecurityContext = {
-    var isRoot = false;
+    var isRoot = false
     session foreach { s =>
       isRoot = authorizer.isRoot(s.principal.getName)
     }

@@ -18,14 +18,11 @@
  */
 package org.beangle.security.session
 
-import java.time.{ Duration, Instant }
-
-import org.beangle.security.authc.Account
-import org.beangle.security.context.SecurityContext
-import java.io.ObjectInput
-import java.io.ObjectOutput
-import org.beangle.security.authc.DefaultAccount
+import java.io.{ObjectInput, ObjectOutput}
 import java.security.Principal
+import java.time.Instant
+
+import org.beangle.security.authc.DefaultAccount
 
 object DefaultSessionBuilder extends SessionBuilder {
   def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent): Session = {
@@ -46,10 +43,10 @@ class DefaultSession extends Session {
     this.principal = principal
     this.loginAt = loginAt
     this.lastAccessAt = loginAt
-    this.agent = agent;
+    this.agent = agent
   }
 
-  def writeExternal(out: ObjectOutput) {
+  def writeExternal(out: ObjectOutput): Unit = {
     out.writeObject(id)
     principal.writeExternal(out)
     out.writeLong(loginAt.getEpochSecond)
@@ -59,7 +56,7 @@ class DefaultSession extends Session {
     out.writeObject(agent.os)
   }
 
-  def readExternal(in: ObjectInput) {
+  def readExternal(in: ObjectInput): Unit = {
     id = readString(in)
     principal = new DefaultAccount()
     principal.readExternal(in)
