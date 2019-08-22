@@ -24,6 +24,7 @@ import java.{util => ju}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
+import org.beangle.security.realm.cas.{Cas, CasConfig}
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.session.SessionIdReader
@@ -34,6 +35,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   /** 本地登录地址 */
   var localLogin: String = _
+
   var sessionIdReader: SessionIdReader = _
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
@@ -44,12 +46,20 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     } else {
       if (null != localLogin) {
         // 防止在localLogin也不是公开资源的错误配置情况下，出现CasEntryPoint和CasServer之间的死循环
-        if (req.getServletPath.endsWith(localLogin)) {
-          throw ae
+        if (req.getRequestURI.endsWith(localLogin)) {
+          if (null == ae) {
+            throw new SecurityException("infinite loop")
+          } else {
+            throw ae
+          }
         } else {
-          val serviceUrl = constructLocalLoginUrl(req, res, null, getLocalServer(req))
-          val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, gateway = false)
-          res.sendRedirect(redirectUrl + "&isLoginService=11")
+          if (null == ae) {
+            res.sendRedirect(constructLocalLoginUrl(req, res, null, getLocalServer(req)))
+          } else {
+            val serviceUrl = res.encodeURL(constructLocalLoginUrl(req, res, null, getLocalServer(req)))
+            val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, gateway = false)
+            res.sendRedirect(redirectUrl + "&isLoginService=11")
+          }
         }
       } else {
         val serviceUrl = constructServiceUrl(req, res, null, getLocalServer(req))
@@ -62,13 +72,13 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   def constructLocalLoginUrl(req: HttpServletRequest, res: HttpServletResponse,
                              service: String, serverName: String): String = {
     if (Strings.isNotBlank(service)) {
-      res.encodeURL(service)
+      service
     } else {
       val buffer = new StringBuilder()
       if (!serverName.startsWith("https://") && !serverName.startsWith("http://"))
         buffer.append(if (req.isSecure) "https://" else "http://")
       buffer.append(serverName).append(req.getContextPath).append(localLogin)
-      res.encodeURL(buffer.toString)
+      buffer.toString
     }
   }
 
