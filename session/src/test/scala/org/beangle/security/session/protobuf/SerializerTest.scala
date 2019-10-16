@@ -46,10 +46,10 @@ class SerializerTest extends AnyFunSpec with Matchers with Logging {
       val data = serializer.asBytes(account)
       println("Account data has " + data.length + " bytes using protobuf serializer.")
       val newAccount = serializer.asObject(classOf[DefaultAccount], data)
-      assert(newAccount.remoteToken == Some("OTHER_token"))
+      assert(newAccount.remoteToken.contains("OTHER_token"))
 
       val agent = new Session.Agent("Firefox", "localhost", "Fedora Linux 27")
-      val session = new DefaultSession("CAS_xxasdfafd", account, Instant.now, agent)
+      val session = new DefaultSession("CAS_xxasdfafd", account, Instant.now, agent,30)
       val sessionBytes = serializer.asBytes(session)
       val newSession = serializer.asObject(classOf[DefaultSession], sessionBytes)
       assert(newSession.id == "CAS_xxasdfafd")

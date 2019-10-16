@@ -20,13 +20,13 @@ package org.beangle.security.session
 
 import java.io.{ObjectInput, ObjectOutput}
 import java.security.Principal
-import java.time.Instant
+import java.time.{Duration, Instant}
 
 import org.beangle.security.authc.DefaultAccount
 
 object DefaultSessionBuilder extends SessionBuilder {
-  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent): Session = {
-    new DefaultSession(id, principal.asInstanceOf[DefaultAccount], loginAt, agent)
+  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiMinutes: Int): Session = {
+    new DefaultSession(id, principal.asInstanceOf[DefaultAccount], loginAt, agent, ttiMinutes)
   }
 }
 
@@ -36,14 +36,16 @@ class DefaultSession extends Session {
   var loginAt: Instant = _
   var lastAccessAt: Instant = _
   var agent: Session.Agent = _
+  var ttiMinutes: Int = _
 
-  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent) {
+  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent, ttiMinutes: Int) {
     this()
     this.id = id
     this.principal = principal
     this.loginAt = loginAt
     this.lastAccessAt = loginAt
     this.agent = agent
+    this.ttiMinutes = ttiMinutes
   }
 
   def writeExternal(out: ObjectOutput): Unit = {
@@ -54,6 +56,7 @@ class DefaultSession extends Session {
     out.writeObject(agent.name)
     out.writeObject(agent.ip)
     out.writeObject(agent.os)
+    out.writeInt(ttiMinutes)
   }
 
   def readExternal(in: ObjectInput): Unit = {
@@ -63,10 +66,15 @@ class DefaultSession extends Session {
     loginAt = Instant.ofEpochSecond(in.readLong)
     lastAccessAt = Instant.ofEpochSecond(in.readLong)
     agent = new Session.Agent(readString(in), readString(in), readString(in))
+    ttiMinutes = in.readInt
   }
 
   @inline
   private def readString(in: ObjectInput): String = {
     in.readObject.asInstanceOf[String]
+  }
+
+  override def expired: Boolean = {
+    lastAccessAt.plusSeconds(60 * ttiMinutes).isBefore(Instant.now)
   }
 }

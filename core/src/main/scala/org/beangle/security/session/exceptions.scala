@@ -18,10 +18,14 @@
  */
 package org.beangle.security.session
 
+import java.security.Principal
+
 import org.beangle.security.authc.AuthenticationException
 
-class SessionException(msg: String, principal: Any) extends AuthenticationException(msg, principal) {
+class SessionException(message: String, principal: Any) extends AuthenticationException(message, principal) {
 }
+
+class SessionExpiredException(message: String, principal: Principal) extends SessionException(message, principal)
 
 class OvermaxSessionException(val maxUserLimit: Int, principal: Any)
     extends SessionException("Over max session Limit :" + String.valueOf(maxUserLimit), principal) {
