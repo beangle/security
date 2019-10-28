@@ -24,8 +24,8 @@ import org.beangle.commons.codec.binary.{Base64, Hex}
 import org.beangle.commons.lang.Arrays
 
 /**
-  * @author chaostone
-  */
+ * @author chaostone
+ */
 trait PasswordEncoder {
   def verify(digest: String, password: String): Boolean
 
@@ -62,7 +62,11 @@ object DefaultPasswordEncoder extends PasswordEncoder {
 
     val hs =
       if (alg.contains("MD5")) {
-        split(Hex.decode(digestContent), size)
+        if (digestContent.length == 32 && !digestContent.contains("=")) {
+          split(Hex.decode(digestContent), size)
+        } else {
+          split(Base64.decode(digestContent.toCharArray), size)
+        }
       } else {
         split(Base64.decode(digestContent.toCharArray), size)
       }
