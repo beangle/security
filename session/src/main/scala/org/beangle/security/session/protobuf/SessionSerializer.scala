@@ -33,7 +33,7 @@ object SessionSerializer extends ObjectSerializer {
     builder.setLoginAt(session.loginAt.getEpochSecond)
     builder.setLastAccessAt(session.lastAccessAt.getEpochSecond)
     builder.setAgent(AgentSerializer.toMessage(session.agent))
-    builder.setTtiMinutes(session.ttiMinutes)
+    builder.setTtiMinutes(session.ttiSeconds)
     builder.build().writeTo(os)
   }
 

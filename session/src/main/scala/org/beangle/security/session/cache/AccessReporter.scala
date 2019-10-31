@@ -29,7 +29,7 @@ import org.beangle.security.session.util.Task
 /**
  * Report heartbeat.
  */
-class HeartbeatReporter(sessions: Cache[String, Session], repo: CacheSessionRepo) extends Task {
+class AccessReporter(sessions: Cache[String, Session], repo: CacheSessionRepo) extends Task {
 
   private var lastReportAt: Instant = Instant.now
 
@@ -48,7 +48,7 @@ class HeartbeatReporter(sessions: Cache[String, Session], repo: CacheSessionRepo
       val sessionId = keys.nextElement()
       sessions.get(sessionId) match {
         case Some(s) =>
-          if (s.lastAccessAt.isAfter(last) && !repo.heartbeat(s))
+          if (s.lastAccessAt.isAfter(last) && !repo.flush(s))
             expired += sessionId
         case None => expired += sessionId
       }

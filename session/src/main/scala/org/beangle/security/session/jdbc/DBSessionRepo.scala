@@ -23,13 +23,14 @@ import java.sql.Timestamp
 
 import javax.sql.DataSource
 import org.beangle.cache.CacheManager
+import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.data.jdbc.query.JdbcExecutor
+import org.beangle.security.session._
 import org.beangle.security.session.cache.CacheSessionRepo
-import org.beangle.security.session.{DefaultSession, DefaultSessionBuilder, Session, SessionBuilder}
 
 class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
-  extends CacheSessionRepo(cacheManager) {
+  extends CacheSessionRepo(cacheManager) with EventPublisher {
 
   protected val executor = new JdbcExecutor(dataSource)
 
@@ -38,7 +39,7 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
   var sessionTable = "session_infoes"
 
   protected override def getInternal(sessionId: String): Option[Session] = {
-    val datas = executor.query(s"select data from $sessionTable where id=?", sessionId)
+    val datas = executor.query(s"select data,last_access_at,tti_senconds from $sessionTable where id=?", sessionId)
     if (datas.isEmpty) {
       None
     } else {
@@ -46,23 +47,47 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
         case is: InputStream => serializer.deserialize(classOf[DefaultSession], is, Map.empty)
         case ba: Array[Byte] => serializer.asObject(classOf[DefaultSession], ba)
       }
+      //从数据库中取出时，需要更新访问时间和tti，这两项会有改变
+      data.access(datas.head(1).asInstanceOf[Timestamp].toInstant)
+      data.ttiSeconds = datas.head(2).asInstanceOf[Number].intValue
       Some(data)
     }
   }
 
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
-    val datas = executor.query(s"select data from $sessionTable info where principal =? order by last_access_at", principal)
+    val datas = executor.query(s"select data,last_access_at,tti_senconds from $sessionTable info where principal =? order by last_access_at", principal)
     datas.map { data =>
-      data.head match {
+      val s = data.head match {
         case is: InputStream => serializer.deserialize(classOf[DefaultSession], is, Map.empty)
         case ba: Array[Byte] => serializer.asObject(classOf[DefaultSession], ba)
       }
+      //从数据库中取出时，需要更新访问时间和tti，这两项会有改变
+      s.access(datas.head(1).asInstanceOf[Timestamp].toInstant)
+      s.ttiSeconds = datas.head(2).asInstanceOf[Number].intValue
+      s
     }
   }
 
-  override def heartbeat(session: Session): Boolean = {
+  /** 后端是否依然存在该会话
+   *
+   * @param session 会话
+   * @return true如果仍然存在
+   */
+  override def flush(session: Session): Boolean = {
     executor.update(s"update $sessionTable set last_access_at=? where id=?",
       Timestamp.from(session.lastAccessAt), session.id) > 0
   }
 
+  /** 过期指定会话
+   * 同时更新数据库和缓存
+   */
+  override def expire(sessionId: String): Unit = {
+    executor.update(s"update $sessionTable set tti_minutes=0 where id=?", sessionId)
+    get(sessionId) foreach { session =>
+      session.ttiSeconds = 0
+      evict(session)
+      executor.update(s"delete from $sessionTable where id=?", sessionId)
+      publish(new LogoutEvent(session, "强制过期"))
+    }
+  }
 }

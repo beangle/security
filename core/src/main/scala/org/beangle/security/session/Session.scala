@@ -37,26 +37,30 @@ trait Session extends java.io.Externalizable {
 
   def agent: Session.Agent
 
-  def ttiMinutes: Int
+  def ttiSeconds: Int
 
-  def ttiMinutes_=(minutes: Int): Unit
+  def ttiSeconds_=(seconds: Int): Unit
 
   def lastAccessAt: Instant
 
-  def lastAccessAt_=(newAccessed: Instant): Unit
+  /** 访问session
+   *
+   * @return 据上一次的间隔秒数，-1 表示已经过期
+   **/
+  def access(accessAt: Instant): Long
 
-  def expired:Boolean
+  def expired: Boolean
 }
 
 /** 会话配置
-  *
-  * @param ttiMinutes tti时间以分钟计
-  * @param concurrent 多重会话数上限
-  * @param checkConcurrent 是否检查多重会话
-  * @param checkCapacity 是否检查系统会话上限
-  */
-case class SessionProfile(ttiMinutes: Int, concurrent: Int,capacity:Int,checkConcurrent:Boolean,checkCapacity:Boolean)
+ *
+ * @param ttiSeconds      tti时间以秒计
+ * @param concurrent      多重会话数上限
+ * @param checkConcurrent 是否检查多重会话
+ * @param checkCapacity   是否检查系统会话上限
+ */
+case class SessionProfile(ttiSeconds: Int, concurrent: Int, capacity: Int, checkConcurrent: Boolean, checkCapacity: Boolean)
 
 trait SessionBuilder {
-  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiMinutes: Int): Session
+  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int): Session
 }

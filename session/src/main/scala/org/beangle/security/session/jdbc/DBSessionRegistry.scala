@@ -23,7 +23,6 @@ import java.time.Instant
 
 import javax.sql.DataSource
 import org.beangle.cache.CacheManager
-import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.ParamSetter
@@ -31,17 +30,17 @@ import org.beangle.security.authc.Account
 import org.beangle.security.session._
 import org.beangle.security.session.util.SessionDaemon
 
-/**
-  * 基于数据库的session注册表
-  */
+/** 基于数据库的session注册表
+ * 使用数据库的$sessionTable表
+ */
 class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
   extends DBSessionRepo(dataSource, cacheManager, serializer)
-    with EventPublisher with SessionRegistry {
+    with SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_minutes,category_id,data"
 
   override def init(): Unit = {
-    SessionDaemon.start(heartbeatSeconds, heartbeatReporter, new DBSessionCleaner(this))
+    SessionDaemon.start(flushInterval, accessReporter, new DBSessionCleaner(this))
   }
 
   override def register(sessionId: String, info: Account, agent: Session.Agent, profile: SessionProfile): Session = {
@@ -50,7 +49,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
     if (profile.checkCapacity) {
       val sc = sessionCount(info.categoryId)
       if (sc + 1 > profile.capacity) {
-        throw new OvermaxSessionException( profile.capacity, principal)
+        throw new OvermaxSessionException(profile.capacity, principal)
       }
     }
     // 是否为重复注册
@@ -65,15 +64,11 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
           concurrents.take(expiredCnt) foreach (x => expire(x.id))
         }
       }
-      val session = builder.build(sessionId, info, Instant.now, agent, profile.ttiMinutes) // 新生
+      val session = builder.build(sessionId, info, Instant.now, agent, profile.ttiSeconds) // 新生
       save(session)
       publish(new LoginEvent(session))
       session
     }
-  }
-
-  override def remove(sessionId: String): Option[Session] = {
-    remove(sessionId, null)
   }
 
   override def findExpired(): collection.Seq[String] = {
@@ -81,22 +76,18 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
       .map { data => data(0).toString }
   }
 
-  private def remove(sessionId: String, reason: String): Option[Session] = {
+  private def sessionCount(categoryId: Int): Int = {
+    executor.queryForInt(s"select count(*) from $sessionTable where category_id=" + categoryId).getOrElse(0)
+  }
+
+  override def remove(sessionId: String, reason: String): Option[Session] = {
     val s = get(sessionId)
     s foreach { session =>
-      publish(new LogoutEvent(session, reason))
       evict(session)
       executor.update(s"delete from $sessionTable where id=?", sessionId)
+      publish(new LogoutEvent(session, reason))
     }
     s
-  }
-
-  override def expire(sessionId: String): Unit = {
-    executor.update(s"update $sessionTable set tti_minutes=0 where id=?", sessionId)
-  }
-
-  private def sessionCount(categoryId:Int): Int = {
-    executor.queryForInt(s"select count(*) from $sessionTable where category_id="+categoryId).getOrElse(0)
   }
 
   private def save(s: Session): Unit = {
@@ -112,10 +103,11 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
         x.setString(6, ac.os)
         x.setTimestamp(7, Timestamp.from(s.loginAt))
         x.setTimestamp(8, Timestamp.from(s.loginAt))
-        x.setInt(9, s.ttiMinutes)
-        x.setInt(10,s.principal.asInstanceOf[Account].categoryId)
+        x.setInt(9, s.ttiSeconds)
+        x.setInt(10, s.principal.asInstanceOf[Account].categoryId)
         ParamSetter.setParam(x, 11, serializer.asBytes(s), Types.BINARY)
       }).execute()
     put(s)
   }
+
 }

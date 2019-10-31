@@ -23,25 +23,30 @@ import java.time.Instant
 import org.beangle.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
-import org.beangle.security.session.{Session, SessionRepo}
 import org.beangle.security.session.util.{SessionDaemon, UpdateDelayGenerator}
+import org.beangle.security.session.{Session, SessionRepo}
 
 abstract class CacheSessionRepo(val cacheManager: CacheManager)
   extends SessionRepo with Initializing with Logging {
 
   private val sessions = cacheManager.getCache("sessions", classOf[String], classOf[Session])
 
+  /** 访问更新延迟
+   * 如果访问非常频繁，则根据访问延迟决定是否向后端发出心跳
+   * 默认按照20~60秒的随机数字防止更新过快,具体到后端需要看flushInterval
+   * 一般是3分钟
+   */
   private val accessDelaySeconds = new UpdateDelayGenerator(20, 60).generateDelaySeconds()
 
-  protected val heartbeatReporter = new HeartbeatReporter(sessions, this)
+  protected val accessReporter = new AccessReporter(sessions, this)
 
   /**
-    * interval (3 min) report heartbeat.
-    */
-  var heartbeatSeconds: Int = 3 * 60
+   * flush 间隔，以秒计,默认3分钟
+   */
+  var flushInterval: Int = 3 * 60
 
   override def init(): Unit = {
-    SessionDaemon.start(heartbeatSeconds, this.heartbeatReporter)
+    SessionDaemon.start(flushInterval, this.accessReporter)
   }
 
   override def get(sessionId: String): Option[Session] = {
@@ -57,14 +62,22 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
   }
 
   override def access(sessionId: String, accessAt: Instant): Option[Session] = {
-    val a = get(sessionId)
-    a foreach { s =>
-      if ((accessAt.getEpochSecond - s.lastAccessAt.getEpochSecond) > accessDelaySeconds) {
-        s.lastAccessAt = accessAt
-        heartbeatReporter.addSessionId(s.id, accessAt)
-      }
+    get(sessionId) match {
+      case None => None
+      case se@Some(s) =>
+        val elapse = s.access(accessAt)
+        if (elapse > accessDelaySeconds) {
+          accessReporter.addSessionId(s.id, accessAt)
+          se
+        } else {
+          if (elapse == -1) {
+            expire(s.id)
+            None
+          } else {
+            se
+          }
+        }
     }
-    a
   }
 
   protected def put(session: Session): Unit = {
@@ -77,6 +90,11 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
 
   protected def getInternal(sessionId: String): Option[Session]
 
-  def heartbeat(session: Session): Boolean
+  /** 向后端更新该会话的访问时间
+   *
+   * @param session 会话
+   * @return true如果是否依然存在该会话
+   */
+  def flush(session: Session): Boolean
 
 }

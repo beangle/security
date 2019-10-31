@@ -39,6 +39,6 @@ trait SecurityManager {
   def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session
 
   def logout(session: Session): Unit = {
-    this.registry.remove(session.id)
+    this.registry.remove(session.id,null)
   }
 }

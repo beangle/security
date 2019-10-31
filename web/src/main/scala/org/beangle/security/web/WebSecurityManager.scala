@@ -51,7 +51,7 @@ class WebSecurityManager extends SecurityManager {
 
   def logout(request: HttpServletRequest, response: HttpServletResponse,
              session: Session): Unit = {
-    registry.remove(session.id)
+    registry.remove(session.id,null)
     sessionIdPolicy.delId(request, response)
     val s = request.getSession(false)
     if (null != s) s.invalidate()

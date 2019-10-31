@@ -24,7 +24,8 @@ import org.beangle.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.lang.Strings.replace
-import org.beangle.commons.net.http.{HttpMethods, HttpUtils, Https}
+import org.beangle.commons.net.http.HttpUtils.{getData, getText}
+import org.beangle.commons.net.http.{HttpMethods, Https}
 import org.beangle.security.session.cache.CacheSessionRepo
 import org.beangle.security.session.{DefaultSession, Session}
 
@@ -34,22 +35,21 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   var geturl: String = _
   var accessUrl: String = _
   var findUrl: String = _
+  var expireUrl: String = _
 
-  protected def getInternal(sessionId: String): Option[Session] = {
-    HttpUtils.getData(replace(geturl, "{id}", sessionId)) map { data =>
-      serializer.asObject(classOf[DefaultSession], data)
-    }
+  protected def getInternal(sid: String): Option[Session] = {
+    getData(replace(geturl, "{id}", sid)).map(serializer.asObject(classOf[DefaultSession], _))
   }
 
 
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
-    HttpUtils.getText(replace(findUrl, "{principal}", principal)) match {
+    getText(replace(findUrl, "{principal}", principal)) match {
       case None => List.empty
-      case Some(data) => Strings.split(data).toSeq.flatMap(getInternal(_))
+      case Some(data) => Strings.split(data).toSeq.flatMap(getInternal)
     }
   }
 
-  def heartbeat(session: Session): Boolean = {
+  override def flush(session: Session): Boolean = {
     var surl = replace(accessUrl, "{id}", session.id)
     surl = replace(surl, "{time}", session.lastAccessAt.getEpochSecond.toString)
     val url = new URL(surl)
@@ -57,5 +57,9 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
     hc.setRequestMethod(HttpMethods.GET)
     Https.noverify(hc)
     hc.getResponseCode == 200
+  }
+
+  override def expire(sid: String): Unit = {
+    getText(replace(expireUrl, "{id}", sid))
   }
 }
