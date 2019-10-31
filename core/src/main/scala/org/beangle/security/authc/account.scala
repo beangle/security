@@ -34,6 +34,8 @@ trait Account extends AuthorizationInfo with Principal with Externalizable {
 
   def name: String
 
+  def categoryId:Int
+
   def description: String
 
   def remoteToken: Option[String]

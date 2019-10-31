@@ -24,7 +24,6 @@ import java.{util => ju}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
-import org.beangle.security.realm.cas.{Cas, CasConfig}
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.session.SessionIdReader
@@ -36,7 +35,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   /** 本地登录地址 */
   var localLogin: String = _
 
-  var sessionIdReader: SessionIdReader = _
+  var sessionIdReader: Option[SessionIdReader] = None
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
     Cas.cleanup(config, req, res)
@@ -90,7 +89,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") +
       (serviceName + "=" + URLEncoder.encode(serviceUrl, "UTF-8")) +
       (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "") +
-      (if (null != sessionIdReader) "&" + SessionIdReader.SessionIdName + "=" + sessionIdReader.idName else "")
+      sessionIdReader.map(x => "&" + SessionIdReader.SessionIdName + "=" + x.idName).getOrElse("")
   }
 
   def constructServiceUrl(req: HttpServletRequest, res: HttpServletResponse,
@@ -103,11 +102,9 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     }
 
     val reservedKeys =
-      if (null == sessionIdReader) {
-        Set(config.artifactName)
-      }
-      else {
-        Set(sessionIdReader.idName, config.artifactName)
+      sessionIdReader match {
+        case None => Set(config.artifactName)
+        case Some(r) => Set(r.idName, config.artifactName)
       }
     buffer.append(serverName).append(req.getRequestURI)
     val queryString = req.getQueryString

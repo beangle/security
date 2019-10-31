@@ -22,9 +22,7 @@
 package org.beangle.security.session.protobuf;
 
 public final class Model {
-  private Model() {
-  }
-
+  private Model() {}
   public static void registerAllExtensions(
     com.google.protobuf.ExtensionRegistryLite registry) {
   }
@@ -34,7 +32,6 @@ public final class Model {
     registerAllExtensions(
       (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-
   public interface AccountOrBuilder extends
     // @@protoc_insertion_point(interface_extends:Account)
     com.google.protobuf.MessageOrBuilder {
@@ -43,7 +40,6 @@ public final class Model {
      * <code>string name = 1;</code>
      */
     java.lang.String getName();
-
     /**
      * <code>string name = 1;</code>
      */
@@ -54,7 +50,6 @@ public final class Model {
      * <code>string description = 2;</code>
      */
     java.lang.String getDescription();
-
     /**
      * <code>string description = 2;</code>
      */
@@ -65,7 +60,6 @@ public final class Model {
      * <code>string remoteToken = 3;</code>
      */
     java.lang.String getRemoteToken();
-
     /**
      * <code>string remoteToken = 3;</code>
      */
@@ -81,7 +75,6 @@ public final class Model {
      * <code>string authorities = 5;</code>
      */
     java.lang.String getAuthorities();
-
     /**
      * <code>string authorities = 5;</code>
      */
@@ -92,7 +85,6 @@ public final class Model {
      * <code>string permissions = 6;</code>
      */
     java.lang.String getPermissions();
-
     /**
      * <code>string permissions = 6;</code>
      */
@@ -103,26 +95,22 @@ public final class Model {
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
     int getDetailsCount();
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
     boolean containsDetails(
       java.lang.String key);
-
     /**
      * Use {@link #getDetailsMap()} instead.
      */
     @java.lang.Deprecated
     java.util.Map<java.lang.String, java.lang.String>
     getDetails();
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
     java.util.Map<java.lang.String, java.lang.String>
     getDetailsMap();
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
@@ -130,29 +118,30 @@ public final class Model {
     java.lang.String getDetailsOrDefault(
       java.lang.String key,
       java.lang.String defaultValue);
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
 
     java.lang.String getDetailsOrThrow(
       java.lang.String key);
-  }
 
+    /**
+     * <code>int32 categoryId = 8;</code>
+     */
+    int getCategoryId();
+  }
   /**
    * Protobuf type {@code Account}
    */
-  public static final class Account extends
+  public  static final class Account extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:Account)
     AccountOrBuilder {
     private static final long serialVersionUID = 0L;
-
     // Use Account.newBuilder() to construct.
     private Account(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private Account() {
       name_ = "";
       description_ = "";
@@ -160,6 +149,7 @@ public final class Model {
       status_ = 0;
       authorities_ = "";
       permissions_ = "";
+      categoryId_ = 0;
     }
 
     @java.lang.Override
@@ -167,7 +157,6 @@ public final class Model {
     getUnknownFields() {
       return this.unknownFields;
     }
-
     private Account(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -235,6 +224,11 @@ public final class Model {
                 details__.getKey(), details__.getValue());
               break;
             }
+            case 64: {
+
+              categoryId_ = input.readInt32();
+              break;
+            }
             default: {
               if (!parseUnknownFieldProto3(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -254,7 +248,6 @@ public final class Model {
         makeExtensionsImmutable();
       }
     }
-
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
       return org.beangle.security.session.protobuf.Model.internal_static_Account_descriptor;
@@ -272,7 +265,6 @@ public final class Model {
             "Invalid map field number: " + number);
       }
     }
-
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internalGetFieldAccessorTable() {
@@ -284,7 +276,6 @@ public final class Model {
     private int bitField0_;
     public static final int NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object name_;
-
     /**
      * <code>string name = 1;</code>
      */
@@ -300,7 +291,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string name = 1;</code>
      */
@@ -320,7 +310,6 @@ public final class Model {
 
     public static final int DESCRIPTION_FIELD_NUMBER = 2;
     private volatile java.lang.Object description_;
-
     /**
      * <code>string description = 2;</code>
      */
@@ -336,7 +325,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string description = 2;</code>
      */
@@ -356,7 +344,6 @@ public final class Model {
 
     public static final int REMOTETOKEN_FIELD_NUMBER = 3;
     private volatile java.lang.Object remoteToken_;
-
     /**
      * <code>string remoteToken = 3;</code>
      */
@@ -372,7 +359,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string remoteToken = 3;</code>
      */
@@ -392,7 +378,6 @@ public final class Model {
 
     public static final int STATUS_FIELD_NUMBER = 4;
     private int status_;
-
     /**
      * <code>int32 status = 4;</code>
      */
@@ -402,7 +387,6 @@ public final class Model {
 
     public static final int AUTHORITIES_FIELD_NUMBER = 5;
     private volatile java.lang.Object authorities_;
-
     /**
      * <code>string authorities = 5;</code>
      */
@@ -418,7 +402,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string authorities = 5;</code>
      */
@@ -438,7 +421,6 @@ public final class Model {
 
     public static final int PERMISSIONS_FIELD_NUMBER = 6;
     private volatile java.lang.Object permissions_;
-
     /**
      * <code>string permissions = 6;</code>
      */
@@ -454,7 +436,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string permissions = 6;</code>
      */
@@ -473,7 +454,6 @@ public final class Model {
     }
 
     public static final int DETAILS_FIELD_NUMBER = 7;
-
     private static final class DetailsDefaultEntryHolder {
       static final com.google.protobuf.MapEntry<
         java.lang.String, java.lang.String> defaultEntry =
@@ -485,10 +465,8 @@ public final class Model {
             com.google.protobuf.WireFormat.FieldType.STRING,
             "");
     }
-
     private com.google.protobuf.MapField<
       java.lang.String, java.lang.String> details_;
-
     private com.google.protobuf.MapField<java.lang.String, java.lang.String>
     internalGetDetails() {
       if (details_ == null) {
@@ -501,19 +479,15 @@ public final class Model {
     public int getDetailsCount() {
       return internalGetDetails().getMap().size();
     }
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
 
     public boolean containsDetails(
       java.lang.String key) {
-      if (key == null) {
-        throw new java.lang.NullPointerException();
-      }
+      if (key == null) { throw new java.lang.NullPointerException(); }
       return internalGetDetails().getMap().containsKey(key);
     }
-
     /**
      * Use {@link #getDetailsMap()} instead.
      */
@@ -521,7 +495,6 @@ public final class Model {
     public java.util.Map<java.lang.String, java.lang.String> getDetails() {
       return getDetailsMap();
     }
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
@@ -529,7 +502,6 @@ public final class Model {
     public java.util.Map<java.lang.String, java.lang.String> getDetailsMap() {
       return internalGetDetails().getMap();
     }
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
@@ -537,23 +509,18 @@ public final class Model {
     public java.lang.String getDetailsOrDefault(
       java.lang.String key,
       java.lang.String defaultValue) {
-      if (key == null) {
-        throw new java.lang.NullPointerException();
-      }
+      if (key == null) { throw new java.lang.NullPointerException(); }
       java.util.Map<java.lang.String, java.lang.String> map =
         internalGetDetails().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
-
     /**
      * <code>map&lt;string, string&gt; details = 7;</code>
      */
 
     public java.lang.String getDetailsOrThrow(
       java.lang.String key) {
-      if (key == null) {
-        throw new java.lang.NullPointerException();
-      }
+      if (key == null) { throw new java.lang.NullPointerException(); }
       java.util.Map<java.lang.String, java.lang.String> map =
         internalGetDetails().getMap();
       if (!map.containsKey(key)) {
@@ -562,8 +529,16 @@ public final class Model {
       return map.get(key);
     }
 
-    private byte memoizedIsInitialized = -1;
+    public static final int CATEGORYID_FIELD_NUMBER = 8;
+    private int categoryId_;
+    /**
+     * <code>int32 categoryId = 8;</code>
+     */
+    public int getCategoryId() {
+      return categoryId_;
+    }
 
+    private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -601,6 +576,9 @@ public final class Model {
           internalGetDetails(),
           DetailsDefaultEntryHolder.defaultEntry,
           7);
+      if (categoryId_ != 0) {
+        output.writeInt32(8, categoryId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -639,6 +617,10 @@ public final class Model {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, details__);
       }
+      if (categoryId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(8, categoryId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -669,6 +651,8 @@ public final class Model {
         .equals(other.getPermissions());
       result = result && internalGetDetails().equals(
         other.internalGetDetails());
+      result = result && (getCategoryId()
+        == other.getCategoryId());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -696,6 +680,8 @@ public final class Model {
         hash = (37 * hash) + DETAILS_FIELD_NUMBER;
         hash = (53 * hash) + internalGetDetails().hashCode();
       }
+      hash = (37 * hash) + CATEGORYID_FIELD_NUMBER;
+      hash = (53 * hash) + getCategoryId();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -706,45 +692,38 @@ public final class Model {
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(java.io.InputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -752,13 +731,11 @@ public final class Model {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -766,14 +743,12 @@ public final class Model {
       return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Account parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -783,18 +758,13 @@ public final class Model {
     }
 
     @java.lang.Override
-    public Builder newBuilderForType() {
-      return newBuilder();
-    }
-
+    public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-
     public static Builder newBuilder(org.beangle.security.session.protobuf.Model.Account prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-
     @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
@@ -807,7 +777,6 @@ public final class Model {
       Builder builder = new Builder(parent);
       return builder;
     }
-
     /**
      * Protobuf type {@code Account}
      */
@@ -831,7 +800,6 @@ public final class Model {
               "Invalid map field number: " + number);
         }
       }
-
       @SuppressWarnings({"rawtypes"})
       protected com.google.protobuf.MapField internalGetMutableMapField(
         int number) {
@@ -843,7 +811,6 @@ public final class Model {
               "Invalid map field number: " + number);
         }
       }
-
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
@@ -862,13 +829,11 @@ public final class Model {
         super(parent);
         maybeForceBuilderInitialization();
       }
-
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
           .alwaysUseFieldBuilders) {
         }
       }
-
       @java.lang.Override
       public Builder clear() {
         super.clear();
@@ -885,6 +850,8 @@ public final class Model {
         permissions_ = "";
 
         internalGetMutableDetails().clear();
+        categoryId_ = 0;
+
         return this;
       }
 
@@ -921,6 +888,7 @@ public final class Model {
         result.permissions_ = permissions_;
         result.details_ = internalGetDetails();
         result.details_.makeImmutable();
+        result.categoryId_ = categoryId_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -930,44 +898,38 @@ public final class Model {
       public Builder clone() {
         return (Builder) super.clone();
       }
-
       @java.lang.Override
       public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
-
       @java.lang.Override
       public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-
       @java.lang.Override
       public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-
       @java.lang.Override
       public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-
       @java.lang.Override
       public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.beangle.security.session.protobuf.Model.Account) {
-          return mergeFrom((org.beangle.security.session.protobuf.Model.Account) other);
+          return mergeFrom((org.beangle.security.session.protobuf.Model.Account)other);
         } else {
           super.mergeFrom(other);
           return this;
@@ -1001,6 +963,9 @@ public final class Model {
         }
         internalGetMutableDetails().mergeFrom(
           other.internalGetDetails());
+        if (other.getCategoryId() != 0) {
+          setCategoryId(other.getCategoryId());
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -1029,11 +994,9 @@ public final class Model {
         }
         return this;
       }
-
       private int bitField0_;
 
       private java.lang.Object name_ = "";
-
       /**
        * <code>string name = 1;</code>
        */
@@ -1049,7 +1012,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -1066,7 +1028,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -1080,7 +1041,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -1090,7 +1050,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -1107,7 +1066,6 @@ public final class Model {
       }
 
       private java.lang.Object description_ = "";
-
       /**
        * <code>string description = 2;</code>
        */
@@ -1123,7 +1081,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string description = 2;</code>
        */
@@ -1140,7 +1097,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string description = 2;</code>
        */
@@ -1154,7 +1110,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string description = 2;</code>
        */
@@ -1164,7 +1119,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string description = 2;</code>
        */
@@ -1181,7 +1135,6 @@ public final class Model {
       }
 
       private java.lang.Object remoteToken_ = "";
-
       /**
        * <code>string remoteToken = 3;</code>
        */
@@ -1197,7 +1150,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string remoteToken = 3;</code>
        */
@@ -1214,7 +1166,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string remoteToken = 3;</code>
        */
@@ -1228,7 +1179,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string remoteToken = 3;</code>
        */
@@ -1238,7 +1188,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string remoteToken = 3;</code>
        */
@@ -1254,15 +1203,13 @@ public final class Model {
         return this;
       }
 
-      private int status_;
-
+      private int status_ ;
       /**
        * <code>int32 status = 4;</code>
        */
       public int getStatus() {
         return status_;
       }
-
       /**
        * <code>int32 status = 4;</code>
        */
@@ -1272,7 +1219,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>int32 status = 4;</code>
        */
@@ -1284,7 +1230,6 @@ public final class Model {
       }
 
       private java.lang.Object authorities_ = "";
-
       /**
        * <code>string authorities = 5;</code>
        */
@@ -1300,7 +1245,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string authorities = 5;</code>
        */
@@ -1317,7 +1261,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string authorities = 5;</code>
        */
@@ -1331,7 +1274,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string authorities = 5;</code>
        */
@@ -1341,7 +1283,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string authorities = 5;</code>
        */
@@ -1358,7 +1299,6 @@ public final class Model {
       }
 
       private java.lang.Object permissions_ = "";
-
       /**
        * <code>string permissions = 6;</code>
        */
@@ -1374,7 +1314,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string permissions = 6;</code>
        */
@@ -1391,7 +1330,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string permissions = 6;</code>
        */
@@ -1405,7 +1343,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string permissions = 6;</code>
        */
@@ -1415,7 +1352,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string permissions = 6;</code>
        */
@@ -1433,7 +1369,6 @@ public final class Model {
 
       private com.google.protobuf.MapField<
         java.lang.String, java.lang.String> details_;
-
       private com.google.protobuf.MapField<java.lang.String, java.lang.String>
       internalGetDetails() {
         if (details_ == null) {
@@ -1442,11 +1377,9 @@ public final class Model {
         }
         return details_;
       }
-
       private com.google.protobuf.MapField<java.lang.String, java.lang.String>
       internalGetMutableDetails() {
-        onChanged();
-        ;
+        onChanged();;
         if (details_ == null) {
           details_ = com.google.protobuf.MapField.newMapField(
             DetailsDefaultEntryHolder.defaultEntry);
@@ -1460,19 +1393,15 @@ public final class Model {
       public int getDetailsCount() {
         return internalGetDetails().getMap().size();
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
 
       public boolean containsDetails(
         java.lang.String key) {
-        if (key == null) {
-          throw new java.lang.NullPointerException();
-        }
+        if (key == null) { throw new java.lang.NullPointerException(); }
         return internalGetDetails().getMap().containsKey(key);
       }
-
       /**
        * Use {@link #getDetailsMap()} instead.
        */
@@ -1480,7 +1409,6 @@ public final class Model {
       public java.util.Map<java.lang.String, java.lang.String> getDetails() {
         return getDetailsMap();
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
@@ -1488,7 +1416,6 @@ public final class Model {
       public java.util.Map<java.lang.String, java.lang.String> getDetailsMap() {
         return internalGetDetails().getMap();
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
@@ -1496,23 +1423,18 @@ public final class Model {
       public java.lang.String getDetailsOrDefault(
         java.lang.String key,
         java.lang.String defaultValue) {
-        if (key == null) {
-          throw new java.lang.NullPointerException();
-        }
+        if (key == null) { throw new java.lang.NullPointerException(); }
         java.util.Map<java.lang.String, java.lang.String> map =
           internalGetDetails().getMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
 
       public java.lang.String getDetailsOrThrow(
         java.lang.String key) {
-        if (key == null) {
-          throw new java.lang.NullPointerException();
-        }
+        if (key == null) { throw new java.lang.NullPointerException(); }
         java.util.Map<java.lang.String, java.lang.String> map =
           internalGetDetails().getMap();
         if (!map.containsKey(key)) {
@@ -1526,21 +1448,17 @@ public final class Model {
           .clear();
         return this;
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
 
       public Builder removeDetails(
         java.lang.String key) {
-        if (key == null) {
-          throw new java.lang.NullPointerException();
-        }
+        if (key == null) { throw new java.lang.NullPointerException(); }
         internalGetMutableDetails().getMutableMap()
           .remove(key);
         return this;
       }
-
       /**
        * Use alternate mutation accessors instead.
        */
@@ -1549,24 +1467,18 @@ public final class Model {
       getMutableDetails() {
         return internalGetMutableDetails().getMutableMap();
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
       public Builder putDetails(
         java.lang.String key,
         java.lang.String value) {
-        if (key == null) {
-          throw new java.lang.NullPointerException();
-        }
-        if (value == null) {
-          throw new java.lang.NullPointerException();
-        }
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
         internalGetMutableDetails().getMutableMap()
           .put(key, value);
         return this;
       }
-
       /**
        * <code>map&lt;string, string&gt; details = 7;</code>
        */
@@ -1578,6 +1490,31 @@ public final class Model {
         return this;
       }
 
+      private int categoryId_ ;
+      /**
+       * <code>int32 categoryId = 8;</code>
+       */
+      public int getCategoryId() {
+        return categoryId_;
+      }
+      /**
+       * <code>int32 categoryId = 8;</code>
+       */
+      public Builder setCategoryId(int value) {
+
+        categoryId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 categoryId = 8;</code>
+       */
+      public Builder clearCategoryId() {
+
+        categoryId_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1596,7 +1533,6 @@ public final class Model {
 
     // @@protoc_insertion_point(class_scope:Account)
     private static final org.beangle.security.session.protobuf.Model.Account DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new org.beangle.security.session.protobuf.Model.Account();
     }
@@ -1640,7 +1576,6 @@ public final class Model {
      * <code>string name = 1;</code>
      */
     java.lang.String getName();
-
     /**
      * <code>string name = 1;</code>
      */
@@ -1651,7 +1586,6 @@ public final class Model {
      * <code>string ip = 2;</code>
      */
     java.lang.String getIp();
-
     /**
      * <code>string ip = 2;</code>
      */
@@ -1662,28 +1596,24 @@ public final class Model {
      * <code>string os = 3;</code>
      */
     java.lang.String getOs();
-
     /**
      * <code>string os = 3;</code>
      */
     com.google.protobuf.ByteString
     getOsBytes();
   }
-
   /**
    * Protobuf type {@code Agent}
    */
-  public static final class Agent extends
+  public  static final class Agent extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:Agent)
     AgentOrBuilder {
     private static final long serialVersionUID = 0L;
-
     // Use Agent.newBuilder() to construct.
     private Agent(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private Agent() {
       name_ = "";
       ip_ = "";
@@ -1695,7 +1625,6 @@ public final class Model {
     getUnknownFields() {
       return this.unknownFields;
     }
-
     private Agent(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1752,7 +1681,6 @@ public final class Model {
         makeExtensionsImmutable();
       }
     }
-
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
       return org.beangle.security.session.protobuf.Model.internal_static_Agent_descriptor;
@@ -1768,7 +1696,6 @@ public final class Model {
 
     public static final int NAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object name_;
-
     /**
      * <code>string name = 1;</code>
      */
@@ -1784,7 +1711,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string name = 1;</code>
      */
@@ -1804,7 +1730,6 @@ public final class Model {
 
     public static final int IP_FIELD_NUMBER = 2;
     private volatile java.lang.Object ip_;
-
     /**
      * <code>string ip = 2;</code>
      */
@@ -1820,7 +1745,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string ip = 2;</code>
      */
@@ -1840,7 +1764,6 @@ public final class Model {
 
     public static final int OS_FIELD_NUMBER = 3;
     private volatile java.lang.Object os_;
-
     /**
      * <code>string os = 3;</code>
      */
@@ -1856,7 +1779,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string os = 3;</code>
      */
@@ -1875,7 +1797,6 @@ public final class Model {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1965,45 +1886,38 @@ public final class Model {
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(java.io.InputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2011,13 +1925,11 @@ public final class Model {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2025,14 +1937,12 @@ public final class Model {
       return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Agent parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2042,18 +1952,13 @@ public final class Model {
     }
 
     @java.lang.Override
-    public Builder newBuilderForType() {
-      return newBuilder();
-    }
-
+    public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-
     public static Builder newBuilder(org.beangle.security.session.protobuf.Model.Agent prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-
     @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
@@ -2066,7 +1971,6 @@ public final class Model {
       Builder builder = new Builder(parent);
       return builder;
     }
-
     /**
      * Protobuf type {@code Agent}
      */
@@ -2097,13 +2001,11 @@ public final class Model {
         super(parent);
         maybeForceBuilderInitialization();
       }
-
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
           .alwaysUseFieldBuilders) {
         }
       }
-
       @java.lang.Override
       public Builder clear() {
         super.clear();
@@ -2150,44 +2052,38 @@ public final class Model {
       public Builder clone() {
         return (Builder) super.clone();
       }
-
       @java.lang.Override
       public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
-
       @java.lang.Override
       public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-
       @java.lang.Override
       public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-
       @java.lang.Override
       public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-
       @java.lang.Override
       public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.beangle.security.session.protobuf.Model.Agent) {
-          return mergeFrom((org.beangle.security.session.protobuf.Model.Agent) other);
+          return mergeFrom((org.beangle.security.session.protobuf.Model.Agent)other);
         } else {
           super.mergeFrom(other);
           return this;
@@ -2238,7 +2134,6 @@ public final class Model {
       }
 
       private java.lang.Object name_ = "";
-
       /**
        * <code>string name = 1;</code>
        */
@@ -2254,7 +2149,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -2271,7 +2165,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -2285,7 +2178,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -2295,7 +2187,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string name = 1;</code>
        */
@@ -2312,7 +2203,6 @@ public final class Model {
       }
 
       private java.lang.Object ip_ = "";
-
       /**
        * <code>string ip = 2;</code>
        */
@@ -2328,7 +2218,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string ip = 2;</code>
        */
@@ -2345,7 +2234,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string ip = 2;</code>
        */
@@ -2359,7 +2247,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string ip = 2;</code>
        */
@@ -2369,7 +2256,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string ip = 2;</code>
        */
@@ -2386,7 +2272,6 @@ public final class Model {
       }
 
       private java.lang.Object os_ = "";
-
       /**
        * <code>string os = 3;</code>
        */
@@ -2402,7 +2287,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string os = 3;</code>
        */
@@ -2419,7 +2303,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string os = 3;</code>
        */
@@ -2433,7 +2316,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string os = 3;</code>
        */
@@ -2443,7 +2325,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string os = 3;</code>
        */
@@ -2458,7 +2339,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -2477,7 +2357,6 @@ public final class Model {
 
     // @@protoc_insertion_point(class_scope:Agent)
     private static final org.beangle.security.session.protobuf.Model.Agent DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new org.beangle.security.session.protobuf.Model.Agent();
     }
@@ -2521,7 +2400,6 @@ public final class Model {
      * <code>string id = 1;</code>
      */
     java.lang.String getId();
-
     /**
      * <code>string id = 1;</code>
      */
@@ -2532,12 +2410,10 @@ public final class Model {
      * <code>.Account principal = 2;</code>
      */
     boolean hasPrincipal();
-
     /**
      * <code>.Account principal = 2;</code>
      */
     org.beangle.security.session.protobuf.Model.Account getPrincipal();
-
     /**
      * <code>.Account principal = 2;</code>
      */
@@ -2557,12 +2433,10 @@ public final class Model {
      * <code>.Agent agent = 5;</code>
      */
     boolean hasAgent();
-
     /**
      * <code>.Agent agent = 5;</code>
      */
     org.beangle.security.session.protobuf.Model.Agent getAgent();
-
     /**
      * <code>.Agent agent = 5;</code>
      */
@@ -2573,21 +2447,18 @@ public final class Model {
      */
     int getTtiMinutes();
   }
-
   /**
    * Protobuf type {@code Session}
    */
-  public static final class Session extends
+  public  static final class Session extends
     com.google.protobuf.GeneratedMessageV3 implements
     // @@protoc_insertion_point(message_implements:Session)
     SessionOrBuilder {
     private static final long serialVersionUID = 0L;
-
     // Use Session.newBuilder() to construct.
     private Session(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-
     private Session() {
       id_ = "";
       loginAt_ = 0L;
@@ -2600,7 +2471,6 @@ public final class Model {
     getUnknownFields() {
       return this.unknownFields;
     }
-
     private Session(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2686,7 +2556,6 @@ public final class Model {
         makeExtensionsImmutable();
       }
     }
-
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
       return org.beangle.security.session.protobuf.Model.internal_static_Session_descriptor;
@@ -2702,7 +2571,6 @@ public final class Model {
 
     public static final int ID_FIELD_NUMBER = 1;
     private volatile java.lang.Object id_;
-
     /**
      * <code>string id = 1;</code>
      */
@@ -2718,7 +2586,6 @@ public final class Model {
         return s;
       }
     }
-
     /**
      * <code>string id = 1;</code>
      */
@@ -2738,21 +2605,18 @@ public final class Model {
 
     public static final int PRINCIPAL_FIELD_NUMBER = 2;
     private org.beangle.security.session.protobuf.Model.Account principal_;
-
     /**
      * <code>.Account principal = 2;</code>
      */
     public boolean hasPrincipal() {
       return principal_ != null;
     }
-
     /**
      * <code>.Account principal = 2;</code>
      */
     public org.beangle.security.session.protobuf.Model.Account getPrincipal() {
       return principal_ == null ? org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
     }
-
     /**
      * <code>.Account principal = 2;</code>
      */
@@ -2762,7 +2626,6 @@ public final class Model {
 
     public static final int LOGINAT_FIELD_NUMBER = 3;
     private long loginAt_;
-
     /**
      * <code>int64 loginAt = 3;</code>
      */
@@ -2772,7 +2635,6 @@ public final class Model {
 
     public static final int LASTACCESSAT_FIELD_NUMBER = 4;
     private long lastAccessAt_;
-
     /**
      * <code>int64 lastAccessAt = 4;</code>
      */
@@ -2782,21 +2644,18 @@ public final class Model {
 
     public static final int AGENT_FIELD_NUMBER = 5;
     private org.beangle.security.session.protobuf.Model.Agent agent_;
-
     /**
      * <code>.Agent agent = 5;</code>
      */
     public boolean hasAgent() {
       return agent_ != null;
     }
-
     /**
      * <code>.Agent agent = 5;</code>
      */
     public org.beangle.security.session.protobuf.Model.Agent getAgent() {
       return agent_ == null ? org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
     }
-
     /**
      * <code>.Agent agent = 5;</code>
      */
@@ -2806,7 +2665,6 @@ public final class Model {
 
     public static final int TTIMINUTES_FIELD_NUMBER = 6;
     private int ttiMinutes_;
-
     /**
      * <code>int32 ttiMinutes = 6;</code>
      */
@@ -2815,7 +2673,6 @@ public final class Model {
     }
 
     private byte memoizedIsInitialized = -1;
-
     @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -2952,45 +2809,38 @@ public final class Model {
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       java.nio.ByteBuffer data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(java.io.InputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -2998,13 +2848,11 @@ public final class Model {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -3012,14 +2860,12 @@ public final class Model {
       return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
     }
-
     public static org.beangle.security.session.protobuf.Model.Session parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -3029,18 +2875,13 @@ public final class Model {
     }
 
     @java.lang.Override
-    public Builder newBuilderForType() {
-      return newBuilder();
-    }
-
+    public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-
     public static Builder newBuilder(org.beangle.security.session.protobuf.Model.Session prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
-
     @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
@@ -3053,7 +2894,6 @@ public final class Model {
       Builder builder = new Builder(parent);
       return builder;
     }
-
     /**
      * Protobuf type {@code Session}
      */
@@ -3084,13 +2924,11 @@ public final class Model {
         super(parent);
         maybeForceBuilderInitialization();
       }
-
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
           .alwaysUseFieldBuilders) {
         }
       }
-
       @java.lang.Override
       public Builder clear() {
         super.clear();
@@ -3162,44 +3000,38 @@ public final class Model {
       public Builder clone() {
         return (Builder) super.clone();
       }
-
       @java.lang.Override
       public Builder setField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         java.lang.Object value) {
         return (Builder) super.setField(field, value);
       }
-
       @java.lang.Override
       public Builder clearField(
         com.google.protobuf.Descriptors.FieldDescriptor field) {
         return (Builder) super.clearField(field);
       }
-
       @java.lang.Override
       public Builder clearOneof(
         com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return (Builder) super.clearOneof(oneof);
       }
-
       @java.lang.Override
       public Builder setRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         int index, java.lang.Object value) {
         return (Builder) super.setRepeatedField(field, index, value);
       }
-
       @java.lang.Override
       public Builder addRepeatedField(
         com.google.protobuf.Descriptors.FieldDescriptor field,
         java.lang.Object value) {
         return (Builder) super.addRepeatedField(field, value);
       }
-
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.beangle.security.session.protobuf.Model.Session) {
-          return mergeFrom((org.beangle.security.session.protobuf.Model.Session) other);
+          return mergeFrom((org.beangle.security.session.protobuf.Model.Session)other);
         } else {
           super.mergeFrom(other);
           return this;
@@ -3257,7 +3089,6 @@ public final class Model {
       }
 
       private java.lang.Object id_ = "";
-
       /**
        * <code>string id = 1;</code>
        */
@@ -3273,7 +3104,6 @@ public final class Model {
           return (java.lang.String) ref;
         }
       }
-
       /**
        * <code>string id = 1;</code>
        */
@@ -3290,7 +3120,6 @@ public final class Model {
           return (com.google.protobuf.ByteString) ref;
         }
       }
-
       /**
        * <code>string id = 1;</code>
        */
@@ -3304,7 +3133,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string id = 1;</code>
        */
@@ -3314,7 +3142,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>string id = 1;</code>
        */
@@ -3333,14 +3160,12 @@ public final class Model {
       private org.beangle.security.session.protobuf.Model.Account principal_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
         org.beangle.security.session.protobuf.Model.Account, org.beangle.security.session.protobuf.Model.Account.Builder, org.beangle.security.session.protobuf.Model.AccountOrBuilder> principalBuilder_;
-
       /**
        * <code>.Account principal = 2;</code>
        */
       public boolean hasPrincipal() {
         return principalBuilder_ != null || principal_ != null;
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3351,7 +3176,6 @@ public final class Model {
           return principalBuilder_.getMessage();
         }
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3368,7 +3192,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3383,7 +3206,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3402,7 +3224,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3417,7 +3238,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3426,7 +3246,6 @@ public final class Model {
         onChanged();
         return getPrincipalFieldBuilder().getBuilder();
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3438,7 +3257,6 @@ public final class Model {
             org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
         }
       }
-
       /**
        * <code>.Account principal = 2;</code>
        */
@@ -3456,15 +3274,13 @@ public final class Model {
         return principalBuilder_;
       }
 
-      private long loginAt_;
-
+      private long loginAt_ ;
       /**
        * <code>int64 loginAt = 3;</code>
        */
       public long getLoginAt() {
         return loginAt_;
       }
-
       /**
        * <code>int64 loginAt = 3;</code>
        */
@@ -3474,7 +3290,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>int64 loginAt = 3;</code>
        */
@@ -3485,15 +3300,13 @@ public final class Model {
         return this;
       }
 
-      private long lastAccessAt_;
-
+      private long lastAccessAt_ ;
       /**
        * <code>int64 lastAccessAt = 4;</code>
        */
       public long getLastAccessAt() {
         return lastAccessAt_;
       }
-
       /**
        * <code>int64 lastAccessAt = 4;</code>
        */
@@ -3503,7 +3316,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>int64 lastAccessAt = 4;</code>
        */
@@ -3517,14 +3329,12 @@ public final class Model {
       private org.beangle.security.session.protobuf.Model.Agent agent_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
         org.beangle.security.session.protobuf.Model.Agent, org.beangle.security.session.protobuf.Model.Agent.Builder, org.beangle.security.session.protobuf.Model.AgentOrBuilder> agentBuilder_;
-
       /**
        * <code>.Agent agent = 5;</code>
        */
       public boolean hasAgent() {
         return agentBuilder_ != null || agent_ != null;
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3535,7 +3345,6 @@ public final class Model {
           return agentBuilder_.getMessage();
         }
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3552,7 +3361,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3567,7 +3375,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3586,7 +3393,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3601,7 +3407,6 @@ public final class Model {
 
         return this;
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3610,7 +3415,6 @@ public final class Model {
         onChanged();
         return getAgentFieldBuilder().getBuilder();
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3622,7 +3426,6 @@ public final class Model {
             org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
         }
       }
-
       /**
        * <code>.Agent agent = 5;</code>
        */
@@ -3640,15 +3443,13 @@ public final class Model {
         return agentBuilder_;
       }
 
-      private int ttiMinutes_;
-
+      private int ttiMinutes_ ;
       /**
        * <code>int32 ttiMinutes = 6;</code>
        */
       public int getTtiMinutes() {
         return ttiMinutes_;
       }
-
       /**
        * <code>int32 ttiMinutes = 6;</code>
        */
@@ -3658,7 +3459,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       /**
        * <code>int32 ttiMinutes = 6;</code>
        */
@@ -3668,7 +3468,6 @@ public final class Model {
         onChanged();
         return this;
       }
-
       @java.lang.Override
       public final Builder setUnknownFields(
         final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -3687,7 +3486,6 @@ public final class Model {
 
     // @@protoc_insertion_point(class_scope:Session)
     private static final org.beangle.security.session.protobuf.Model.Session DEFAULT_INSTANCE;
-
     static {
       DEFAULT_INSTANCE = new org.beangle.security.session.protobuf.Model.Session();
     }
@@ -3748,27 +3546,26 @@ public final class Model {
   getDescriptor() {
     return descriptor;
   }
-
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
     descriptor;
-
   static {
     java.lang.String[] descriptorData = {
-      "\n\013model.proto\"\323\001\n\007Account\022\014\n\004name\030\001 \001(\t\022" +
+      "\n\013model.proto\"\347\001\n\007Account\022\014\n\004name\030\001 \001(\t\022" +
         "\023\n\013description\030\002 \001(\t\022\023\n\013remoteToken\030\003 \001(" +
         "\t\022\016\n\006status\030\004 \001(\005\022\023\n\013authorities\030\005 \001(\t\022\023" +
         "\n\013permissions\030\006 \001(\t\022&\n\007details\030\007 \003(\0132\025.A" +
-        "ccount.DetailsEntry\032.\n\014DetailsEntry\022\013\n\003k" +
-        "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"-\n\005Agent\022\014\n\004" +
-        "name\030\001 \001(\t\022\n\n\002ip\030\002 \001(\t\022\n\n\002os\030\003 \001(\t\"\204\001\n\007S" +
-        "ession\022\n\n\002id\030\001 \001(\t\022\033\n\tprincipal\030\002 \001(\0132\010." +
-        "Account\022\017\n\007loginAt\030\003 \001(\003\022\024\n\014lastAccessAt" +
-        "\030\004 \001(\003\022\025\n\005agent\030\005 \001(\0132\006.Agent\022\022\n\nttiMinu" +
-        "tes\030\006 \001(\005B.\n%org.beangle.security.sessio" +
-        "n.protobufB\005Modelb\006proto3"
+        "ccount.DetailsEntry\022\022\n\ncategoryId\030\010 \001(\005\032" +
+        ".\n\014DetailsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 " +
+        "\001(\t:\0028\001\"-\n\005Agent\022\014\n\004name\030\001 \001(\t\022\n\n\002ip\030\002 \001" +
+        "(\t\022\n\n\002os\030\003 \001(\t\"\204\001\n\007Session\022\n\n\002id\030\001 \001(\t\022\033" +
+        "\n\tprincipal\030\002 \001(\0132\010.Account\022\017\n\007loginAt\030\003" +
+        " \001(\003\022\024\n\014lastAccessAt\030\004 \001(\003\022\025\n\005agent\030\005 \001(" +
+        "\0132\006.Agent\022\022\n\nttiMinutes\030\006 \001(\005B.\n%org.bea" +
+        "ngle.security.session.protobufB\005Modelb\006p" +
+        "roto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
+      new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
           com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
@@ -3777,32 +3574,32 @@ public final class Model {
       };
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
-        new com.google.protobuf.Descriptors.FileDescriptor[]{
+        new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
     internal_static_Account_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_Account_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
       internal_static_Account_descriptor,
-      new java.lang.String[]{"Name", "Description", "RemoteToken", "Status", "Authorities", "Permissions", "Details",});
+      new java.lang.String[] { "Name", "Description", "RemoteToken", "Status", "Authorities", "Permissions", "Details", "CategoryId", });
     internal_static_Account_DetailsEntry_descriptor =
       internal_static_Account_descriptor.getNestedTypes().get(0);
     internal_static_Account_DetailsEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
       internal_static_Account_DetailsEntry_descriptor,
-      new java.lang.String[]{"Key", "Value",});
+      new java.lang.String[] { "Key", "Value", });
     internal_static_Agent_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_Agent_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
       internal_static_Agent_descriptor,
-      new java.lang.String[]{"Name", "Ip", "Os",});
+      new java.lang.String[] { "Name", "Ip", "Os", });
     internal_static_Session_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_Session_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
       internal_static_Session_descriptor,
-      new java.lang.String[]{"Id", "Principal", "LoginAt", "LastAccessAt", "Agent", "TtiMinutes",});
+      new java.lang.String[] { "Id", "Principal", "LoginAt", "LastAccessAt", "Agent", "TtiMinutes", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

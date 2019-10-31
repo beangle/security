@@ -55,7 +55,7 @@ trait Session extends java.io.Externalizable {
   * @param checkConcurrent 是否检查多重会话
   * @param checkCapacity 是否检查系统会话上限
   */
-case class SessionProfile(ttiMinutes: Int, concurrent: Int,checkConcurrent:Boolean,checkCapacity:Boolean)
+case class SessionProfile(ttiMinutes: Int, concurrent: Int,capacity:Int,checkConcurrent:Boolean,checkCapacity:Boolean)
 
 trait SessionBuilder {
   def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiMinutes: Int): Session

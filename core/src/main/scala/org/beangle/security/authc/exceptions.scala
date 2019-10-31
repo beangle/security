@@ -41,7 +41,7 @@ class BadCredentialsException(message: String, token: AuthenticationToken, cause
 
 @SerialVersionUID(1L)
 class UsernameNotFoundException(message: String, token: AuthenticationToken, cause: Throwable = null)
-  extends BadCredentialsException(message, token, cause)
+  extends AuthenticationException(message, token, cause)
 
 class AccountStatusException(message: String, token: AuthenticationToken) extends AuthenticationException(message, token, null)
 

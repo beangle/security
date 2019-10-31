@@ -13,7 +13,7 @@
 
   <properties>
     <beangle.commons.version>5.1.9</beangle.commons.version>
-    <beangle.data.version>5.1.9</beangle.data.version>
+    <beangle.data.version>5.1.11</beangle.data.version>
     <beangle.cache.version>0.0.16</beangle.cache.version>
     <beangle.serializer.version>0.0.11</beangle.serializer.version>
   </properties>

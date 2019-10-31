@@ -29,6 +29,7 @@ object AccountSerializer extends ObjectSerializer {
     builder.setName(account.name)
     builder.setDescription(account.description)
     builder.setStatus(account.status)
+    builder.setCategoryId(account.categoryId)
     account.remoteToken foreach { t =>
       builder.setRemoteToken(t)
     }
@@ -44,6 +45,7 @@ object AccountSerializer extends ObjectSerializer {
   def fromMessage(pa: Model.Account): DefaultAccount = {
     val account = new DefaultAccount(pa.getName, pa.getDescription)
     account.status = pa.getStatus
+    account.categoryId= pa.getCategoryId
     account.authorities = pa.getAuthorities
     account.permissions = pa.getPermissions
     account.remoteToken = Option(pa.getRemoteToken)

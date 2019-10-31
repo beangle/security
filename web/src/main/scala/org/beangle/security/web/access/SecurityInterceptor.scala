@@ -61,13 +61,13 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
   private def handleException(request: ServletRequest, response: ServletResponse, exception: SecurityException): Unit = {
     exception match {
+      case se: SessionException =>
+        sendStartAuthentication(request, response, se)
       case ae: AuthenticationException =>
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
         if (SecurityContext.get.isValid) accessDeniedHandler.handle(request, response, ade)
         else sendStartAuthentication(request, response, new AuthenticationException("access denied", ade))
-      case se: SessionException =>
-        sendStartAuthentication(request, response, se)
       case se: SecurityException =>
         sendStartAuthentication(request, response, new AuthenticationException(se.getMessage, se))
     }

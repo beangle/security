@@ -20,7 +20,7 @@ package org.beangle.security.session
 
 import java.io.{ObjectInput, ObjectOutput}
 import java.security.Principal
-import java.time.{Duration, Instant}
+import java.time.Instant
 
 import org.beangle.security.authc.DefaultAccount
 

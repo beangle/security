@@ -38,9 +38,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   extends DBSessionRepo(dataSource, cacheManager, serializer)
     with EventPublisher with SessionRegistry {
 
-  private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_minutes,data"
-
-  var maxCapacity: Int = Int.MaxValue
+  private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_minutes,category_id,data"
 
   override def init(): Unit = {
     SessionDaemon.start(heartbeatSeconds, heartbeatReporter, new DBSessionCleaner(this))
@@ -50,9 +48,9 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
     val existed = get(sessionId).orNull
     val principal = info.getName
     if (profile.checkCapacity) {
-      val sc = sessionCount()
-      if (sc + 1 > maxCapacity) {
-        throw new OvermaxSessionException(maxCapacity, principal)
+      val sc = sessionCount(info.categoryId)
+      if (sc + 1 > profile.capacity) {
+        throw new OvermaxSessionException( profile.capacity, principal)
       }
     }
     // 是否为重复注册
@@ -94,17 +92,17 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   }
 
   override def expire(sessionId: String): Unit = {
-    executor.update(s"updaet $sessionTable set tti_minutes=0 where id=?", sessionId)
+    executor.update(s"update $sessionTable set tti_minutes=0 where id=?", sessionId)
   }
 
-  private def sessionCount(): Int = {
-    executor.queryForInt(s"select count(*) from $sessionTable").getOrElse(0)
+  private def sessionCount(categoryId:Int): Int = {
+    executor.queryForInt(s"select count(*) from $sessionTable where category_id="+categoryId).getOrElse(0)
   }
 
   private def save(s: Session): Unit = {
     val sessionId = s.id
     val ac = s.agent
-    executor.statement(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?)")
+    executor.statement(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?,?)")
       .prepare(x => {
         x.setString(1, sessionId)
         x.setString(2, s.principal.getName)
@@ -115,7 +113,8 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
         x.setTimestamp(7, Timestamp.from(s.loginAt))
         x.setTimestamp(8, Timestamp.from(s.loginAt))
         x.setInt(9, s.ttiMinutes)
-        ParamSetter.setParam(x, 10, serializer.asBytes(s), Types.BINARY)
+        x.setInt(10,s.principal.asInstanceOf[Account].categoryId)
+        ParamSetter.setParam(x, 11, serializer.asBytes(s), Types.BINARY)
       }).execute()
     put(s)
   }
