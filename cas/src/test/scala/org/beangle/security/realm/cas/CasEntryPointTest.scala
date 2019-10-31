@@ -46,12 +46,12 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
       val config = new CasConfig("https://cas")
       config.renew = false
       val ep = new CasEntryPoint(config)
-      ep.sessionIdReader = new ParamSessionIdPolicy
+      ep.sessionIdReader = Some(new ParamSessionIdPolicy)
       val request = mock(classOf[HttpServletRequest])
-      when(request.getRequestURI()).thenReturn("/bigWebApp/some_path")
-      when(request.getServerName()).thenReturn("mycompany.com")
-      when(request.getScheme()).thenReturn("https")
-      when(request.getServerPort()).thenReturn(443)
+      when(request.getRequestURI).thenReturn("/bigWebApp/some_path")
+      when(request.getServerName).thenReturn("mycompany.com")
+      when(request.getScheme).thenReturn("https")
+      when(request.getServerPort).thenReturn(443)
       val response = mockResponse()
 
       ep.commence(request, response, null)
@@ -64,12 +64,12 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
       val config = new CasConfig("https://cas")
       config.renew = true
       val ep = new CasEntryPoint(config)
-      ep.sessionIdReader = new ParamSessionIdPolicy
+      ep.sessionIdReader = Some(new ParamSessionIdPolicy)
       val request = mock(classOf[HttpServletRequest])
-      when(request.getRequestURI()).thenReturn("/bigWebApp/some_path")
-      when(request.getServerName()).thenReturn("mycompany.com")
-      when(request.getScheme()).thenReturn("https")
-      when(request.getServerPort()).thenReturn(443)
+      when(request.getRequestURI).thenReturn("/bigWebApp/some_path")
+      when(request.getServerName).thenReturn("mycompany.com")
+      when(request.getScheme).thenReturn("https")
+      when(request.getServerPort).thenReturn(443)
 
       val response = mockResponse()
 
@@ -83,12 +83,12 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
       val config = new CasConfig("http://www.mycompany.com/cas")
       val request = mock(classOf[HttpServletRequest])
       when(request.getServerName).thenReturn("localhost")
-      when(request.getRequestURI()).thenReturn("/demo/home.action")
-      when(request.getServletPath()).thenReturn("/home.action")
-      when(request.getContextPath()).thenReturn("/demo")
-      when(request.getServerPort()).thenReturn(8080)
-      when(request.getScheme()).thenReturn("http")
-      when(request.getQueryString()).thenReturn("a=1&b=2");
+      when(request.getRequestURI).thenReturn("/demo/home.action")
+      when(request.getServletPath).thenReturn("/home.action")
+      when(request.getContextPath).thenReturn("/demo")
+      when(request.getServerPort).thenReturn(8080)
+      when(request.getScheme).thenReturn("http")
+      when(request.getQueryString).thenReturn("a=1&b=2")
 
       val entryPoint = new CasEntryPoint(config)
       val response = mock(classOf[HttpServletResponse])
@@ -106,7 +106,7 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
     val response = mock(classOf[HttpServletResponse])
     when(response.encodeURL(any(classOf[String]))).`then`(new Answer[String]() {
       def answer(invocation: InvocationOnMock): String = {
-        invocation.getArguments()(0).toString()
+        invocation.getArguments()(0).toString
       }
     })
     response

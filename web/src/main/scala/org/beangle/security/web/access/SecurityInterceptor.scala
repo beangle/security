@@ -27,6 +27,7 @@ import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
+import org.beangle.security.session.{SessionException, SessionExpiredException}
 import org.beangle.security.web.EntryPoint
 
 class SecurityInterceptor extends Interceptor with Logging with Initializing {
@@ -42,7 +43,13 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
   override def preInvoke(req: HttpServletRequest, res: HttpServletResponse): Boolean = {
     try {
-      SecurityContext.set(securityContextBuilder.find(req, res))
+      val ctx = securityContextBuilder.find(req, res)
+      SecurityContext.set(ctx)
+      ctx.session foreach { s =>
+        if (s.expired) {
+          throw new SessionExpiredException("session expired", s.principal)
+        }
+      }
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {
@@ -54,11 +61,15 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
   private def handleException(request: ServletRequest, response: ServletResponse, exception: SecurityException): Unit = {
     exception match {
+      case se: SessionException =>
+        sendStartAuthentication(request, response, se)
       case ae: AuthenticationException =>
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
         if (SecurityContext.get.isValid) accessDeniedHandler.handle(request, response, ade)
-        else sendStartAuthentication(request, response, new AuthenticationException("access denied", ade));
+        else sendStartAuthentication(request, response, new AuthenticationException("access denied", ade))
+      case se: SecurityException =>
+        sendStartAuthentication(request, response, new AuthenticationException(se.getMessage, se))
     }
   }
 

@@ -25,12 +25,24 @@ import org.beangle.security.authc.Account
 trait SessionRepo {
   def get(sessionId: String): Option[Session]
 
+  def findByPrincipal(principal:String):collection.Seq[Session]
+
   def access(sessionId: String, accessAt: Instant): Option[Session]
 }
 
 trait SessionRegistry extends SessionRepo {
 
-  def register(sessionId: String, info: Account, client: Session.Agent): Session
+  def register(sessionId: String, info: Account, client: Session.Agent, profile: SessionProfile): Session
+
+  def expire(sessionId:String):Unit
 
   def remove(sessionId: String): Option[Session]
+
+  def findExpired(): collection.Seq[String]
+
+}
+
+
+trait SessionProfileProvider {
+  def getProfile(account: Account): SessionProfile
 }

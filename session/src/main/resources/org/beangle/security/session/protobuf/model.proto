@@ -11,6 +11,7 @@ message Account {
     string authorities=5;
     string permissions=6;
     map<string, string> details = 7;
+    int32 categoryId = 8;
 }
 
 message Agent {
@@ -25,4 +26,5 @@ message Session {
     int64 loginAt=3;
     int64 lastAccessAt=4;
     Agent agent=5;
+    int32 ttiMinutes=6;
 }

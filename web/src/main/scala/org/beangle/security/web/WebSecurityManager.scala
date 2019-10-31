@@ -18,15 +18,14 @@
  */
 package org.beangle.security.web
 
-import org.beangle.security.authc.{ AuthenticationToken, Authenticator }
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.commons.web.security.RequestConvertor
+import org.beangle.security.authc.{AuthenticationToken, Authenticator}
 import org.beangle.security.authz.Authorizer
 import org.beangle.security.mgt.SecurityManager
-import org.beangle.security.session.{ Session, SessionRegistry }
+import org.beangle.security.session.{Session, SessionProfileProvider, SessionRegistry}
 import org.beangle.security.web.authc.WebClient
 import org.beangle.security.web.session.SessionIdPolicy
-
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
-import org.beangle.commons.web.security.RequestConvertor
 
 class WebSecurityManager extends SecurityManager {
 
@@ -35,18 +34,23 @@ class WebSecurityManager extends SecurityManager {
   var registry: SessionRegistry = _
   var sessionIdPolicy: SessionIdPolicy = _
   var requestConvertor: RequestConvertor = _
+  var sessionProfileProvider: SessionProfileProvider = _
 
   override def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session = {
-    registry.register(sessionId, authenticator.authenticate(token), client)
+    val account = authenticator.authenticate(token)
+    val profile = sessionProfileProvider.getProfile(account)
+    registry.register(sessionId, account, client, profile)
   }
 
   def login(request: HttpServletRequest, response: HttpServletResponse, token: AuthenticationToken): Session = {
     val key = sessionIdPolicy.newId(request, response)
-    registry.register(key, authenticator.authenticate(token), WebClient.get(request))
+    val account = authenticator.authenticate(token)
+    val profile = sessionProfileProvider.getProfile(account)
+    registry.register(key, account, WebClient.get(request), profile)
   }
 
   def logout(request: HttpServletRequest, response: HttpServletResponse,
-    session: Session): Unit = {
+             session: Session): Unit = {
     registry.remove(session.id)
     sessionIdPolicy.delId(request, response)
     val s = request.getSession(false)

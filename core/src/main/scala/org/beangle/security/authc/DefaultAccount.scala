@@ -52,6 +52,8 @@ final class DefaultAccount extends Account {
 
   var details: Map[String, String] = Map.empty
 
+  var categoryId: Int = _
+
   def this(name: String, description: String) {
     this()
     this.name = name
@@ -63,6 +65,7 @@ final class DefaultAccount extends Account {
     account match {
       case da: DefaultAccount =>
         this.status = da.status
+        this.categoryId = da.categoryId
       case _ =>
         this.accountExpired = account.accountExpired
         this.accountLocked = account.accountLocked

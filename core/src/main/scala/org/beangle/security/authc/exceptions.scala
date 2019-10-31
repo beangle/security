@@ -20,11 +20,11 @@ package org.beangle.security.authc
 
 import org.beangle.commons.lang.Strings
 import org.beangle.security.SecurityException
+
 /**
- * 认证异常
- *
- * @author chaostone
- */
+  * 认证异常
+  * @author chaostone
+  */
 @SerialVersionUID(-3529782031102169004L)
 class AuthenticationException(message: String, val principal: Any, cause: Throwable = null) extends SecurityException(message, cause) {
 
@@ -41,7 +41,7 @@ class BadCredentialsException(message: String, token: AuthenticationToken, cause
 
 @SerialVersionUID(1L)
 class UsernameNotFoundException(message: String, token: AuthenticationToken, cause: Throwable = null)
-  extends BadCredentialsException(message, token, cause)
+  extends AuthenticationException(message, token, cause)
 
 class AccountStatusException(message: String, token: AuthenticationToken) extends AuthenticationException(message, token, null)
 

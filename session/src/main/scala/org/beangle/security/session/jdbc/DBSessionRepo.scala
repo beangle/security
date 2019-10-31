@@ -29,7 +29,7 @@ import org.beangle.security.session.cache.CacheSessionRepo
 import org.beangle.security.session.{DefaultSession, DefaultSessionBuilder, Session, SessionBuilder}
 
 class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
-    extends CacheSessionRepo(cacheManager) {
+  extends CacheSessionRepo(cacheManager) {
 
   protected val executor = new JdbcExecutor(dataSource)
 
@@ -47,6 +47,16 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
         case ba: Array[Byte] => serializer.asObject(classOf[DefaultSession], ba)
       }
       Some(data)
+    }
+  }
+
+  override def findByPrincipal(principal: String): collection.Seq[Session] = {
+    val datas = executor.query(s"select data from $sessionTable info where principal =? order by last_access_at", principal)
+    datas.map { data =>
+      data.head match {
+        case is: InputStream => serializer.deserialize(classOf[DefaultSession], is, Map.empty)
+        case ba: Array[Byte] => serializer.asObject(classOf[DefaultSession], ba)
+      }
     }
   }
 
