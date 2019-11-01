@@ -25,8 +25,8 @@ import java.time.Instant
 import org.beangle.security.authc.DefaultAccount
 
 object DefaultSessionBuilder extends SessionBuilder {
-  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiMinutes: Int): Session = {
-    new DefaultSession(id, principal.asInstanceOf[DefaultAccount], loginAt, agent, ttiMinutes)
+  def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int): Session = {
+    new DefaultSession(id, principal.asInstanceOf[DefaultAccount], loginAt, agent, ttiSeconds)
   }
 }
 
@@ -36,16 +36,16 @@ class DefaultSession extends Session {
   var loginAt: Instant = _
   var lastAccessAt: Instant = _
   var agent: Session.Agent = _
-  var ttiMinutes: Int = _
+  var ttiSeconds: Int = _
 
-  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent, ttiMinutes: Int) {
+  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int) {
     this()
     this.id = id
     this.principal = principal
     this.loginAt = loginAt
     this.lastAccessAt = loginAt
     this.agent = agent
-    this.ttiMinutes = ttiMinutes
+    this.ttiSeconds = ttiSeconds
   }
 
   def writeExternal(out: ObjectOutput): Unit = {
@@ -56,7 +56,7 @@ class DefaultSession extends Session {
     out.writeObject(agent.name)
     out.writeObject(agent.ip)
     out.writeObject(agent.os)
-    out.writeInt(ttiMinutes)
+    out.writeInt(ttiSeconds)
   }
 
   def readExternal(in: ObjectInput): Unit = {
@@ -66,7 +66,7 @@ class DefaultSession extends Session {
     loginAt = Instant.ofEpochSecond(in.readLong)
     lastAccessAt = Instant.ofEpochSecond(in.readLong)
     agent = new Session.Agent(readString(in), readString(in), readString(in))
-    ttiMinutes = in.readInt
+    ttiSeconds = in.readInt
   }
 
   @inline
@@ -75,6 +75,21 @@ class DefaultSession extends Session {
   }
 
   override def expired: Boolean = {
-    lastAccessAt.plusSeconds(60 * ttiMinutes).isBefore(Instant.now)
+    lastAccessAt.plusSeconds(ttiSeconds).isBefore(Instant.now)
+  }
+
+  override def access(accessAt: Instant): Long = {
+    val expired = lastAccessAt.plusSeconds(ttiSeconds).isBefore(accessAt)
+    if (expired) {
+      -1
+    } else {
+      var elapse = accessAt.getEpochSecond - this.lastAccessAt.getEpochSecond
+      if (elapse < 0) {
+        elapse = 0
+      }else{
+        lastAccessAt = accessAt
+      }
+      elapse
+    }
   }
 }

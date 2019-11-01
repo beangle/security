@@ -34,6 +34,7 @@ trait SecurityContextBuilder {
   def find(request: HttpServletRequest, response: HttpServletResponse): SecurityContext
 
   def build(request: HttpServletRequest, session: Option[Session]): SecurityContext
+
 }
 
 class DefaultSecurityContextBuilder extends SecurityContextBuilder {
