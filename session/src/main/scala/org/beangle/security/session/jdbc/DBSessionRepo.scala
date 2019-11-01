@@ -39,7 +39,7 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
   var sessionTable = "session_infoes"
 
   protected override def getInternal(sessionId: String): Option[Session] = {
-    val datas = executor.query(s"select data,last_access_at,tti_senconds from $sessionTable where id=?", sessionId)
+    val datas = executor.query(s"select data,last_access_at,tti_seconds from $sessionTable where id=?", sessionId)
     if (datas.isEmpty) {
       None
     } else {
@@ -55,7 +55,7 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
   }
 
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
-    val datas = executor.query(s"select data,last_access_at,tti_senconds from $sessionTable info where principal =? order by last_access_at", principal)
+    val datas = executor.query(s"select data,last_access_at,tti_seconds from $sessionTable info where principal =? order by last_access_at", principal)
     datas.map { data =>
       val s = data.head match {
         case is: InputStream => serializer.deserialize(classOf[DefaultSession], is, Map.empty)
@@ -82,7 +82,7 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
    * 同时更新数据库和缓存
    */
   override def expire(sessionId: String): Unit = {
-    executor.update(s"update $sessionTable set tti_minutes=0 where id=?", sessionId)
+    executor.update(s"update $sessionTable set tti_seconds=0 where id=?", sessionId)
     get(sessionId) foreach { session =>
       session.ttiSeconds = 0
       evict(session)

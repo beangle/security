@@ -37,7 +37,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   extends DBSessionRepo(dataSource, cacheManager, serializer)
     with SessionRegistry {
 
-  private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_minutes,category_id,data"
+  private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_seconds,category_id,data"
 
   override def init(): Unit = {
     SessionDaemon.start(flushInterval, accessReporter, new DBSessionCleaner(this))
@@ -72,7 +72,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   }
 
   override def findExpired(): collection.Seq[String] = {
-    executor.query(s"select id from $sessionTable info where add_minutes(info.last_access_at,tti_minutes) <= current_timestamp")
+    executor.query(s"select id from $sessionTable info where add_seconds(info.last_access_at,tti_seconds) <= current_timestamp")
       .map { data => data(0).toString }
   }
 
