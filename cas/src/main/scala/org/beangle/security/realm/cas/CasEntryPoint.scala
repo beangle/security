@@ -87,7 +87,6 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
       queryString ++= URLEncoder.encode(serviceUrl(req), "UTF-8")
       builder.queryString = queryString.mkString
     }
-    println("in login:" + builder.buildUrl())
     builder.buildUrl()
   }
 
