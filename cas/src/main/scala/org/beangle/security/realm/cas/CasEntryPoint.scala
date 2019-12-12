@@ -24,6 +24,7 @@ import java.{util => ju}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.web.url.UrlBuilder
+import org.beangle.commons.web.util.RequestUtils
 import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
@@ -70,8 +71,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     val localLogin = config.localLoginUri.get
     val builder = new UrlBuilder(req.getContextPath)
     builder.serverName = req.getServerName
-    builder.port=req.getServerPort
-    builder.scheme = req.getScheme
+    builder.port = RequestUtils.getServerPort(req)
+    builder.scheme = if (RequestUtils.isHttps(req)) "https" else "http"
     builder.servletPath = localLogin
 
     if (req.getRequestURI.endsWith(localLogin)) {
@@ -84,8 +85,9 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
       }
       queryString ++= "service="
       queryString ++= URLEncoder.encode(serviceUrl(req), "UTF-8")
-      builder.queryString =queryString.mkString
+      builder.queryString = queryString.mkString
     }
+    println("in login:" + builder.buildUrl())
     builder.buildUrl()
   }
 
