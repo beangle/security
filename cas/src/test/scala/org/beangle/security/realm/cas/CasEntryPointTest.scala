@@ -44,7 +44,6 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
   describe("CasEntryPoint") {
     it("commence redirect") {
       val config = new CasConfig("https://cas")
-      config.renew = false
       val ep = new CasEntryPoint(config)
       ep.sessionIdReader = Some(new ParamSessionIdPolicy)
       val request = mock(classOf[HttpServletRequest])
@@ -60,23 +59,26 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
           + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&sid_name=JSESSIONID")
     }
 
-    it("commence with renew") {
-      val config = new CasConfig("https://cas")
-      config.renew = true
+    it("commence with gateway") {
+      val config = new CasConfig("https://school.edu.cn/cas")
+      config.gateway=true
+      config.localLoginUri=Some("/mylogin.jsp")
       val ep = new CasEntryPoint(config)
       ep.sessionIdReader = Some(new ParamSessionIdPolicy)
       val request = mock(classOf[HttpServletRequest])
+      when(request.getContextPath).thenReturn("/bigWebApp")
       when(request.getRequestURI).thenReturn("/bigWebApp/some_path")
       when(request.getServerName).thenReturn("mycompany.com")
       when(request.getScheme).thenReturn("https")
       when(request.getServerPort).thenReturn(443)
 
       val response = mockResponse()
-
       ep.commence(request, response, null)
+      val originUrl="https://mycompany.com/bigWebApp/some_path"
+      val loginUrl="https://mycompany.com/bigWebApp/mylogin.jsp?service="+URLEncoder.encode(originUrl,"UTF-8")
       verify(response).sendRedirect(
-        "https://cas/login?service="
-          + URLEncoder.encode("https://mycompany.com/bigWebApp/some_path", "UTF-8") + "&renew=true&sid_name=JSESSIONID")
+        "https://school.edu.cn/cas/login?service="
+          + URLEncoder.encode(loginUrl, "UTF-8") + "&gateway=true&sid_name=JSESSIONID")
 
     }
     it("constuct service url") {
@@ -91,13 +93,9 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
       when(request.getQueryString).thenReturn("a=1&b=2")
 
       val entryPoint = new CasEntryPoint(config)
-      val response = mock(classOf[HttpServletResponse])
-      val urlEncodedService = entryPoint.constructServiceUrl(request, response, null,
-        CasConfig.getLocalServer(request))
+      val urlEncodedService = entryPoint.serviceUrl(request)
       logger.debug(urlEncodedService)
-
-      val urlEncodedService2 = entryPoint.constructServiceUrl(request, response, null,
-        "localhost:8080")
+      val urlEncodedService2 = entryPoint.serviceUrl(request)
       logger.debug(urlEncodedService2)
     }
   }

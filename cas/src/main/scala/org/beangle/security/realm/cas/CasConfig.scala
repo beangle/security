@@ -23,6 +23,10 @@ import org.beangle.commons.bean.Initializing
 import org.beangle.commons.lang.{Assert, Strings}
 import org.beangle.commons.web.util.RequestUtils
 
+/** Cas 配置
+ *
+ * @see https://apereo.github.io/cas/4.2.x/protocol/CAS-Protocol-Specification.html
+ */
 object CasConfig {
 
   def getLocalServer(request: HttpServletRequest): String = {
@@ -31,10 +35,8 @@ object CasConfig {
     val port = RequestUtils.getServerPort(request)
     val serverName = request.getServerName
     var includePort = true
-    if (null != scheme) {
-      sb.append(scheme).append("://")
-      includePort = port != (if (scheme == "http") 80 else 443)
-    }
+    sb.append(scheme).append("://")
+    includePort = port != (if (scheme == "http") 80 else 443)
     if (null != serverName) {
       sb.append(serverName)
       if (includePort && port > 0) sb.append(':').append(port)
@@ -48,16 +50,11 @@ object CasConfig {
 
 class CasConfig(server: String) extends Initializing {
   val casServer: String = Strings.stripEnd(server, "/")
-  /**
-    * Indicates whether the <code>renew</code> parameter should be sent to the
-    * CAS login URL and CAS validation URL.
-    * <p>
-    * If <code>true</code>, it will force CAS to authenticate the user again (even if the user has
-    * previously authenticated). During ticket validation it will require the ticket was generated as
-    * a consequence of an explicit login. High security applications would probably set this to
-    * <code>true</code>. Defaults to <code>false</code>, providing automated single sign on.
-    */
-  var renew = false
+
+  /** 目标cas是否是网关 */
+  var gateway = false
+
+  var serviceName: String = "service"
 
   var artifactName: String = CasConfig.TicketName
 
@@ -69,15 +66,20 @@ class CasConfig(server: String) extends Initializing {
 
   var checkAliveUri = "/checkAlive"
 
+  var localLoginUri: Option[String] = None
+
   def init(): Unit = {
     Assert.notEmpty(this.loginUri, "loginUri must be specified. like /login")
     Assert.notEmpty(this.artifactName, "artifact name  must be specified.etc. ticket")
+    if (gateway) {
+      require(localLoginUri.nonEmpty, "local login uri required when gateway is true")
+    }
   }
 
   /**
-    * The enterprise-wide CAS login URL. Usually something like
-    * <code>https://www.mycompany.com/cas/login</code>.
-    */
+   * The enterprise-wide CAS login URL. Usually something like
+   * <code>https://www.mycompany.com/cas/login</code>.
+   */
   def loginUrl: String = casServer + loginUri
 
   def logoutUrl: String = casServer + logoutUri

@@ -23,6 +23,7 @@ import java.{util => ju}
 
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
+import org.beangle.commons.web.url.UrlBuilder
 import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
@@ -32,8 +33,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   import CasConfig._
 
-  /** 本地登录地址 */
-  var localLogin: String = _
+  var localLoginStrategy = new DefaultLocalLoginStrategy
 
   var sessionIdReader: Option[SessionIdReader] = None
 
@@ -43,69 +43,70 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
       || ae.isInstanceOf[SessionException])) {
       res.getWriter.append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
     } else {
-      if (null != localLogin) {
+      if (config.gateway) {
+        val localLogin = config.localLoginUri.get
         // 防止在localLogin也不是公开资源的错误配置情况下，出现CasEntryPoint和CasServer之间的死循环
-        if (req.getRequestURI.endsWith(localLogin)) {
-          if (null == ae) {
-            throw new SecurityException("infinite loop")
-          } else {
-            throw ae
-          }
+        if (req.getRequestURI.endsWith(localLogin) && null != ae) {
+          throw ae
         } else {
-          if (null == ae) {
-            res.sendRedirect(constructLocalLoginUrl(req, res, null, getLocalServer(req)))
-          } else {
-            val serviceUrl = res.encodeURL(constructLocalLoginUrl(req, res, null, getLocalServer(req)))
-            val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, gateway = false)
-            res.sendRedirect(redirectUrl + "&isLoginService=11")
-          }
+          res.sendRedirect(casLoginUrl(localLoginUrl(req)))
         }
       } else {
-        val serviceUrl = constructServiceUrl(req, res, null, getLocalServer(req))
-        val redirectUrl = constructLoginUrl(config.loginUrl, "service", serviceUrl, config.renew, gateway = false)
-        res.sendRedirect(redirectUrl)
+        config.localLoginUri match {
+          case None =>
+            res.sendRedirect(casLoginUrl(serviceUrl(req)))
+          case Some(_) =>
+            if (shouldForceLocal(req, ae)) {
+              res.sendRedirect(localLoginUrl(req))
+            } else {
+              res.sendRedirect(casLoginUrl(localLoginUrl(req)))
+            }
+        }
       }
     }
   }
 
-  def constructLocalLoginUrl(req: HttpServletRequest, res: HttpServletResponse,
-                             service: String, serverName: String): String = {
-    if (Strings.isNotBlank(service)) {
-      service
+  def localLoginUrl(req: HttpServletRequest): String = {
+    val localLogin = config.localLoginUri.get
+    val builder = new UrlBuilder(req.getContextPath)
+    builder.serverName = req.getServerName
+    builder.port=req.getServerPort
+    builder.scheme = req.getScheme
+    builder.servletPath = localLogin
+
+    if (req.getRequestURI.endsWith(localLogin)) {
+      builder.queryString = req.getQueryString
     } else {
-      val buffer = new StringBuilder()
-      if (!serverName.startsWith("https://") && !serverName.startsWith("http://"))
-        buffer.append(if (req.isSecure) "https://" else "http://")
-      buffer.append(serverName).append(req.getContextPath).append(localLogin)
-      buffer.toString
+      var queryString = new StringBuilder()
+      if (Strings.isNotBlank(queryString)) {
+        queryString ++= req.getQueryString
+        queryString ++= "&"
+      }
+      queryString ++= "service="
+      queryString ++= URLEncoder.encode(serviceUrl(req), "UTF-8")
+      builder.queryString =queryString.mkString
     }
+    builder.buildUrl()
   }
 
   /**
-    * Constructs the URL to use to redirect to the CAS server.
-    */
-  def constructLoginUrl(loginUrl: String, serviceName: String, serviceUrl: String,
-                        renew: Boolean, gateway: Boolean): String = {
+   * Constructs the URL to use to redirect to the CAS server.
+   */
+  def casLoginUrl(service: String): String = {
+    val loginUrl = config.loginUrl
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") +
-      (serviceName + "=" + URLEncoder.encode(serviceUrl, "UTF-8")) +
-      (if (renew) "&renew=true" else "") + (if (gateway) "&gateway=true" else "") +
+      (config.serviceName + "=" + URLEncoder.encode(service, "UTF-8")) +
+      (if (config.gateway) "&gateway=true" else "") +
       sessionIdReader.map(x => "&" + SessionIdReader.SessionIdName + "=" + x.idName).getOrElse("")
   }
 
-  def constructServiceUrl(req: HttpServletRequest, res: HttpServletResponse,
-                          service: String, serverName: String): String = {
-    if (Strings.isNotBlank(service)) return res.encodeURL(service)
-
+  def serviceUrl(req: HttpServletRequest): String = {
     val buffer = new StringBuilder()
-    if (!serverName.startsWith("https://") && !serverName.startsWith("http://")) {
-      buffer.append(if (req.isSecure) "https://" else "http://")
+    val serverName = getLocalServer(req)
+    val reservedKeys = sessionIdReader match {
+      case None => Set(config.artifactName)
+      case Some(r) => Set(r.idName, config.artifactName)
     }
-
-    val reservedKeys =
-      sessionIdReader match {
-        case None => Set(config.artifactName)
-        case Some(r) => Set(r.idName, config.artifactName)
-      }
     buffer.append(serverName).append(req.getRequestURI)
     val queryString = req.getQueryString
     if (Strings.isNotBlank(queryString)) {
@@ -127,6 +128,10 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
         buffer.append(paramBuf)
       }
     }
-    res.encodeURL(buffer.toString)
+    buffer.toString
+  }
+
+  def shouldForceLocal(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
+    localLoginStrategy.shouldForceLocal(req, ae)
   }
 }
