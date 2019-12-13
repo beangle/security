@@ -46,6 +46,7 @@ object CasConfig {
 
   val TicketName = "ticket"
 
+  val ServiceName  = "service"
 }
 
 class CasConfig(server: String) extends Initializing {
@@ -53,10 +54,6 @@ class CasConfig(server: String) extends Initializing {
 
   /** 目标cas是否是网关 */
   var gateway = false
-
-  var serviceName: String = "service"
-
-  var artifactName: String = CasConfig.TicketName
 
   var loginUri = "/login"
 
@@ -70,7 +67,6 @@ class CasConfig(server: String) extends Initializing {
 
   def init(): Unit = {
     Assert.notEmpty(this.loginUri, "loginUri must be specified. like /login")
-    Assert.notEmpty(this.artifactName, "artifact name  must be specified.etc. ticket")
     if (gateway) {
       require(localLoginUri.nonEmpty, "local login uri required when gateway is true")
     }

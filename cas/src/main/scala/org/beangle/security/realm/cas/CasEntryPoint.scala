@@ -24,7 +24,7 @@ import java.{util => ju}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.web.url.UrlBuilder
-import org.beangle.commons.web.util.RequestUtils
+import org.beangle.commons.web.util.{CookieUtils, RequestUtils}
 import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
@@ -50,7 +50,9 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
         if (req.getRequestURI.endsWith(localLogin) && null != ae) {
           throw ae
         } else {
-          res.sendRedirect(casLoginUrl(localLoginUrl(req)))
+          val localUrl = localLoginUrl(req)
+          CookieUtils.addCookie(req, res, CasConfig.ServiceName, localUrl, req.getContextPath, 30 * 60)
+          res.sendRedirect(casLoginUrl(localUrl))
         }
       } else {
         config.localLoginUri match {
@@ -96,7 +98,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   def casLoginUrl(service: String): String = {
     val loginUrl = config.loginUrl
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") +
-      (config.serviceName + "=" + URLEncoder.encode(service, "UTF-8")) +
+      (CasConfig.ServiceName + "=" + URLEncoder.encode(service, "UTF-8")) +
       (if (config.gateway) "&gateway=true" else "") +
       sessionIdReader.map(x => "&" + SessionIdReader.SessionIdName + "=" + x.idName).getOrElse("")
   }
@@ -105,8 +107,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     val buffer = new StringBuilder()
     val serverName = getLocalServer(req)
     val reservedKeys = sessionIdReader match {
-      case None => Set(config.artifactName)
-      case Some(r) => Set(r.idName, config.artifactName)
+      case None => Set(CasConfig.TicketName)
+      case Some(r) => Set(r.idName, CasConfig.TicketName)
     }
     buffer.append(serverName).append(req.getRequestURI)
     val queryString = req.getQueryString

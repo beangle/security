@@ -19,6 +19,7 @@
 package org.beangle.security.realm.cas
 
 import javax.servlet.http.HttpServletRequest
+import org.beangle.commons.web.util.CookieUtils
 import org.beangle.security.authc.AuthenticationException
 
 trait LocalLoginStrategy {
@@ -32,6 +33,7 @@ class DefaultLocalLoginStrategy extends LocalLoginStrategy {
   var forceLocalParam: String = "local"
 
   override def shouldForceLocal(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
-    null != req.getParameter(forceLocalParam)
+    null != req.getParameter(forceLocalParam) ||
+      null != CookieUtils.getCookieValue(req, CasConfig.ServiceName)
   }
 }
