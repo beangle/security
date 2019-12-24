@@ -58,7 +58,6 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     val urlParameters = new collection.mutable.HashMap[String, String]
     urlParameters.put("ticket", ticket)
     urlParameters.put("service", encodeUrl(serviceUrl))
-    if (config.renew) urlParameters.put("renew", "true")
     populateUrlAttributeMap(urlParameters)
     if (customParameters != null) urlParameters ++= customParameters
     val suffix = config.validateUri

@@ -33,7 +33,7 @@ class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, t
   var casEntryPoint: CasEntryPoint = _
 
   protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
-    val url = casEntryPoint.constructServiceUrl(req, res, null, getLocalServer(req))
+    val url = casEntryPoint.serviceUrl(req)
     Some(new PreauthToken(ticketValidator.validate(credentials.toString, url), credentials))
   }
 
