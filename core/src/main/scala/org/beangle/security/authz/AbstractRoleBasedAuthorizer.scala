@@ -19,7 +19,7 @@
 package org.beangle.security.authz
 
 import org.beangle.commons.bean.Initializing
-import org.beangle.security.authc.DefaultAccount
+import org.beangle.security.authc.{Account, DefaultAccount}
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.util.{SecurityDaemon, Task}
 
@@ -45,7 +45,7 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer with Initializing 
           case _ => //private
             context.session match {
               case Some(session) =>
-                ra.matches(session.principal.asInstanceOf[DefaultAccount].authorities)
+                ra.matches(session.principal.asInstanceOf[Account].authorities)
               case None => false
             }
         }

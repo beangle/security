@@ -33,8 +33,9 @@ object AccountSerializer extends ObjectSerializer {
     account.remoteToken foreach { t =>
       builder.setRemoteToken(t)
     }
-    if (null != account.authorities) builder.setAuthorities(account.authorities)
-    if (null != account.permissions) builder.setPermissions(account.permissions)
+    //FIXME
+   // if (null != account.authorities) builder.setAuthorities(account.authorities)
+    //if (null != account.permissions) builder.setPermissions(account.permissions)
     account.details foreach {
       case (k, v) =>
         builder.putDetails(k, v)
@@ -46,6 +47,7 @@ object AccountSerializer extends ObjectSerializer {
     val account = new DefaultAccount(pa.getName, pa.getDescription)
     account.status = pa.getStatus
     account.categoryId= pa.getCategoryId
+    //FIXME
     account.authorities = pa.getAuthorities
     account.permissions = pa.getPermissions
     account.remoteToken = Option(pa.getRemoteToken)

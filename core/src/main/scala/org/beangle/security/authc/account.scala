@@ -23,14 +23,13 @@ import java.security.Principal
 
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authz.AuthorizationInfo
 import org.beangle.security.realm.Realm
 
 /**
   * Authentication Information
   * @author chaostone
   */
-trait Account extends AuthorizationInfo with Principal with Externalizable {
+trait Account extends Principal with Externalizable {
 
   def name: String
 
@@ -49,6 +48,10 @@ trait Account extends AuthorizationInfo with Principal with Externalizable {
   def credentialExpired: Boolean
 
   def disabled: Boolean
+
+  def authorities : Array[String]
+
+  def permissions: Array[String]
 
   override def hashCode: Int = {
     if (null == name) 629 else name.hashCode()
