@@ -18,32 +18,30 @@
  */
 package org.beangle.security.authz
 
-import org.beangle.commons.lang.Strings
-
-object RoleAuthorityDomain {
-  def apply(roots: Set[String], resources: List[RoleAuthority]): Unit = {
-    new RoleAuthorityDomain(roots, resources.map(x => (x.resourceName, x)).toMap)
+object AuthorityDomain {
+  def apply(roots: collection.Iterable[String], resources: collection.Seq[Authority]): AuthorityDomain = {
+    new AuthorityDomain(roots.toSet, resources.map(x => (x.resourceName, x)).toMap)
   }
 
-  def empty: RoleAuthorityDomain = {
-    new RoleAuthorityDomain(Set.empty, Map.empty)
+  def empty: AuthorityDomain = {
+    new AuthorityDomain(Set.empty, Map.empty)
   }
 }
 
-class RoleAuthorityDomain(val roots: Set[String], val authorities: Map[String, RoleAuthority]) {
+class AuthorityDomain(val roots: Set[String], val authorities: Map[String, Authority]) {
 
   def isEmpty: Boolean = {
     authorities.isEmpty && roots.isEmpty
   }
 }
 
-object RoleAuthority {
-  def apply(resourceName: String, scope: String, roles: Set[String]): RoleAuthority = {
-    new RoleAuthority(resourceName, Scopes.withName(scope).asInstanceOf[Scopes.Scope], roles)
+object Authority {
+  def apply(resourceName: String, scope: String, roles: Set[String]): Authority = {
+    new Authority(resourceName, Scopes.withName(scope).asInstanceOf[Scopes.Scope], roles)
   }
 }
 
-case class RoleAuthority(resourceName: String, scope: Scopes.Scope, roles: Set[String]) {
+case class Authority(resourceName: String, scope: Scopes.Scope, roles: Set[String]) {
 
   def matches(authorities: Array[String]): Boolean = {
     authorities.exists(roles.contains)
