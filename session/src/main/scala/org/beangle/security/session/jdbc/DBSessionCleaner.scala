@@ -20,7 +20,7 @@ package org.beangle.security.session.jdbc
 
 import org.beangle.commons.lang.time.Stopwatch
 import org.beangle.commons.logging.Logging
-import org.beangle.security.session.util.Task
+import org.beangle.security.util.Task
 
 /**
  * Database session registry cleaner.

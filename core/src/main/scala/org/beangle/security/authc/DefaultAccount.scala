@@ -19,6 +19,7 @@
 package org.beangle.security.authc
 
 import java.io.{ObjectInput, ObjectOutput}
+import java.util
 
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Objects
@@ -46,9 +47,9 @@ final class DefaultAccount extends Account {
 
   var status: Int = _
 
-  var authorities: String = _
+  var authorities: Array[String] = _
 
-  var permissions: String = _
+  var permissions: Array[String] = _
 
   var details: Map[String, String] = Map.empty
 
@@ -72,8 +73,8 @@ final class DefaultAccount extends Account {
         this.disabled = account.disabled
         this.credentialExpired = account.credentialExpired
     }
-    if (account.authorities != null) this.authorities = account.authorities.toString
-    if (account.permissions != null) this.permissions = account.permissions.toString
+    if (account.authorities != null) this.authorities = account.authorities
+    if (account.permissions != null) this.permissions = account.permissions
     this.addDetails(account.details)
   }
 
@@ -119,12 +120,16 @@ final class DefaultAccount extends Account {
 
   override def toString: String = {
     Objects.toStringBuilder(this).add("Name:", name)
+      .add("Description", description)
+      .add("CategoryId", categoryId)
+      .add("Authorities: ", util.Arrays.toString(authorities.asInstanceOf[Array[Object]]))
+      .add("Permissions: ", util.Arrays.toString(permissions.asInstanceOf[Array[Object]]))
       .add("AccountExpired: ", accountExpired)
       .add("credentialExpired: ", credentialExpired)
       .add("AccountLocked: ", accountLocked)
       .add("Disabled: ", disabled)
-      .add("Authorities: ", authorities)
-      .add("Permissions: ", permissions).toString
+      .add("Details: ", details)
+      .toString
   }
 
   override def equals(obj: Any): Boolean = {
@@ -137,6 +142,7 @@ final class DefaultAccount extends Account {
   def writeExternal(out: ObjectOutput): Unit = {
     out.writeObject(name)
     out.writeObject(description)
+    out.writeInt(categoryId)
     out.writeObject(remoteToken.orNull)
     out.writeInt(status)
     out.writeObject(authorities)
@@ -147,15 +153,17 @@ final class DefaultAccount extends Account {
         out.writeObject(k)
         out.writeObject(v)
     }
+
   }
 
   def readExternal(in: ObjectInput): Unit = {
     name = in.readObject.toString
     description = in.readObject.toString
+    categoryId = in.readInt()
     remoteToken = Option(in.readObject.asInstanceOf[String])
     status = in.readInt()
-    authorities = in.readObject.asInstanceOf[String]
-    permissions = in.readObject.asInstanceOf[String]
+    authorities = in.readObject.asInstanceOf[Array[String]]
+    permissions = in.readObject.asInstanceOf[Array[String]]
     val mapSize = in.readInt()
     val temp = Collections.newMap[String, String]
     (0 until mapSize) foreach { _ =>

@@ -16,26 +16,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.session.util
+package org.beangle.security.util
 
 import java.util.{Timer, TimerTask}
 
-object SessionDaemon {
+object SecurityDaemon {
 
-  def start(intervalSeconds: Int, tasks: Task*): Unit = {
-    println(s"Starting Beangle Session Daemon after $intervalSeconds seconds")
-    val daemon = new SessionDaemon(tasks)
-    new Timer("Beangle Session Daemon", true).schedule(
-      daemon,
-      new java.util.Date(System.currentTimeMillis + intervalSeconds * 1000),
+  def start(name: String, intervalSeconds: Int, tasks: Task*): Unit = {
+    println(s"Starting $name Daemon ")
+    val daemon = new SecurityDaemon(tasks)
+    new Timer(s"$name Daemon", true).schedule(
+      daemon, new java.util.Date(System.currentTimeMillis),
       intervalSeconds * 1000)
   }
 }
 
-class SessionDaemon(tasks: collection.Seq[Task]) extends TimerTask {
+class SecurityDaemon(tasks: collection.Seq[Task]) extends TimerTask {
   override def run(): Unit = {
     tasks foreach { task =>
-      task.run()
+      try {
+        task.run()
+      } catch {
+        case e: Throwable => e.printStackTrace()
+      }
     }
   }
 }

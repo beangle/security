@@ -18,7 +18,8 @@
  */
 package org.beangle.security.session.protobuf
 
-import java.io.{ InputStream, OutputStream }
+import java.io.{InputStream, OutputStream}
+
 import org.beangle.commons.io.ObjectSerializer
 import org.beangle.security.authc.DefaultAccount
 
@@ -33,8 +34,16 @@ object AccountSerializer extends ObjectSerializer {
     account.remoteToken foreach { t =>
       builder.setRemoteToken(t)
     }
-    if (null != account.authorities) builder.setAuthorities(account.authorities)
-    if (null != account.permissions) builder.setPermissions(account.permissions)
+    if (null != account.authorities) {
+      account.authorities foreach { a =>
+        builder.addAuthorities(a)
+      }
+    }
+    if (null != account.permissions) {
+      account.permissions foreach { a =>
+        builder.addPermissions(a)
+      }
+    }
     account.details foreach {
       case (k, v) =>
         builder.putDetails(k, v)
@@ -45,14 +54,26 @@ object AccountSerializer extends ObjectSerializer {
   def fromMessage(pa: Model.Account): DefaultAccount = {
     val account = new DefaultAccount(pa.getName, pa.getDescription)
     account.status = pa.getStatus
-    account.categoryId= pa.getCategoryId
-    account.authorities = pa.getAuthorities
-    account.permissions = pa.getPermissions
+    account.categoryId = pa.getCategoryId
     account.remoteToken = Option(pa.getRemoteToken)
     val dk = pa.getDetailsMap.entrySet().iterator()
     while (dk.hasNext) {
       val entry = dk.next()
       account.details += (entry.getKey -> entry.getValue)
+    }
+    if (pa.getAuthoritiesCount > 0) {
+      val authorities = Array.ofDim[String](pa.getAuthoritiesCount)
+      (0 until pa.getAuthoritiesCount) foreach { i =>
+        authorities(i) = pa.getAuthorities(i)
+      }
+      account.authorities = authorities
+    }
+    if (pa.getPermissionsCount > 0) {
+      val permissions = Array.ofDim[String](pa.getPermissionsCount)
+      (0 until pa.getPermissionsCount) foreach { i =>
+        permissions(i) = pa.getPermissions(i)
+      }
+      account.permissions = permissions
     }
     account
   }

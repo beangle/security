@@ -18,16 +18,18 @@
  */
 package org.beangle.security.session.protobuf
 
+import java.io.{ByteArrayOutputStream, ObjectOutputStream}
+import java.time.Instant
+
+import org.beangle.commons.lang.Objects
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.DefaultAccount
-import org.beangle.security.session.DefaultSession
+import org.beangle.security.session.{DefaultSession, Session}
 import org.beangle.serializer.protobuf.ProtobufSerializer
 import org.junit.runner.RunWith
 import org.scalatest.Matchers
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatestplus.junit.JUnitRunner
-import java.time.Instant
-import org.beangle.security.session.Session
 
 @RunWith(classOf[JUnitRunner])
 class SerializerTest extends AnyFunSpec with Matchers with Logging {
@@ -35,7 +37,7 @@ class SerializerTest extends AnyFunSpec with Matchers with Logging {
     it("serializing") {
       val account = new DefaultAccount("0001", "root")
       account.remoteToken = Some("OTHER_token")
-      account.authorities = "12,3,4"
+      account.authorities = Array("12", "3", "4")
       account.details = Map("category" -> "1")
 
       val serializer = new ProtobufSerializer()
@@ -44,12 +46,18 @@ class SerializerTest extends AnyFunSpec with Matchers with Logging {
       serializer.register(classOf[Session.Agent], AgentSerializer)
 
       val data = serializer.asBytes(account)
-      println("Account data has " + data.length + " bytes using protobuf serializer.")
+      val os = new ByteArrayOutputStream()
+      val oos = new ObjectOutputStream(os)
+      account.writeExternal(oos)
+
+      println(s"Account data has ${data.length} bytes(protobuf) and ${os.size()} bytes(java) serializer.")
       val newAccount = serializer.asObject(classOf[DefaultAccount], data)
       assert(newAccount.remoteToken.contains("OTHER_token"))
+      assert(Objects.equals(newAccount.authorities.asInstanceOf[Array[Any]], Array[Any]("12", "3", "4")))
+      assert(newAccount.permissions == null)
 
       val agent = new Session.Agent("Firefox", "localhost", "Fedora Linux 27")
-      val session = new DefaultSession("CAS_xxasdfafd", account, Instant.now, agent,30)
+      val session = new DefaultSession("CAS_xxasdfafd", account, Instant.now, agent, 30)
       val sessionBytes = serializer.asBytes(session)
       val newSession = serializer.asObject(classOf[DefaultSession], sessionBytes)
       assert(newSession.id == "CAS_xxasdfafd")

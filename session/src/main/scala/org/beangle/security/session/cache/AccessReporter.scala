@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 import org.beangle.cache.Cache
 import org.beangle.commons.collection.Collections
 import org.beangle.security.session.Session
-import org.beangle.security.session.util.Task
+import org.beangle.security.util.Task
 
 /**
  * Report heartbeat.

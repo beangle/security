@@ -28,7 +28,7 @@ import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.ParamSetter
 import org.beangle.security.authc.Account
 import org.beangle.security.session._
-import org.beangle.security.session.util.SessionDaemon
+import org.beangle.security.util.SecurityDaemon
 
 /** 基于数据库的session注册表
  * 使用数据库的$sessionTable表
@@ -40,7 +40,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_seconds,category_id,data"
 
   override def init(): Unit = {
-    SessionDaemon.start(flushInterval, accessReporter, new DBSessionCleaner(this))
+    SecurityDaemon.start("Beangle Session", flushInterval, accessReporter, new DBSessionCleaner(this))
   }
 
   override def register(sessionId: String, info: Account, agent: Session.Agent, profile: SessionProfile): Session = {

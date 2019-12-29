@@ -18,43 +18,32 @@
  */
 package org.beangle.security.authz
 
-import java.{lang => jl}
-
-import org.beangle.commons.lang.Assert
-
-trait AuthorizationInfo {
-  def authorities: Any
-
-  def permissions: Any
-}
-
-/** Basic concrete implementation of a  Authority  */
-@SerialVersionUID(1L)
-class Role(val name: Any) extends Serializable {
-
-  Assert.notNull(name, "A granted authority textual representation is required")
-
-  def authority: Any = name
-
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case ga: Role => ga.name == this.name
-      case _ => false
-    }
+object AuthorityDomain {
+  def apply(roots: collection.Iterable[String], resources: collection.Seq[Authority]): AuthorityDomain = {
+    new AuthorityDomain(roots.toSet, resources.map(x => (x.resourceName, x)).toMap)
   }
 
-  override def hashCode(): Int = name.hashCode
+  def empty: AuthorityDomain = {
+    new AuthorityDomain(Set.empty, Map.empty)
+  }
+}
 
-  override def toString: String = name.toString
+class AuthorityDomain(val roots: Set[String], val authorities: Map[String, Authority]) {
 
-  def compare(o: Role): Int = {
-    if (o != null) {
-      o.authority match {
-        case or: Ordered[_] => or.asInstanceOf[Ordered[Any]] compare name
-        case comp: jl.Comparable[_] => comp.asInstanceOf[jl.Comparable[Any]] compareTo name
-        case _ =>
-          throw new RuntimeException("Cannot compare GrantedAuthority using role:" + name)
-      }
-    } else -1
+  def isEmpty: Boolean = {
+    authorities.isEmpty && roots.isEmpty
+  }
+}
+
+object Authority {
+  def apply(resourceName: String, scope: String, roles: Set[String]): Authority = {
+    new Authority(resourceName, Scopes.withName(scope).asInstanceOf[Scopes.Scope], roles)
+  }
+}
+
+case class Authority(resourceName: String, scope: Scopes.Scope, roles: Set[String]) {
+
+  def matches(authorities: Array[String]): Boolean = {
+    authorities.exists(roles.contains)
   }
 }
