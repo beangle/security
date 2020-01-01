@@ -54,7 +54,7 @@ class SerializerTest extends AnyFunSpec with Matchers with Logging {
       val newAccount = serializer.asObject(classOf[DefaultAccount], data)
       assert(newAccount.remoteToken.contains("OTHER_token"))
       assert(Objects.equals(newAccount.authorities.asInstanceOf[Array[Any]], Array[Any]("12", "3", "4")))
-      assert(newAccount.permissions == null)
+      assert(newAccount.permissions.isEmpty)
 
       val agent = new Session.Agent("Firefox", "localhost", "Fedora Linux 27")
       val session = new DefaultSession("CAS_xxasdfafd", account, Instant.now, agent, 30)
