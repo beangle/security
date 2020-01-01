@@ -19,8 +19,8 @@
 package org.beangle.security.authz
 
 object AuthorityDomain {
-  def apply(roots: collection.Iterable[String], resources: collection.Seq[Authority]): AuthorityDomain = {
-    new AuthorityDomain(roots.toSet, resources.map(x => (x.resourceName, x)).toMap)
+  def apply(roots: collection.Iterable[String], authorities: collection.Seq[Authority]): AuthorityDomain = {
+    new AuthorityDomain(roots.toSet, authorities.map(x => (x.resourceName, x)).toMap)
   }
 
   def empty: AuthorityDomain = {
