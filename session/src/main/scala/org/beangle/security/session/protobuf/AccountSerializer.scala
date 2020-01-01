@@ -67,6 +67,8 @@ object AccountSerializer extends ObjectSerializer {
         authorities(i) = pa.getAuthorities(i)
       }
       account.authorities = authorities
+    } else {
+      account.authorities = Array.empty[String]
     }
     if (pa.getPermissionsCount > 0) {
       val permissions = Array.ofDim[String](pa.getPermissionsCount)
@@ -74,6 +76,8 @@ object AccountSerializer extends ObjectSerializer {
         permissions(i) = pa.getPermissions(i)
       }
       account.permissions = permissions
+    } else {
+      account.permissions = Array.empty[String]
     }
     account
   }

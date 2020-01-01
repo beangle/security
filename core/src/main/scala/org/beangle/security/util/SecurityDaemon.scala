@@ -23,11 +23,10 @@ import java.util.{Timer, TimerTask}
 object SecurityDaemon {
 
   def start(name: String, intervalSeconds: Int, tasks: Task*): Unit = {
-    println(s"Starting $name Daemon ")
+    println(s"Starting $name Daemon,Running within every $intervalSeconds seconds.")
     val daemon = new SecurityDaemon(tasks)
-    new Timer(s"$name Daemon", true).schedule(
-      daemon, new java.util.Date(System.currentTimeMillis),
-      intervalSeconds * 1000)
+    new Timer(s"$name Daemon", true).schedule(daemon,
+      new java.util.Date(System.currentTimeMillis), intervalSeconds * 1000)
   }
 }
 
