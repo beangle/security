@@ -27,7 +27,7 @@ import org.beangle.security.authc.DefaultAccount
 import org.beangle.security.session.{DefaultSession, Session}
 import org.beangle.serializer.protobuf.ProtobufSerializer
 import org.junit.runner.RunWith
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatestplus.junit.JUnitRunner
 

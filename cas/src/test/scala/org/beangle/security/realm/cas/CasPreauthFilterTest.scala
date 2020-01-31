@@ -24,7 +24,7 @@ import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.beangle.security.web.WebSecurityManager
 import org.junit.runner.RunWith
 import org.mockito.Mockito.{ mock, when }
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatestplus.junit.JUnitRunner
 
