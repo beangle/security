@@ -19,9 +19,10 @@
 package org.beangle.security.realm.cas
 
 import java.net.{MalformedURLException, URL, URLEncoder}
+import java.nio.charset.Charset
 
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.net.http.HttpUtils
+import org.beangle.commons.net.http.{HttpMethods, HttpUtils}
 
 class TicketValidationException(message: String) extends Exception(message)
 
@@ -38,7 +39,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
   var config: CasConfig = _
 
-  var encoding: String = _
+  var encoding: Charset = _
 
   /** A map containing custom parameters to pass to the validation url. */
   var customParameters: Map[String, String] = _
@@ -99,7 +100,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     * Contacts the CAS Server to retrieve the response for the ticket validation.
     */
   protected def retrieveResponse(url: URL, ticket: String): String = {
-    HttpUtils.getText(url, encoding).orNull
+    HttpUtils.getText(url, HttpMethods.GET, encoding).getOrElse(null)
   }
 
   def validate(ticket: String, service: String): String = {
