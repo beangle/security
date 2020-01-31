@@ -20,7 +20,7 @@ package org.beangle.security.authc
 
 import org.beangle.commons.logging.Logging
 import org.junit.runner.RunWith
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatestplus.junit.JUnitRunner
 

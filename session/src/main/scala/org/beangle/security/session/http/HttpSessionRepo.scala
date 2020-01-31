@@ -38,14 +38,21 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   var expireUrl: String = _
 
   protected def getInternal(sid: String): Option[Session] = {
-    getData(replace(geturl, "{id}", sid)).map(serializer.asObject(classOf[DefaultSession], _))
+    val response = getData(replace(geturl, "{id}", sid))
+    if (response.status == 200) {
+      Some(serializer.asObject(classOf[DefaultSession], response.content.asInstanceOf[Array[Byte]]))
+    } else {
+      None
+    }
   }
 
 
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
-    getText(replace(findUrl, "{principal}", principal)) match {
-      case None => List.empty
-      case Some(data) => Strings.split(data).toSeq.flatMap(getInternal)
+    val response = getText(replace(findUrl, "{principal}", principal))
+    if (response.status == 200) {
+      Strings.split(response.getText).toSeq.flatMap(getInternal)
+    } else {
+      List.empty
     }
   }
 
