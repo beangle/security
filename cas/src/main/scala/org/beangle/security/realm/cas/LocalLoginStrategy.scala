@@ -34,6 +34,6 @@ class DefaultLocalLoginStrategy extends LocalLoginStrategy {
 
   override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
     null != req.getParameter(forceLocalParam) ||
-      null != CookieUtils.getCookieValue(req, CasConfig.ServiceName)
+      null != CookieUtils.getCookieValue(req, "CAS_" + CasConfig.ServiceName)
   }
 }
