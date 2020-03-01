@@ -21,6 +21,7 @@ package org.beangle.security.realm.cas
 import java.net.{MalformedURLException, URL, URLEncoder}
 import java.nio.charset.Charset
 
+import org.beangle.commons.lang.Charsets
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.net.http.{HttpMethods, HttpUtils}
 
@@ -39,7 +40,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
   var config: CasConfig = _
 
-  var encoding: Charset = _
+  var encoding: Charset = Charsets.UTF_8
 
   /** A map containing custom parameters to pass to the validation url. */
   var customParameters: Map[String, String] = _

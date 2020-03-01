@@ -38,6 +38,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   var sessionIdReader: Option[SessionIdReader] = None
 
+  var allowSessionIdAsParameter: Boolean = true
+
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
     Cas.cleanup(config, req, res)
     if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException]
@@ -97,10 +99,16 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     */
   def casLoginUrl(service: String): String = {
     val loginUrl = config.loginUrl
-    loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") +
-      (CasConfig.ServiceName + "=" + URLEncoder.encode(service, "UTF-8")) +
-      (if (config.gateway) "&gateway=true" else "") +
-      sessionIdReader.map(x => "&" + SessionIdReader.SessionIdName + "=" + x.idName).getOrElse("")
+    val sb = new StringBuilder(loginUrl)
+    sb.append(if (loginUrl.indexOf("?") != -1) "&" else "?")
+    sb.append(CasConfig.ServiceName + "=" + URLEncoder.encode(service, "UTF-8"))
+    sb.append(if (config.gateway) "&gateway=true" else "")
+    if (allowSessionIdAsParameter) {
+      sessionIdReader.foreach { x =>
+        sb.append("&" + SessionIdReader.SessionIdName + "=" + x.idName)
+      }
+    }
+    sb.toString
   }
 
   def serviceUrl(req: HttpServletRequest): String = {
@@ -140,7 +148,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   override def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit = {
     val localUrl = this.localLoginUrl(request)
-    CookieUtils.addCookie(request, response, CasConfig.ServiceName, localUrl, request.getContextPath, 1 * 60)
+    CookieUtils.addCookie(request, response, "CAS_" + CasConfig.ServiceName, localUrl, request.getContextPath, 1 * 60)
     response.sendRedirect(this.casLoginUrl(localUrl))
   }
 }
