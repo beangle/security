@@ -59,7 +59,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
           case None =>
             res.sendRedirect(casLoginUrl(serviceUrl(req)))
           case Some(_) =>
-            if (shouldForceLocal(req, ae)) {
+            if (isLocalLogin(req, ae)) {
               res.sendRedirect(localLoginUrl(req))
             } else {
               res.sendRedirect(casLoginUrl(localLoginUrl(req)))
@@ -93,8 +93,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   }
 
   /**
-   * Constructs the URL to use to redirect to the CAS server.
-   */
+    * Constructs the URL to use to redirect to the CAS server.
+    */
   def casLoginUrl(service: String): String = {
     val loginUrl = config.loginUrl
     loginUrl + (if (loginUrl.indexOf("?") != -1) "&" else "?") +
@@ -134,7 +134,13 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     buffer.toString
   }
 
-  def shouldForceLocal(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
-    localLoginStrategy.shouldForceLocal(req, ae)
+  override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
+    localLoginStrategy.isLocalLogin(req, ae)
+  }
+
+  override def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+    val localUrl = this.localLoginUrl(request)
+    CookieUtils.addCookie(request, response, CasConfig.ServiceName, localUrl, request.getContextPath, 1 * 60)
+    response.sendRedirect(this.casLoginUrl(localUrl))
   }
 }

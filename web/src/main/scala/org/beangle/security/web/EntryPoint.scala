@@ -30,6 +30,10 @@ import org.beangle.security.authc.AuthenticationException
 
 trait EntryPoint {
 
+  def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean
+
+  def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit
+
   @throws(classOf[IOException])
   @throws(classOf[ServletException])
   def commence(request: HttpServletRequest, response: HttpServletResponse, ae: AuthenticationException): Unit
@@ -61,5 +65,13 @@ class UrlEntryPoint(val url: String) extends EntryPoint with Logging {
   protected def determineUrl(req: HttpServletRequest, ae: AuthenticationException): String = {
     if (url.contains("${goto}")) Strings.replace(url, "${goto}", UrlBuilder.url(req))
     else url
+  }
+
+  override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
+    true
+  }
+
+  override def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit = {
+    throw new org.beangle.security.SecurityException("UrlEntryPoint doesn't support remoteLogin", null)
   }
 }

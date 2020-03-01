@@ -20,10 +20,12 @@ package org.beangle.security.util
 
 import java.util.{Timer, TimerTask}
 
-object SecurityDaemon {
+import org.beangle.commons.logging.Logging
+
+object SecurityDaemon extends Logging {
 
   def start(name: String, intervalSeconds: Int, tasks: Task*): Unit = {
-    println(s"Starting $name Daemon,Running within every $intervalSeconds seconds.")
+    logger.info(s"Starting $name Daemon,Running within every $intervalSeconds seconds.")
     val daemon = new SecurityDaemon(tasks)
     new Timer(s"$name Daemon", true).schedule(daemon,
       new java.util.Date(System.currentTimeMillis), intervalSeconds * 1000)

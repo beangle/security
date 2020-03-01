@@ -53,6 +53,8 @@ trait Account extends Principal with Externalizable {
 
   def permissions: Array[String]
 
+  def isRemote:Boolean
+
   override def hashCode: Int = {
     if (null == name) 629 else name.hashCode()
   }

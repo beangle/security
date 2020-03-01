@@ -132,6 +132,10 @@ final class DefaultAccount extends Account {
       .toString
   }
 
+  override def isRemote: Boolean = {
+    remoteToken.isDefined
+  }
+
   override def equals(obj: Any): Boolean = {
     obj match {
       case test: DefaultAccount => Objects.equalsBuilder.add(this.name, test.name).isEquals
