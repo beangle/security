@@ -24,7 +24,7 @@ import org.beangle.security.authc.AuthenticationException
 
 trait LocalLoginStrategy {
 
-  def shouldForceLocal(req: HttpServletRequest, ae: AuthenticationException): Boolean
+  def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean
 
 }
 
@@ -32,8 +32,8 @@ class DefaultLocalLoginStrategy extends LocalLoginStrategy {
 
   var forceLocalParam: String = "local"
 
-  override def shouldForceLocal(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
+  override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
     null != req.getParameter(forceLocalParam) ||
-      null != CookieUtils.getCookieValue(req, CasConfig.ServiceName)
+      null != CookieUtils.getCookieValue(req, "CAS_" + CasConfig.ServiceName)
   }
 }
