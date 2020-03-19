@@ -18,9 +18,9 @@
  */
 package org.beangle.security.realm.ldap
 
-import java.io.{ BufferedReader, InputStreamReader }
+import java.io.{BufferedReader, InputStreamReader}
 
-import org.beangle.commons.lang.{ Consoles, Strings }
+import org.beangle.commons.lang.{Consoles, Strings}
 import org.beangle.security.codec.DefaultPasswordEncoder
 
 object Main {
@@ -45,10 +45,10 @@ object Main {
     }
   }
 
-  private def tryTestPassword(store: LdapUserStore, dn: String, password: String): Unit = {
-    val rs = store.getPassword(dn) match {
+  private def tryTestPassword(store: LdapCredentialStore, uid: String, password: String): Unit = {
+    val rs = store.getPassword(uid) match {
       case Some(p) => DefaultPasswordEncoder.verify(p, password)
-      case None    => false
+      case None => false
     }
     println("password " + (if (rs) " ok! " else " WRONG!"))
   }
@@ -70,7 +70,8 @@ object Main {
 
     println("Connecting to ldap://" + host)
     println("Using base:" + base)
-    val store = getStore("ldap://" + host, username, password, base)
+    val userStore = getStore("ldap://" + host, username, password, base)
+    val credentialStore = new LdapCredentialStore(userStore)
     println("verify/change user/password: ")
     val stdin = new BufferedReader(new InputStreamReader(System.in))
     var value = stdin.readLine()
@@ -85,14 +86,11 @@ object Main {
         mypass = Strings.substringAfter(value, "/")
       }
       if (action == "verify") {
-        tryGet(store, myname) foreach { dn =>
-          tryTestPassword(store, dn, mypass)
-        }
+        tryTestPassword(credentialStore, myname, mypass)
       } else if (action == "change") {
-        tryGet(store, myname) foreach { dn =>
-          store.updatePassword(dn, mypass)
-          tryTestPassword(store, dn, mypass)
-        }
+        val mypassRaw = DefaultPasswordEncoder.generate(mypass, null, "sha")
+        credentialStore.updatePassword(myname, mypassRaw)
+        tryTestPassword(credentialStore, myname, mypass)
       }
       println("verify/change user[/password]: ")
       value = stdin.readLine()

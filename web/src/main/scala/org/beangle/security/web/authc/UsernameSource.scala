@@ -35,9 +35,9 @@ trait UsernameSource {
   /**
     * Obtain username supplied in the request.
     */
-  def resolveUser(request: HttpServletRequest, credentials: Any): Option[String]
+  def resolveUser(request: HttpServletRequest, credential: Any): Option[String]
 
-  def getCredentials(request: HttpServletRequest): Option[Any]
+  def getCredential(request: HttpServletRequest): Option[Any]
 }
 
 /**
@@ -47,7 +47,7 @@ abstract class AbstractCookieUsernameSource extends UsernameSource {
 
   var cookieName: String = _
 
-  override def getCredentials(request: HttpServletRequest): Option[Any] = {
+  override def getCredential(request: HttpServletRequest): Option[Any] = {
     val cookies = request.getCookies
     if (cookies != null) {
       cookies.find(c => c.getName == cookieName) match {
@@ -68,7 +68,7 @@ class RemoteUsernameSource extends UsernameSource with Logging {
 
   var stripPrefix = true
 
-  override def getCredentials(request: HttpServletRequest): Option[Any] = {
+  override def getCredential(request: HttpServletRequest): Option[Any] = {
     var username: String = null
     val p = request.getUserPrincipal
     if (null != p) username = p.getName
@@ -78,8 +78,8 @@ class RemoteUsernameSource extends UsernameSource with Logging {
     Option(username)
   }
 
-  override def resolveUser(request: HttpServletRequest, credentials: Any): Option[String] = {
-    Some(credentials.toString)
+  override def resolveUser(request: HttpServletRequest, credential: Any): Option[String] = {
+    Some(credential.toString)
   }
 
   private def stripPrefix(userName: String): String = {
@@ -103,17 +103,17 @@ class ParameterUsernameSource extends UsernameSource with Logging {
 
   var extra = "123456!"
 
-  override def getCredentials(request: HttpServletRequest): Option[Any] = {
+  override def getCredential(request: HttpServletRequest): Option[Any] = {
     Option(request.getParameter(digestParam))
   }
 
-  override def resolveUser(request: HttpServletRequest, credentials: Any): Option[String] = {
+  override def resolveUser(request: HttpServletRequest, credential: Any): Option[String] = {
     val ip = RequestUtils.getIpAddr(request)
     val cid = request.getParameter(userParam)
     val timeParamStr = request.getParameter(timeParam)
     val t: Long = if (null == timeParamStr) 0L else java.lang.Long.valueOf(timeParamStr)
 
-    val s = credentials.toString
+    val s = credential.toString
     if (0 == t || null == cid || null == ip) None
     else {
       val full = cid + "," + ip + "," + t + "," + extra

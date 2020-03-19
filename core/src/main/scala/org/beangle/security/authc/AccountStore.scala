@@ -16,22 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.beangle.security.realm.ldap
+package org.beangle.security.authc
 
-import org.beangle.security.authc.CredentialsChecker
-import org.beangle.security.codec.DefaultPasswordEncoder
-
-class DefaultCredentialsChecker(ldapUserStore: LdapUserStore) extends CredentialsChecker {
-
-  override def check(principal: Any, credential: Any): Boolean = {
-    val uid = principal.toString
-    ldapUserStore.getUserDN(uid) match {
-      case Some(dn) =>
-        ldapUserStore.getPassword(dn) match {
-          case Some(p) => DefaultPasswordEncoder.verify(p, credential.toString)
-          case None    => false
-        }
-      case None => false
-    }
-  }
+trait AccountStore {
+  def load(principal: Any): Option[Account]
 }

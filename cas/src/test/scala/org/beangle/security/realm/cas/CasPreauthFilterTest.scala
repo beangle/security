@@ -19,7 +19,7 @@
 package org.beangle.security.realm.cas
 
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.{ Account, AuthenticationToken, Authenticator, BadCredentialsException }
+import org.beangle.security.authc.{ Account, AuthenticationToken, Authenticator, BadCredentialException }
 import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.beangle.security.web.WebSecurityManager
 import org.junit.runner.RunWith
@@ -36,7 +36,7 @@ class CasPreauthFilterTest extends AnyFunSpec with Matchers with Logging {
 
   val authenticator = new Authenticator() {
     def authenticate(token: AuthenticationToken): Account = {
-      throw new BadCredentialsException("Rejected", token, null)
+      throw new BadCredentialException("Rejected", token, null)
     }
   }
   val sm = new WebSecurityManager()
@@ -47,7 +47,7 @@ class CasPreauthFilterTest extends AnyFunSpec with Matchers with Logging {
 
   describe("CasPreauthFilter") {
     it("Normal operation") {
-      assert(null != filter.getCredentials(mockRequest()))
+      assert(null != filter.getCredential(mockRequest()))
     }
   }
 
