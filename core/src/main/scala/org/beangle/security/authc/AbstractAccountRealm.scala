@@ -18,56 +18,9 @@
  */
 package org.beangle.security.authc
 
-import java.io.Externalizable
-import java.security.Principal
-
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.security.realm.Realm
-
-/**
-  * Authentication Information
-  * @author chaostone
-  */
-trait Account extends Principal with Externalizable {
-
-  def name: String
-
-  def categoryId:Int
-
-  def description: String
-
-  def remoteToken: Option[String]
-
-  def details: Map[String, Any]
-
-  def accountExpired: Boolean
-
-  def accountLocked: Boolean
-
-  def credentialExpired: Boolean
-
-  def disabled: Boolean
-
-  def authorities : Array[String]
-
-  def permissions: Array[String]
-
-  def isRemote:Boolean
-
-  override def hashCode: Int = {
-    if (null == name) 629 else name.hashCode()
-  }
-
-  def getName: String = {
-    name
-  }
-
-}
-
-trait AccountStore {
-  def load(principal: Any): Option[Account]
-}
 
 abstract class AbstractAccountRealm extends Realm with Logging {
 
@@ -82,8 +35,8 @@ abstract class AbstractAccountRealm extends Realm with Logging {
     }
 
     if (!token.trusted) {
-      if (!credentialsCheck(token))
-        throw new BadCredentialsException("Incorrect credentials", token, null)
+      if (!credentialCheck(token))
+        throw new BadCredentialException("Incorrect credential", token, null)
     }
 
     loadAccount(principal) match {
@@ -91,7 +44,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         additionalCheck(token, account)
         val da = new DefaultAccount(account)
         token match {
-          case p: PreauthToken => da.addRemoteToken(p.credentials)
+          case p: PreauthToken => da.addRemoteToken(p.credential)
           case _ =>
         }
         da
@@ -108,28 +61,13 @@ abstract class AbstractAccountRealm extends Realm with Logging {
     if (ac.accountExpired)
       throw new AccountExpiredException("AccountStatusChecker.expired", token)
     if (ac.credentialExpired)
-      throw new CredentialsExpiredException("AccountStatusChecker.credentialExpired", token)
+      throw new CredentialExpiredException("AccountStatusChecker.credentialExpired", token)
   }
 
   protected def loadAccount(principal: Any): Option[Account]
 
-  protected def credentialsCheck(token: AuthenticationToken): Boolean
+  protected def credentialCheck(token: AuthenticationToken): Boolean
 
   def supports(token: AuthenticationToken): Boolean = true
 
-}
-
-class DefaultAccountRealm(accountStore: AccountStore, credentialsChecker: CredentialsChecker) extends AbstractAccountRealm {
-
-  def this(accountStore: AccountStore) {
-    this(accountStore, null)
-  }
-
-  protected override def loadAccount(principal: Any): Option[Account] = {
-    accountStore.load(principal)
-  }
-
-  protected override def credentialsCheck(token: AuthenticationToken): Boolean = {
-    credentialsChecker.check(token.principal, token.credentials)
-  }
 }

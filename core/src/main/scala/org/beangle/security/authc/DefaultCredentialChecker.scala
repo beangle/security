@@ -18,32 +18,14 @@
  */
 package org.beangle.security.authc
 
-import org.beangle.commons.logging.Logging
-import org.junit.runner.RunWith
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.funspec.AnyFunSpec
-import org.scalatestplus.junit.JUnitRunner
+import org.beangle.security.codec.DefaultPasswordEncoder
 
-/**
-  * @author chaostone
-  */
-@RunWith(classOf[JUnitRunner])
-class DefaultPasswordStrengthCheckerTest extends AnyFunSpec with Matchers with Logging {
+class DefaultCredentialChecker(credentialStore: CredentialStore) extends CredentialChecker {
 
-  import PasswordStrengths._
-  describe("DefaultPasswordStrengthChecker check password") {
-    it("check week") {
-      val checker = new DefaultPasswordStrengthChecker(8)
-      var rs = checker.check("1234567")
-      rs should be(PasswordStrengths.VeryWeak)
-
-      checker.check("12345678") should be( Weak)
-
-      checker.check("1234567A8") should be(Medium)
-
-      checker.check("1234a567A8") should be(Strong)
-
-
+  override def check(principal: Any, credential: Any): Boolean = {
+    credentialStore.getPassword(principal) match {
+      case Some(p) => DefaultPasswordEncoder.verify(p, credential.toString)
+      case None => false
     }
   }
 }

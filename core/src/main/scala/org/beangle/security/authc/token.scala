@@ -23,22 +23,18 @@ import java.security.Principal
 import org.beangle.commons.lang.Objects
 
 /**
- * Authentication Token used before authentication
- */
+  * Authentication Token used before authentication
+  */
 trait AuthenticationToken extends Principal with Serializable {
 
   def principal: Any
 
-  def credentials: Any
+  def credential: Any
 
   def details: Map[String, Any]
 
   override def getName: String = {
-    this.principal match {
-      case jPrincipal: java.security.Principal => jPrincipal.getName
-      case null                                => ""
-      case obj: Any                            => obj.toString
-    }
+    Principals.getName(principal)
   }
 
   override def hashCode: Int = {
@@ -52,10 +48,10 @@ trait AuthenticationToken extends Principal with Serializable {
 }
 
 /**
- * Simple Authentication Token
- */
+  * Simple Authentication Token
+  */
 @SerialVersionUID(3966615358056184985L)
-class UsernamePasswordToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
+class UsernamePasswordToken(val principal: Any, val credential: Any) extends AuthenticationToken {
 
   var details: Map[String, Any] = Map.empty
 
@@ -63,7 +59,7 @@ class UsernamePasswordToken(val principal: Any, val credentials: Any) extends Au
     obj match {
       case test: UsernamePasswordToken =>
         Objects.equalsBuilder.add(principal, test.principal)
-          .add(credentials, test.credentials).add(details, test.details)
+          .add(credential, test.credential).add(details, test.details)
           .isEquals
       case _ => false
     }
@@ -79,16 +75,16 @@ object AnonymousToken extends AuthenticationToken {
 
   def principal: Any = "anonymous"
 
-  def credentials: Any = ""
+  def credential: Any = ""
 
   def details: Map[String, Any] = Map.empty
 
 }
 
 /**
- * Preauth Authentication Token
- */
-class PreauthToken(val principal: Any, val credentials: Any) extends AuthenticationToken {
+  * Preauth Authentication Token
+  */
+class PreauthToken(val principal: Any, val credential: Any) extends AuthenticationToken {
 
   var details: Map[String, Any] = Map.empty
 
@@ -100,7 +96,7 @@ class PreauthToken(val principal: Any, val credentials: Any) extends Authenticat
     obj match {
       case test: PreauthToken =>
         Objects.equalsBuilder.add(principal, test.principal)
-          .add(details, test.details).add(credentials, test.credentials).isEquals
+          .add(details, test.details).add(credential, test.credential).isEquals
       case _ => false
     }
   }

@@ -124,7 +124,3 @@ class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator w
     strategy.authenticate(reams, token)
   }
 }
-
-trait CredentialsChecker {
-  def check(principal: Any, credential: Any): Boolean
-}

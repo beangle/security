@@ -20,7 +20,7 @@ package org.beangle.security.realm.ldap
 
 import java.{ util => jl }
 
-import org.beangle.security.authc.CredentialsChecker
+import org.beangle.security.authc.CredentialChecker
 
 import javax.naming.Context
 import javax.naming.directory.InitialDirContext
@@ -28,7 +28,7 @@ import javax.naming.directory.InitialDirContext
 /**
  * @author chaostone
  */
-class BindCredentialsChecker(contextSource: ContextSource) extends CredentialsChecker {
+class BindCredentialChecker(contextSource: ContextSource) extends CredentialChecker {
 
   var properties = new jl.Hashtable[String, String]
 

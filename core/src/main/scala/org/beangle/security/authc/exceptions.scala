@@ -36,7 +36,7 @@ class AuthenticationException(message: String, val principal: Any, cause: Throwa
   }
 }
 
-class BadCredentialsException(message: String, token: AuthenticationToken, cause: Throwable)
+class BadCredentialException(message: String, token: AuthenticationToken, cause: Throwable)
   extends AuthenticationException(message, token, cause)
 
 @SerialVersionUID(1L)
@@ -49,6 +49,6 @@ class LockedException(message: String, token: AuthenticationToken) extends Accou
 
 class DisabledException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
 
-class CredentialsExpiredException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
+class CredentialExpiredException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
 
 class AccountExpiredException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)

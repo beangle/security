@@ -32,12 +32,12 @@ class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, t
 
   var casEntryPoint: CasEntryPoint = _
 
-  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credentials: Any): Option[PreauthToken] = {
+  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {
     val url = casEntryPoint.serviceUrl(req)
-    Some(new PreauthToken(ticketValidator.validate(credentials.toString, url), credentials))
+    Some(new PreauthToken(ticketValidator.validate(credential.toString, url), credential))
   }
 
-  protected[cas] override def getCredentials(request: HttpServletRequest): Option[Any] = {
+  protected[cas] override def getCredential(request: HttpServletRequest): Option[Any] = {
     Option(request.getParameter(CasConfig.TicketName))
   }
 

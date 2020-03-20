@@ -23,38 +23,9 @@ import javax.naming.{CompositeName, NamingException}
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.{Account, AccountStore, DefaultAccount}
-import org.beangle.security.codec.DefaultPasswordEncoder
+import org.beangle.security.authc.{Account, DefaultAccount}
 
 import scala.collection.mutable
-
-/**
- * Ldap User Store (RFC 4510)
- * @see http://tools.ietf.org/html/rfc4510
- * @see http://www.rfc-base.org/rfc-4510.html
- * @see http://directory.apache.org/api/java-api.html
- */
-trait LdapUserStore extends AccountStore {
-
-  def getUserDN(uid: String): Option[String]
-
-  def getPassword(userDN: String): Option[String]
-
-  def getAttribute(userDN: String, attrName: String): Option[Any]
-
-  def getAttributes(userDN: String, attributeNames: String*): collection.Map[String, Any]
-
-  def updateAttribute(dn: String, attribute: String, value: AnyRef): Unit
-
-  def updatePassword(userDN: String, passwd: String): Unit
-
-  //def create(user: Account): Unit
-}
-
-object LdapUserStore {
-  val CommonName = "cn"
-  val UserPassword = "userPassword"
-}
 
 class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore with Logging {
 
@@ -87,10 +58,6 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
     Option(result)
   }
 
-  override def getPassword(userDN: String): Option[String] = {
-    getAttribute(userDN, LdapUserStore.UserPassword).map(p => new String(p.asInstanceOf[Array[Byte]]))
-  }
-
   override def getAttribute(userDN: String, attrName: String): Option[Any] = {
     getAttributes(userDN, attrName).get(attrName)
   }
@@ -117,10 +84,6 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
     result.map(e => (e._1, if (e._2.size == 1) e._2.head else e._2))
   }
 
-  override def updatePassword(userDN: String, passwd: String): Unit = {
-    updateAttribute(userDN, LdapUserStore.UserPassword, DefaultPasswordEncoder.generate(passwd, null, "sha").getBytes)
-  }
-
   override def updateAttribute(userDN: String, attribute: String, value: AnyRef): Unit = {
     val ctx = contextSource.get()
     try {
@@ -140,7 +103,6 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
     getUserDN(principal.toString).map(dn => new DefaultAccount(principal.toString, dn))
   }
 
-  //FIXME
   def create(user: Account, password: String): Unit = {
     val attrs = new BasicAttributes()
     attrs.put("cn", user.description)
