@@ -12,8 +12,8 @@
   <version>4.2.18-SNAPSHOT</version>
 
   <properties>
-    <beangle.commons.version>5.1.12</beangle.commons.version>
-    <beangle.data.version>5.3.4</beangle.data.version>
+    <beangle.commons.version>5.1.14</beangle.commons.version>
+    <beangle.data.version>5.3.6</beangle.data.version>
     <beangle.cache.version>0.0.18</beangle.cache.version>
     <beangle.serializer.version>0.0.13</beangle.serializer.version>
   </properties>
