@@ -45,8 +45,8 @@ class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHand
   }
   if (null != errorPage) {
     require(errorPage.startsWith("/"), "errorPage must begin with '/'")
-    val file = ServletContextHolder.context.getRealPath(errorPage)
-    if (!new File(file).exists) errorPage = null
+    val file = ServletContextHolder.context.getResource(errorPage)
+    if (null==file) errorPage = null
   }
 
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {
