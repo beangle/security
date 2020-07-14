@@ -23,14 +23,21 @@ import java.sql.Timestamp
 
 import javax.sql.DataSource
 import org.beangle.cache.CacheManager
+import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.data.jdbc.query.JdbcExecutor
 import org.beangle.security.session._
 import org.beangle.security.session.cache.CacheSessionRepo
 
-class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
-  extends CacheSessionRepo(cacheManager) with EventPublisher {
+class DBSessionRepo(domainProvider: DomainProvider, dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
+  extends CacheSessionRepo(cacheManager) with EventPublisher with Initializing {
+
+  var domainId: Int = _
+
+  override def init(): Unit = {
+    domainId = domainProvider.getDomainId
+  }
 
   protected val executor = new JdbcExecutor(dataSource)
 
@@ -55,7 +62,7 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
   }
 
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
-    val datas = executor.query(s"select data,last_access_at,tti_seconds from $sessionTable info where principal =? order by last_access_at", principal)
+    val datas = executor.query(s"select data,last_access_at,tti_seconds from $sessionTable info where principal =? and domain_id=? order by last_access_at", principal, domainId)
     datas.map { data =>
       val s = data.head match {
         case is: InputStream => serializer.deserialize(classOf[DefaultSession], is, Map.empty)
@@ -69,18 +76,17 @@ class DBSessionRepo(dataSource: DataSource, cacheManager: CacheManager, serializ
   }
 
   /** 后端是否依然存在该会话
-   *
-   * @param session 会话
-   * @return true如果仍然存在
-   */
+    * @param session 会话
+    * @return true如果仍然存在
+    */
   override def flush(session: Session): Boolean = {
     executor.update(s"update $sessionTable set last_access_at=? where id=?",
       Timestamp.from(session.lastAccessAt), session.id) > 0
   }
 
   /** 过期指定会话
-   * 同时更新数据库和缓存
-   */
+    * 同时更新数据库和缓存
+    */
   override def expire(sessionId: String): Unit = {
     executor.update(s"update $sessionTable set tti_seconds=0 where id=?", sessionId)
     get(sessionId) foreach { session =>
