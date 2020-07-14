@@ -11,7 +11,8 @@ message Account {
     int32 status = 5;
     repeated string authorities = 6;
     repeated string permissions = 7;
-    map<string, string> details = 8;
+    repeated Profile profiles = 8;
+    map<string, string> details = 9;
 }
 
 message Agent {
@@ -27,4 +28,10 @@ message Session {
     int64 lastAccessAt = 4;
     Agent agent = 5;
     int32 ttiSeconds = 6;
+}
+
+message Profile{
+   int64 id = 1;
+   string name = 2;
+   map<string, string> properties =3;
 }

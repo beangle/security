@@ -51,6 +51,8 @@ final class DefaultAccount extends Account {
 
   var permissions: Array[String] = _
 
+  var profiles: Array[Profile] = _
+
   var details: Map[String, String] = Map.empty
 
   var categoryId: Int = _
@@ -124,6 +126,7 @@ final class DefaultAccount extends Account {
       .add("CategoryId", categoryId)
       .add("Authorities: ", util.Arrays.toString(authorities.asInstanceOf[Array[Object]]))
       .add("Permissions: ", util.Arrays.toString(permissions.asInstanceOf[Array[Object]]))
+      .add("Profiles: ", util.Arrays.toString(profiles.asInstanceOf[Array[Object]]))
       .add("AccountExpired: ", accountExpired)
       .add("credentialExpired: ", credentialExpired)
       .add("AccountLocked: ", accountLocked)
@@ -151,6 +154,22 @@ final class DefaultAccount extends Account {
     out.writeInt(status)
     out.writeObject(authorities)
     out.writeObject(permissions)
+    //write profile
+    if (null == profiles) {
+      out.writeInt(0)
+    } else {
+      out.writeInt(profiles.length)
+      profiles.foreach { profile =>
+        out.writeLong(profile.id)
+        out.writeObject(profile.name)
+        out.writeInt(profile.properties.size)
+        profile.properties foreach {
+          case (k, v) =>
+            out.writeObject(k)
+            out.writeObject(v)
+        }
+      }
+    }
     out.writeInt(details.size)
     details foreach {
       case (k, v) =>
@@ -168,6 +187,22 @@ final class DefaultAccount extends Account {
     status = in.readInt()
     authorities = in.readObject.asInstanceOf[Array[String]]
     permissions = in.readObject.asInstanceOf[Array[String]]
+    //restore profiles
+    if (in.readInt() > 0) {
+      profiles = Array.ofDim(in.readInt())
+      profiles.indices foreach { i =>
+        val id = in.readLong()
+        val name = in.readObject().toString
+        val propSize = in.readInt()
+        val temp = Collections.newMap[String, String]
+        (0 until propSize) foreach { _ =>
+          val k = in.readObject.toString
+          val v = in.readObject.toString
+          temp += (k -> v)
+        }
+        profiles(i) = Profile(id, name, temp.toMap)
+      }
+    }
     val mapSize = in.readInt()
     val temp = Collections.newMap[String, String]
     (0 until mapSize) foreach { _ =>
