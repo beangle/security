@@ -31,15 +31,16 @@ import org.beangle.security.session._
 import org.beangle.security.util.SecurityDaemon
 
 /** 基于数据库的session注册表
- * 使用数据库的$sessionTable表
- */
-class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
-  extends DBSessionRepo(dataSource, cacheManager, serializer)
+  * 使用数据库的$sessionTable表
+  */
+class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
+  extends DBSessionRepo(domainProvider, dataSource, cacheManager, serializer)
     with SessionRegistry {
 
-  private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_seconds,category_id,data"
+  private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_seconds,category_id,domain_id,data"
 
   override def init(): Unit = {
+    super.init()
     SecurityDaemon.start("Beangle Session", flushInterval, accessReporter, new DBSessionCleaner(this))
   }
 
@@ -72,12 +73,12 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   }
 
   override def findExpired(): collection.Seq[String] = {
-    executor.query(s"select id from $sessionTable info where add_seconds(info.last_access_at,tti_seconds) <= current_timestamp")
+    executor.query(s"select id from $sessionTable info where add_seconds(info.last_access_at,tti_seconds) <= current_timestamp and domain_id=?", this.domainId)
       .map { data => data(0).toString }
   }
 
   private def sessionCount(categoryId: Int): Int = {
-    executor.queryForInt(s"select count(*) from $sessionTable where category_id=" + categoryId).getOrElse(0)
+    executor.queryForInt(s"select count(*) from $sessionTable where category_id=" + categoryId + " and domain_id=" + domainId).getOrElse(0)
   }
 
   override def remove(sessionId: String, reason: String): Option[Session] = {
@@ -93,7 +94,7 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
   private def save(s: Session): Unit = {
     val sessionId = s.id
     val ac = s.agent
-    executor.statement(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?,?)")
+    executor.statement(s"insert into $sessionTable ($insertColumns) values(?,?,?,?,?,?,?,?,?,?,?,?)")
       .prepare(x => {
         x.setString(1, sessionId)
         x.setString(2, s.principal.getName)
@@ -105,7 +106,8 @@ class DBSessionRegistry(dataSource: DataSource, cacheManager: CacheManager, seri
         x.setTimestamp(8, Timestamp.from(s.loginAt))
         x.setInt(9, s.ttiSeconds)
         x.setInt(10, s.principal.asInstanceOf[Account].categoryId)
-        ParamSetter.setParam(x, 11, serializer.asBytes(s), Types.BINARY)
+        x.setInt(11, domainId)
+        ParamSetter.setParam(x, 12, serializer.asBytes(s), Types.BINARY)
       }).execute()
     put(s)
   }
