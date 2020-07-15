@@ -77,6 +77,7 @@ final class DefaultAccount extends Account {
     }
     if (account.authorities != null) this.authorities = account.authorities
     if (account.permissions != null) this.permissions = account.permissions
+    if (account.profiles != null) this.profiles = account.profiles
     this.addDetails(account.details)
   }
 
@@ -188,8 +189,9 @@ final class DefaultAccount extends Account {
     authorities = in.readObject.asInstanceOf[Array[String]]
     permissions = in.readObject.asInstanceOf[Array[String]]
     //restore profiles
-    if (in.readInt() > 0) {
-      profiles = Array.ofDim(in.readInt())
+    val profileCount = in.readInt()
+    if (profileCount > 0) {
+      profiles = Array.ofDim(profileCount)
       profiles.indices foreach { i =>
         val id = in.readLong()
         val name = in.readObject().toString
