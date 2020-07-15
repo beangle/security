@@ -23,12 +23,12 @@ import java.time.Instant
 
 import org.beangle.commons.lang.Objects
 import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.DefaultAccount
+import org.beangle.security.authc.{DefaultAccount, Profile}
 import org.beangle.security.session.{DefaultSession, Session}
 import org.beangle.serializer.protobuf.ProtobufSerializer
 import org.junit.runner.RunWith
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
@@ -39,11 +39,13 @@ class SerializerTest extends AnyFunSpec with Matchers with Logging {
       account.remoteToken = Some("OTHER_token")
       account.authorities = Array("12", "3", "4")
       account.details = Map("category" -> "1")
+      account.profiles = Array(Profile(1L, "default", Map("a" -> "1", "b" -> "2")), Profile(2L, "default2", Map("c" -> "3", "d" -> "4")))
 
       val serializer = new ProtobufSerializer()
       serializer.register(classOf[DefaultAccount], AccountSerializer)
       serializer.register(classOf[DefaultSession], SessionSerializer)
       serializer.register(classOf[Session.Agent], AgentSerializer)
+      serializer.register(classOf[Profile], ProfileSerializer)
 
       val data = serializer.asBytes(account)
       val os = new ByteArrayOutputStream()
@@ -53,6 +55,9 @@ class SerializerTest extends AnyFunSpec with Matchers with Logging {
       println(s"Account data has ${data.length} bytes(protobuf) and ${os.size()} bytes(java) serializer.")
       val newAccount = serializer.asObject(classOf[DefaultAccount], data)
       assert(newAccount.remoteToken.contains("OTHER_token"))
+      assert(newAccount.profiles.length == 2)
+      assert(newAccount.profiles(1).properties("c") == "3")
+
       assert(Objects.equals(newAccount.authorities.asInstanceOf[Array[Any]], Array[Any]("12", "3", "4")))
       assert(newAccount.permissions.isEmpty)
 

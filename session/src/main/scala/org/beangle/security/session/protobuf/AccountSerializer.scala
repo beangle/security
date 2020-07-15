@@ -21,7 +21,7 @@ package org.beangle.security.session.protobuf
 import java.io.{InputStream, OutputStream}
 
 import org.beangle.commons.io.ObjectSerializer
-import org.beangle.security.authc.DefaultAccount
+import org.beangle.security.authc.{DefaultAccount, Profile}
 
 object AccountSerializer extends ObjectSerializer {
 
@@ -42,6 +42,11 @@ object AccountSerializer extends ObjectSerializer {
     if (null != account.permissions) {
       account.permissions foreach { a =>
         builder.addPermissions(a)
+      }
+    }
+    if (null != account.profiles) {
+      account.profiles foreach { profile =>
+        builder.addProfiles(ProfileSerializer.toMessage(profile))
       }
     }
     account.details foreach {
@@ -78,6 +83,13 @@ object AccountSerializer extends ObjectSerializer {
       account.permissions = permissions
     } else {
       account.permissions = Array.empty[String]
+    }
+    if (pa.getProfilesCount > 0) {
+      val profiles = Array.ofDim[Profile](pa.getProfilesCount)
+      (0 until pa.getProfilesCount) foreach { i =>
+        profiles(i) = ProfileSerializer.fromMessage(pa.getProfiles(i))
+      }
+      account.profiles = profiles
     }
     account
   }

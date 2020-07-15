@@ -18,47 +18,31 @@
  */
 package org.beangle.security.authc
 
-import java.io.Externalizable
-import java.security.Principal
+object Profile {
+  val AllValue = "*"
+}
 
-/**
-  * Authentication Information
-  * @author chaostone
-  */
-trait Account extends Principal with Externalizable {
+case class Profile(id: Long, name: String, properties: Map[String, String]) {
 
-  def name: String
-
-  def categoryId: Int
-
-  def description: String
-
-  def remoteToken: Option[String]
-
-  def details: Map[String, Any]
-
-  def accountExpired: Boolean
-
-  def accountLocked: Boolean
-
-  def credentialExpired: Boolean
-
-  def disabled: Boolean
-
-  def authorities: Array[String]
-
-  def permissions: Array[String]
-
-  def profiles: Array[Profile]
-
-  def isRemote: Boolean
-
-  override def hashCode: Int = {
-    if (null == name) 629 else name.hashCode()
+  def getProperty(key: String): Option[String] = {
+    properties.get(key)
   }
 
-  def getName: String = {
-    name
+  override def toString: String = {
+    toJson
   }
 
+  def toJson: String = {
+    val props = new StringBuilder
+    if (properties.isEmpty) {
+      props ++= "{}"
+    } else {
+      props.append("{")
+      properties foreach { case (k, v) =>
+        props ++= s""""$k":"$v","""
+      }
+      props.setCharAt(props.length - 1, '}')
+    }
+    s"""{"id":${id},"name":"$name","properties":$props}"""
+  }
 }

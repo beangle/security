@@ -22,8 +22,8 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, 
 
 import org.beangle.commons.logging.Logging
 import org.junit.runner.RunWith
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
@@ -37,6 +37,7 @@ class DefaultAccountSerializerTest extends AnyFunSpec with Matchers with Logging
       account.permissions = null
       account.authorities = Array("superman", "wheel")
       account.categoryId = 1
+      account.profiles = Array(Profile(1L, "default", Map("a" -> "1", "b" -> "2")), Profile(2L, "default2", Map("c" -> "3", "d" -> "4")))
       account.details = Map("client" -> "firefox", "os" -> "linux")
 
       val os = new ByteArrayOutputStream()
@@ -50,7 +51,8 @@ class DefaultAccountSerializerTest extends AnyFunSpec with Matchers with Logging
       val restored = new DefaultAccount
       restored.readExternal(ois)
 
-      restored.authorities should be (account.authorities)
+      restored.authorities should be(account.authorities)
+      restored.profiles should be(account.profiles)
     }
   }
 
