@@ -22,7 +22,7 @@ package org.beangle.security.authc
 class DefaultAccountRealm(accountStore: AccountStore, credentialChecker: CredentialChecker)
   extends AbstractAccountRealm {
 
-  def this(accountStore: AccountStore) {
+  def this(accountStore: AccountStore) = {
     this(accountStore, null)
   }
 

@@ -21,6 +21,6 @@ package org.beangle.security.session.util
 object UpdateDelayGeneratorTest {
   def main(args: Array[String]): Unit = {
     val generator = new UpdateDelayGenerator()
-    println(generator.generateDelaySeconds)
+    println(generator.generateDelaySeconds())
   }
 }

@@ -25,7 +25,7 @@ object EventTypes extends Enumeration {
 
   val Login, Logout, EditPassword, AccountAlteration,
   ModifyUserPermission, ModifyRolePermission,
-  ResourceAlteration = newValue
+  ResourceAlteration = newValue()
 
   private def newValue(): Type = {
     new Type()

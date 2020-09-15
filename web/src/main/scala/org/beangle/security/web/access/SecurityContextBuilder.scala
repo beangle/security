@@ -27,7 +27,7 @@ import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.{ Session, SessionRepo }
 import org.beangle.security.web.session.SessionIdReader
 
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import jakarta.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 trait SecurityContextBuilder {
 

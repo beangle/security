@@ -20,8 +20,8 @@ package org.beangle.security.web.access
 
 import java.io.File
 
-import javax.servlet.{ServletRequest, ServletResponse}
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.{ServletRequest, ServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.context.ServletContextHolder
 import org.beangle.security.authz.AccessDeniedException
@@ -40,7 +40,7 @@ trait AccessDeniedHandler {
 
 class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHandler with Logging {
 
-  def this() {
+  def this() = {
     this(null)
   }
   if (null != errorPage) {

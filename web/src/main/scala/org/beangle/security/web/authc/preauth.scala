@@ -18,8 +18,8 @@
  */
 package org.beangle.security.web.authc
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
-import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.filter.GenericHttpFilter

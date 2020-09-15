@@ -25,7 +25,7 @@ package org.beangle.security.session.util
 class UpdateDelayGenerator(val minDelay: Int = 60 , val maxDelay: Int = 120 ) {
 
   def generateDelaySeconds(): Int = {
-    val d = new scala.util.Random(System.currentTimeMillis).nextDouble
+    val d = new scala.util.Random(System.currentTimeMillis).nextDouble()
     ((d * (maxDelay - minDelay)) + minDelay).asInstanceOf[Int]
   }
 }

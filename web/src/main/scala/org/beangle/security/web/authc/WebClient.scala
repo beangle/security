@@ -19,7 +19,7 @@
 package org.beangle.security.web.authc
 
 import org.beangle.commons.web.util.RequestUtils
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import org.beangle.security.session.Session
 
 object WebClient {

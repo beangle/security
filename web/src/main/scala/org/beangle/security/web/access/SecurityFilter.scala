@@ -18,7 +18,7 @@
  */
 package org.beangle.security.web.access
 
-import javax.servlet.Filter
+import jakarta.servlet.Filter
 
 /**
  * @author chaostone
