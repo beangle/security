@@ -18,7 +18,7 @@
  */
 package org.beangle.security.realm.cas
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.web.util.CookieUtils
 
 object Cas {

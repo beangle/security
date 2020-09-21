@@ -21,7 +21,7 @@ package org.beangle.security.realm.cas
 import java.net.URLEncoder
 import java.{util => ju}
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.web.url.UrlBuilder
 import org.beangle.commons.web.util.{CookieUtils, RequestUtils}

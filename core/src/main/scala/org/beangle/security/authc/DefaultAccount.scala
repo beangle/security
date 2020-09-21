@@ -57,13 +57,13 @@ final class DefaultAccount extends Account {
 
   var categoryId: Int = _
 
-  def this(name: String, description: String) {
+  def this(name: String, description: String) = {
     this()
     this.name = name
     this.description = description
   }
 
-  def this(account: Account) {
+  def this(account: Account) = {
     this(account.name, account.description)
     account match {
       case da: DefaultAccount =>

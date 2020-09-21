@@ -20,8 +20,8 @@ package org.beangle.security.web
 
 import java.io.IOException
 
-import javax.servlet.ServletException
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.url.UrlBuilder

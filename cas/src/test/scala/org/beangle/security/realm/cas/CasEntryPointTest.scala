@@ -20,7 +20,7 @@ package org.beangle.security.realm.cas
 
 import java.net.URLEncoder
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.logging.Logging
 import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.junit.runner.RunWith

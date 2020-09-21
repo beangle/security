@@ -20,7 +20,7 @@ package org.beangle.security.web.authc
 
 import org.beangle.security.session.Session
 
-import javax.servlet.{ServletRequest, ServletResponse}
+import jakarta.servlet.{ServletRequest, ServletResponse}
 
 trait LogoutHandler {
   def logout(req: ServletRequest, res: ServletResponse, session: Session): Unit

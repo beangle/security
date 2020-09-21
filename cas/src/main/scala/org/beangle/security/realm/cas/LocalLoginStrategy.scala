@@ -18,7 +18,7 @@
  */
 package org.beangle.security.realm.cas
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import org.beangle.commons.web.util.CookieUtils
 import org.beangle.security.authc.AuthenticationException
 

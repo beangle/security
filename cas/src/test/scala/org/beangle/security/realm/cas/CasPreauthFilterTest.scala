@@ -28,8 +28,8 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatestplus.junit.JUnitRunner
 
-import javax.servlet.FilterChain
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse, HttpSession }
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.{ HttpServletRequest, HttpServletResponse, HttpSession }
 
 @RunWith(classOf[JUnitRunner])
 class CasPreauthFilterTest extends AnyFunSpec with Matchers with Logging {

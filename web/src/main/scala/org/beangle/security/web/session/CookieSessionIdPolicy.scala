@@ -22,7 +22,7 @@ import org.beangle.commons.bean.Initializing
 import org.beangle.commons.web.context.ServletContextHolder
 import org.beangle.commons.web.util.{ CookieUtils, CookieGenerator }
 
-import javax.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import jakarta.servlet.http.{ HttpServletRequest, HttpServletResponse }
 
 /**
  * @author chaostone

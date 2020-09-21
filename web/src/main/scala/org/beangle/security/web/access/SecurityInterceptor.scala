@@ -18,8 +18,8 @@
  */
 package org.beangle.security.web.access
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
-import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.web.intercept.Interceptor
@@ -76,6 +76,6 @@ class SecurityInterceptor extends Interceptor with Logging with Initializing {
 
 class ResultChain(val filterIter: Iterator[_ <: SecurityFilter]) extends FilterChain {
   override def doFilter(request: ServletRequest, response: ServletResponse): Unit = {
-    if (filterIter.hasNext) filterIter.next.doFilter(request, response, this)
+    if (filterIter.hasNext) filterIter.next().doFilter(request, response, this)
   }
 }
