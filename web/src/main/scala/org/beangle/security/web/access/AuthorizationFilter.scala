@@ -18,7 +18,7 @@
  */
 package org.beangle.security.web.access
 
-import javax.servlet.{FilterChain, ServletRequest, ServletResponse}
+import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.web.filter.GenericHttpFilter
 import org.beangle.security.authz.{AccessDeniedException, Authorizer}
 import org.beangle.security.context.SecurityContext

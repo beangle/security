@@ -2,20 +2,20 @@
   <parent>
     <groupId>org.beangle</groupId>
     <artifactId>beangle-scala</artifactId>
-    <version>27.1</version>
+    <version>28.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.beangle.security</groupId>
   <artifactId>beangle-security-parent_2.13</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.2.21-SNAPSHOT</version>
+  <version>4.2.21</version>
 
   <properties>
-    <beangle.commons.version>5.1.17</beangle.commons.version>
-    <beangle.data.version>5.3.7</beangle.data.version>
-    <beangle.cache.version>0.0.19</beangle.cache.version>
-    <beangle.serializer.version>0.0.14</beangle.serializer.version>
+    <beangle.commons.version>5.2.0</beangle.commons.version>
+    <beangle.data.version>5.3.11</beangle.data.version>
+    <beangle.cache.version>0.0.20</beangle.cache.version>
+    <beangle.serializer.version>0.0.15</beangle.serializer.version>
   </properties>
 
   <modules>

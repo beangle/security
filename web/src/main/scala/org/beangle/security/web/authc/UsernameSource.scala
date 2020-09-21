@@ -20,7 +20,7 @@ package org.beangle.security.web.authc
 
 import java.time.Instant
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging

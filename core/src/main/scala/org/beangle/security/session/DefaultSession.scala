@@ -38,7 +38,7 @@ class DefaultSession extends Session {
   var agent: Session.Agent = _
   var ttiSeconds: Int = _
 
-  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int) {
+  def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int) = {
     this()
     this.id = id
     this.principal = principal

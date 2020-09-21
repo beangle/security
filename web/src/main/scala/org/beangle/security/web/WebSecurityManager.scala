@@ -18,7 +18,7 @@
  */
 package org.beangle.security.web
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.web.security.RequestConvertor
 import org.beangle.security.authc.{AuthenticationToken, Authenticator}
 import org.beangle.security.authz.Authorizer

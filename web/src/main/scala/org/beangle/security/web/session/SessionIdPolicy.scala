@@ -18,7 +18,7 @@
  */
 package org.beangle.security.web.session
 
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 object SessionIdReader {
   val SessionIdName = "sid_name"
