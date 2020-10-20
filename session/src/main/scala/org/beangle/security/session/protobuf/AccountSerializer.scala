@@ -21,6 +21,7 @@ package org.beangle.security.session.protobuf
 import java.io.{InputStream, OutputStream}
 
 import org.beangle.commons.io.ObjectSerializer
+import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.{DefaultAccount, Profile}
 
 object AccountSerializer extends ObjectSerializer {
@@ -60,7 +61,10 @@ object AccountSerializer extends ObjectSerializer {
     val account = new DefaultAccount(pa.getName, pa.getDescription)
     account.status = pa.getStatus
     account.categoryId = pa.getCategoryId
-    account.remoteToken = Option(pa.getRemoteToken)
+    val rt = pa.getRemoteToken
+    if (Strings.isNotBlank(rt)) {
+      account.remoteToken = Some(rt)
+    }
     val dk = pa.getDetailsMap.entrySet().iterator()
     while (dk.hasNext) {
       val entry = dk.next()
