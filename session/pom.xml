@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.beangle.security</groupId>
     <artifactId>beangle-security-parent_2.13</artifactId>
-    <version>4.2.22</version>
+    <version>4.2.23-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>beangle-security-session_2.13</artifactId>
