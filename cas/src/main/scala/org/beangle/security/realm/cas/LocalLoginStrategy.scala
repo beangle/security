@@ -31,9 +31,15 @@ trait LocalLoginStrategy {
 class DefaultLocalLoginStrategy extends LocalLoginStrategy {
 
   var forceLocalParam: String = "local"
+  var forceRemoteParam: String = "remote"
+
 
   override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
-    null != req.getParameter(forceLocalParam) ||
-      null != CookieUtils.getCookieValue(req, "CAS_" + CasConfig.ServiceName)
+    if (null == req.getParameter(forceRemoteParam)) {
+      null != req.getParameter(forceLocalParam) ||
+        null != CookieUtils.getCookieValue(req, "CAS_" + CasConfig.ServiceName)
+    } else {
+      false
+    }
   }
 }
