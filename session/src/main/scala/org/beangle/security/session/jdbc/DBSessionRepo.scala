@@ -55,7 +55,7 @@ class DBSessionRepo(domainProvider: DomainProvider, dataSource: DataSource, cach
         case ba: Array[Byte] => serializer.asObject(classOf[DefaultSession], ba)
       }
       //从数据库中取出时，需要更新访问时间和tti，这两项会有改变
-      data.access(datas.head(1).asInstanceOf[Timestamp].toInstant)
+      data.lastAccessAt = datas.head(1).asInstanceOf[Timestamp].toInstant
       data.ttiSeconds = datas.head(2).asInstanceOf[Number].intValue
       Some(data)
     }

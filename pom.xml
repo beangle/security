@@ -9,13 +9,13 @@
   <artifactId>beangle-security-parent_2.13</artifactId>
   <packaging>pom</packaging>
   <name>Beangle Security Parent</name>
-  <version>4.2.22</version>
+  <version>4.2.23</version>
 
   <properties>
     <beangle.commons.version>5.2.0</beangle.commons.version>
-    <beangle.data.version>5.3.11</beangle.data.version>
+    <beangle.data.version>5.3.12</beangle.data.version>
     <beangle.cache.version>0.0.20</beangle.cache.version>
-    <beangle.serializer.version>0.0.15</beangle.serializer.version>
+    <beangle.serializer.version>0.0.16</beangle.serializer.version>
   </properties>
 
   <modules>
