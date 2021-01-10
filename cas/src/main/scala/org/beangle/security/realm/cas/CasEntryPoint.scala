@@ -53,7 +53,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
           throw ae
         } else {
           val localUrl = localLoginUrl(req)
-          CookieUtils.addCookie(req, res, CasConfig.ServiceName, localUrl, req.getContextPath, 30 * 60)
+          CookieUtils.addCookie(req, res, CasConfig.ServiceName, localUrl, 30 * 60)
           res.sendRedirect(casLoginUrl(localUrl))
         }
       } else {
@@ -148,7 +148,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   override def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit = {
     val localUrl = this.localLoginUrl(request)
-    CookieUtils.addCookie(request, response, "CAS_" + CasConfig.ServiceName, localUrl, request.getContextPath, 1 * 60)
+    CookieUtils.addCookie(request, response, "CAS_" + CasConfig.ServiceName, localUrl, 1)
     response.sendRedirect(this.casLoginUrl(localUrl))
   }
 }
