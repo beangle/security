@@ -18,9 +18,6 @@
  */
 package org.beangle.security.realm.cas
 
-import java.net.URLEncoder
-import java.{util => ju}
-
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.web.url.UrlBuilder
@@ -29,6 +26,9 @@ import org.beangle.security.authc.{AccountStatusException, AuthenticationExcepti
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.session.SessionIdReader
+
+import java.net.URLEncoder
+import java.{util => ju}
 
 class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
@@ -54,17 +54,17 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
         } else {
           val localUrl = localLoginUrl(req)
           CookieUtils.addCookie(req, res, CasConfig.ServiceName, localUrl, 30 * 60)
-          res.sendRedirect(casLoginUrl(localUrl))
+          res.sendRedirect(casLoginUrl(localUrl, req.getParameter("remote") != null))
         }
       } else {
         config.localLoginUri match {
           case None =>
-            res.sendRedirect(casLoginUrl(serviceUrl(req)))
+            res.sendRedirect(casLoginUrl(serviceUrl(req), false))
           case Some(_) =>
             if (isLocalLogin(req, ae)) {
               res.sendRedirect(localLoginUrl(req))
             } else {
-              res.sendRedirect(casLoginUrl(localLoginUrl(req)))
+              res.sendRedirect(casLoginUrl(localLoginUrl(req), req.getParameter("remote") != null))
             }
         }
       }
@@ -97,12 +97,14 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   /**
     * Constructs the URL to use to redirect to the CAS server.
     */
-  def casLoginUrl(service: String): String = {
+  def casLoginUrl(service: String, forceRemote: Boolean): String = {
     val loginUrl = config.loginUrl
     val sb = new StringBuilder(loginUrl)
     sb.append(if (loginUrl.indexOf("?") != -1) "&" else "?")
     sb.append(CasConfig.ServiceName + "=" + URLEncoder.encode(service, "UTF-8"))
-    sb.append(if (config.gateway) "&gateway=true" else "")
+    if (!forceRemote) {
+      sb.append(if (config.gateway) "&gateway=true" else "")
+    }
     if (allowSessionIdAsParameter) {
       sessionIdReader.foreach { x =>
         sb.append("&" + SessionIdReader.SessionIdName + "=" + x.idName)
@@ -149,6 +151,6 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   override def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit = {
     val localUrl = this.localLoginUrl(request)
     CookieUtils.addCookie(request, response, "CAS_" + CasConfig.ServiceName, localUrl, 1)
-    response.sendRedirect(this.casLoginUrl(localUrl))
+    response.sendRedirect(this.casLoginUrl(localUrl, request.getParameter("remote") != null))
   }
 }
