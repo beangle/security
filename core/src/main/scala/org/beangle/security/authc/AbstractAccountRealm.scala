@@ -49,7 +49,7 @@ abstract class AbstractAccountRealm extends Realm with Logging {
         }
         da
       case None =>
-        throw new UsernameNotFoundException(s"Cannot find account data for $token", token)
+        throw new UsernameNotFoundException(s"你的用户名（$token）在本系统无对应账户信息，无法继续使用，请联系系统管理员。", token)
     }
   }
 
