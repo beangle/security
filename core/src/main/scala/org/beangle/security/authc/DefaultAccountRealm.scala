@@ -18,7 +18,6 @@
  */
 package org.beangle.security.authc
 
-
 class DefaultAccountRealm(accountStore: AccountStore, credentialChecker: CredentialChecker)
   extends AbstractAccountRealm {
 

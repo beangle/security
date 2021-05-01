@@ -44,7 +44,11 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     Cas.cleanup(config, req, res)
     if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException]
       || ae.isInstanceOf[SessionException])) {
-      res.getWriter.append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
+      val writer = res.getWriter
+      writer.append("<!DOCTYPE html>\n<html lang=\"zh_CN\">" +
+        "<head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" /></head><body><p>")
+      writer.append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
+      writer.append("<p></body></html>")
     } else {
       if (config.gateway) {
         val localLogin = config.localLoginUri.get
@@ -95,8 +99,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   }
 
   /**
-    * Constructs the URL to use to redirect to the CAS server.
-    */
+   * Constructs the URL to use to redirect to the CAS server.
+   */
   def casLoginUrl(service: String, forceRemote: Boolean): String = {
     val loginUrl = config.loginUrl
     val sb = new StringBuilder(loginUrl)

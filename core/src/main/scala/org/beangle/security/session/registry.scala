@@ -41,7 +41,6 @@ trait SessionRegistry extends SessionRepo {
   def findExpired(): collection.Seq[String]
 }
 
-
 trait SessionProfileProvider {
   def getProfile(account: Account): SessionProfile
 }
