@@ -33,7 +33,6 @@ class DefaultLocalLoginStrategy extends LocalLoginStrategy {
   var forceLocalParam: String = "local"
   var forceRemoteParam: String = "remote"
 
-
   override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
     if (null == req.getParameter(forceRemoteParam)) {
       null != req.getParameter(forceLocalParam) ||

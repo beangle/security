@@ -22,4 +22,3 @@ trait PasswordPolicyProvider {
 
   def getPolicy: PasswordPolicy
 }
-

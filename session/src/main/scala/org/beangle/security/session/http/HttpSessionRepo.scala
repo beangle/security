@@ -46,7 +46,6 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
     }
   }
 
-
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
     val response = getText(replace(findUrl, "{principal}", principal))
     if (response.status == 200) {

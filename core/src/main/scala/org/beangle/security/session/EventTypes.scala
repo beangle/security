@@ -31,5 +31,3 @@ object EventTypes extends Enumeration {
     new Type()
   }
 }
-
-
