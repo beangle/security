@@ -416,6 +416,7 @@ public final class Model {
      *
      * @return The name.
      */
+    @java.lang.Override
     public java.lang.String getName() {
       java.lang.Object ref = name_;
       if (ref instanceof java.lang.String) {
@@ -434,6 +435,7 @@ public final class Model {
      *
      * @return The bytes for name.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getNameBytes() {
       java.lang.Object ref = name_;
@@ -456,6 +458,7 @@ public final class Model {
      *
      * @return The description.
      */
+    @java.lang.Override
     public java.lang.String getDescription() {
       java.lang.Object ref = description_;
       if (ref instanceof java.lang.String) {
@@ -474,6 +477,7 @@ public final class Model {
      *
      * @return The bytes for description.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getDescriptionBytes() {
       java.lang.Object ref = description_;
@@ -496,6 +500,7 @@ public final class Model {
      *
      * @return The categoryId.
      */
+    @java.lang.Override
     public int getCategoryId() {
       return categoryId_;
     }
@@ -508,6 +513,7 @@ public final class Model {
      *
      * @return The remoteToken.
      */
+    @java.lang.Override
     public java.lang.String getRemoteToken() {
       java.lang.Object ref = remoteToken_;
       if (ref instanceof java.lang.String) {
@@ -526,6 +532,7 @@ public final class Model {
      *
      * @return The bytes for remoteToken.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getRemoteTokenBytes() {
       java.lang.Object ref = remoteToken_;
@@ -548,6 +555,7 @@ public final class Model {
      *
      * @return The status.
      */
+    @java.lang.Override
     public int getStatus() {
       return status_;
     }
@@ -644,6 +652,7 @@ public final class Model {
     /**
      * <code>repeated .Profile profiles = 8;</code>
      */
+    @java.lang.Override
     public java.util.List<org.beangle.security.session.protobuf.Model.Profile> getProfilesList() {
       return profiles_;
     }
@@ -651,6 +660,7 @@ public final class Model {
     /**
      * <code>repeated .Profile profiles = 8;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.beangle.security.session.protobuf.Model.ProfileOrBuilder>
     getProfilesOrBuilderList() {
       return profiles_;
@@ -659,6 +669,7 @@ public final class Model {
     /**
      * <code>repeated .Profile profiles = 8;</code>
      */
+    @java.lang.Override
     public int getProfilesCount() {
       return profiles_.size();
     }
@@ -666,6 +677,7 @@ public final class Model {
     /**
      * <code>repeated .Profile profiles = 8;</code>
      */
+    @java.lang.Override
     public org.beangle.security.session.protobuf.Model.Profile getProfiles(int index) {
       return profiles_.get(index);
     }
@@ -673,6 +685,7 @@ public final class Model {
     /**
      * <code>repeated .Profile profiles = 8;</code>
      */
+    @java.lang.Override
     public org.beangle.security.session.protobuf.Model.ProfileOrBuilder getProfilesOrBuilder(
       int index) {
       return profiles_.get(index);
@@ -712,6 +725,7 @@ public final class Model {
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
 
+    @java.lang.Override
     public boolean containsDetails(
       java.lang.String key) {
       if (key == null) {
@@ -723,6 +737,7 @@ public final class Model {
     /**
      * Use {@link #getDetailsMap()} instead.
      */
+    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, java.lang.String> getDetails() {
       return getDetailsMap();
@@ -731,6 +746,7 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
+    @java.lang.Override
 
     public java.util.Map<java.lang.String, java.lang.String> getDetailsMap() {
       return internalGetDetails().getMap();
@@ -739,6 +755,7 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
+    @java.lang.Override
 
     public java.lang.String getDetailsOrDefault(
       java.lang.String key,
@@ -754,6 +771,7 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
+    @java.lang.Override
 
     public java.lang.String getDetailsOrThrow(
       java.lang.String key) {
@@ -1520,6 +1538,7 @@ public final class Model {
        *
        * @return The categoryId.
        */
+      @java.lang.Override
       public int getCategoryId() {
         return categoryId_;
       }
@@ -1642,6 +1661,7 @@ public final class Model {
        *
        * @return The status.
        */
+      @java.lang.Override
       public int getStatus() {
         return status_;
       }
@@ -2223,6 +2243,7 @@ public final class Model {
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
 
+      @java.lang.Override
       public boolean containsDetails(
         java.lang.String key) {
         if (key == null) {
@@ -2234,6 +2255,7 @@ public final class Model {
       /**
        * Use {@link #getDetailsMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String> getDetails() {
         return getDetailsMap();
@@ -2242,6 +2264,7 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, java.lang.String> getDetailsMap() {
         return internalGetDetails().getMap();
@@ -2250,6 +2273,7 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getDetailsOrDefault(
         java.lang.String key,
@@ -2265,6 +2289,7 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getDetailsOrThrow(
         java.lang.String key) {
@@ -2347,6 +2372,7 @@ public final class Model {
         final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:Account)
     }
@@ -2549,6 +2575,7 @@ public final class Model {
      *
      * @return The name.
      */
+    @java.lang.Override
     public java.lang.String getName() {
       java.lang.Object ref = name_;
       if (ref instanceof java.lang.String) {
@@ -2567,6 +2594,7 @@ public final class Model {
      *
      * @return The bytes for name.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getNameBytes() {
       java.lang.Object ref = name_;
@@ -2589,6 +2617,7 @@ public final class Model {
      *
      * @return The ip.
      */
+    @java.lang.Override
     public java.lang.String getIp() {
       java.lang.Object ref = ip_;
       if (ref instanceof java.lang.String) {
@@ -2607,6 +2636,7 @@ public final class Model {
      *
      * @return The bytes for ip.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getIpBytes() {
       java.lang.Object ref = ip_;
@@ -2629,6 +2659,7 @@ public final class Model {
      *
      * @return The os.
      */
+    @java.lang.Override
     public java.lang.String getOs() {
       java.lang.Object ref = os_;
       if (ref instanceof java.lang.String) {
@@ -2647,6 +2678,7 @@ public final class Model {
      *
      * @return The bytes for os.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getOsBytes() {
       java.lang.Object ref = os_;
@@ -3293,6 +3325,7 @@ public final class Model {
         return super.mergeUnknownFields(unknownFields);
       }
 
+
       // @@protoc_insertion_point(builder_scope:Agent)
     }
 
@@ -3550,6 +3583,7 @@ public final class Model {
      *
      * @return The id.
      */
+    @java.lang.Override
     public java.lang.String getId() {
       java.lang.Object ref = id_;
       if (ref instanceof java.lang.String) {
@@ -3568,6 +3602,7 @@ public final class Model {
      *
      * @return The bytes for id.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getIdBytes() {
       java.lang.Object ref = id_;
@@ -3590,6 +3625,7 @@ public final class Model {
      *
      * @return Whether the principal field is set.
      */
+    @java.lang.Override
     public boolean hasPrincipal() {
       return principal_ != null;
     }
@@ -3599,6 +3635,7 @@ public final class Model {
      *
      * @return The principal.
      */
+    @java.lang.Override
     public org.beangle.security.session.protobuf.Model.Account getPrincipal() {
       return principal_ == null ? org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
     }
@@ -3606,6 +3643,7 @@ public final class Model {
     /**
      * <code>.Account principal = 2;</code>
      */
+    @java.lang.Override
     public org.beangle.security.session.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder() {
       return getPrincipal();
     }
@@ -3618,6 +3656,7 @@ public final class Model {
      *
      * @return The loginAt.
      */
+    @java.lang.Override
     public long getLoginAt() {
       return loginAt_;
     }
@@ -3630,6 +3669,7 @@ public final class Model {
      *
      * @return The lastAccessAt.
      */
+    @java.lang.Override
     public long getLastAccessAt() {
       return lastAccessAt_;
     }
@@ -3642,6 +3682,7 @@ public final class Model {
      *
      * @return Whether the agent field is set.
      */
+    @java.lang.Override
     public boolean hasAgent() {
       return agent_ != null;
     }
@@ -3651,6 +3692,7 @@ public final class Model {
      *
      * @return The agent.
      */
+    @java.lang.Override
     public org.beangle.security.session.protobuf.Model.Agent getAgent() {
       return agent_ == null ? org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
     }
@@ -3658,6 +3700,7 @@ public final class Model {
     /**
      * <code>.Agent agent = 5;</code>
      */
+    @java.lang.Override
     public org.beangle.security.session.protobuf.Model.AgentOrBuilder getAgentOrBuilder() {
       return getAgent();
     }
@@ -3670,6 +3713,7 @@ public final class Model {
      *
      * @return The ttiSeconds.
      */
+    @java.lang.Override
     public int getTtiSeconds() {
       return ttiSeconds_;
     }
@@ -4338,6 +4382,7 @@ public final class Model {
        *
        * @return The loginAt.
        */
+      @java.lang.Override
       public long getLoginAt() {
         return loginAt_;
       }
@@ -4374,6 +4419,7 @@ public final class Model {
        *
        * @return The lastAccessAt.
        */
+      @java.lang.Override
       public long getLastAccessAt() {
         return lastAccessAt_;
       }
@@ -4540,6 +4586,7 @@ public final class Model {
        *
        * @return The ttiSeconds.
        */
+      @java.lang.Override
       public int getTtiSeconds() {
         return ttiSeconds_;
       }
@@ -4580,6 +4627,7 @@ public final class Model {
         final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:Session)
     }
@@ -4816,6 +4864,7 @@ public final class Model {
      *
      * @return The id.
      */
+    @java.lang.Override
     public long getId() {
       return id_;
     }
@@ -4828,6 +4877,7 @@ public final class Model {
      *
      * @return The name.
      */
+    @java.lang.Override
     public java.lang.String getName() {
       java.lang.Object ref = name_;
       if (ref instanceof java.lang.String) {
@@ -4846,6 +4896,7 @@ public final class Model {
      *
      * @return The bytes for name.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
     getNameBytes() {
       java.lang.Object ref = name_;
@@ -4894,6 +4945,7 @@ public final class Model {
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
 
+    @java.lang.Override
     public boolean containsProperties(
       java.lang.String key) {
       if (key == null) {
@@ -4905,6 +4957,7 @@ public final class Model {
     /**
      * Use {@link #getPropertiesMap()} instead.
      */
+    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, java.lang.String> getProperties() {
       return getPropertiesMap();
@@ -4913,6 +4966,7 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
+    @java.lang.Override
 
     public java.util.Map<java.lang.String, java.lang.String> getPropertiesMap() {
       return internalGetProperties().getMap();
@@ -4921,6 +4975,7 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
+    @java.lang.Override
 
     public java.lang.String getPropertiesOrDefault(
       java.lang.String key,
@@ -4936,6 +4991,7 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
+    @java.lang.Override
 
     public java.lang.String getPropertiesOrThrow(
       java.lang.String key) {
@@ -5357,6 +5413,7 @@ public final class Model {
        *
        * @return The id.
        */
+      @java.lang.Override
       public long getId() {
         return id_;
       }
@@ -5506,6 +5563,7 @@ public final class Model {
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
 
+      @java.lang.Override
       public boolean containsProperties(
         java.lang.String key) {
         if (key == null) {
@@ -5517,6 +5575,7 @@ public final class Model {
       /**
        * Use {@link #getPropertiesMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String> getProperties() {
         return getPropertiesMap();
@@ -5525,6 +5584,7 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, java.lang.String> getPropertiesMap() {
         return internalGetProperties().getMap();
@@ -5533,6 +5593,7 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getPropertiesOrDefault(
         java.lang.String key,
@@ -5548,6 +5609,7 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getPropertiesOrThrow(
         java.lang.String key) {
@@ -5630,6 +5692,7 @@ public final class Model {
         final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:Profile)
     }
@@ -5773,6 +5836,5 @@ public final class Model {
       internal_static_Profile_PropertiesEntry_descriptor,
       new java.lang.String[]{"Key", "Value",});
   }
-
   // @@protoc_insertion_point(outer_class_scope)
 }
