@@ -23,7 +23,7 @@ import org.beangle.security.authc.Account
 import java.time.Instant
 
 trait SessionRepo {
-  def get(sessionId: String, refresh: Boolean): Option[Session]
+  def get(sessionId: String, refresh: Boolean = false): Option[Session]
 
   def findByPrincipal(principal: String): collection.Seq[Session]
 
