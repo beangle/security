@@ -91,7 +91,7 @@ class DBSessionRepo(domainProvider: DomainProvider, dataSource: DataSource, cach
     executor.update(s"update $sessionTable set tti_seconds=0 where id=?", sessionId)
     get(sessionId) foreach { session =>
       session.ttiSeconds = 0
-      evict(session)
+      evict(sessionId)
       executor.update(s"delete from $sessionTable where id=?", sessionId)
       publish(new LogoutEvent(session, "强制过期"))
     }

@@ -84,7 +84,7 @@ class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, 
   override def remove(sessionId: String, reason: String): Option[Session] = {
     val s = get(sessionId)
     s foreach { session =>
-      evict(session)
+      evict(sessionId)
       executor.update(s"delete from $sessionTable where id=?", sessionId)
       publish(new LogoutEvent(session, reason))
     }
