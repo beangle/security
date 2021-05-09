@@ -18,12 +18,12 @@
  */
 package org.beangle.security.session
 
-import java.time.Instant
-
 import org.beangle.security.authc.Account
 
+import java.time.Instant
+
 trait SessionRepo {
-  def get(sessionId: String): Option[Session]
+  def get(sessionId: String, refresh: Boolean): Option[Session]
 
   def findByPrincipal(principal: String): collection.Seq[Session]
 

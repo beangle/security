@@ -18,14 +18,14 @@
  */
 package org.beangle.security.session.cache
 
-import java.time.Instant
-
 import org.beangle.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
 import org.beangle.security.session.util.UpdateDelayGenerator
 import org.beangle.security.session.{Session, SessionRepo}
 import org.beangle.security.util.SecurityDaemon
+
+import java.time.Instant
 
 abstract class CacheSessionRepo(val cacheManager: CacheManager)
   extends SessionRepo with Initializing with Logging {
@@ -50,15 +50,21 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
     SecurityDaemon.start("Beangle Session", flushInterval, this.accessReporter)
   }
 
-  override def get(sessionId: String): Option[Session] = {
+  override def get(sessionId: String, refresh: Boolean = false): Option[Session] = {
     if (null == sessionId) return None
-    val data = sessions.get(sessionId)
-    if (data.isEmpty) {
+    if (refresh) {
       val newData = getInternal(sessionId)
       if (newData.nonEmpty) sessions.putIfAbsent(sessionId, newData.get)
       newData
     } else {
-      data
+      val data = sessions.get(sessionId)
+      if (data.isEmpty) {
+        val newData = getInternal(sessionId)
+        if (newData.nonEmpty) sessions.putIfAbsent(sessionId, newData.get)
+        newData
+      } else {
+        data
+      }
     }
   }
 
