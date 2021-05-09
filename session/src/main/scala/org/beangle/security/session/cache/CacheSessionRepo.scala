@@ -78,7 +78,7 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
           se
         } else {
           if (elapse == -1) {
-            evict(s)
+            evict(s.id)
             expire(s.id)
             None
           } else {
@@ -92,8 +92,8 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
     sessions.putIfAbsent(session.id, session)
   }
 
-  protected def evict(session: Session): Unit = {
-    sessions.evict(session.id)
+  final def evict(sessionId: String): Unit = {
+    sessions.evict(sessionId)
   }
 
   protected def getInternal(sessionId: String): Option[Session]

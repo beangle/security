@@ -18,8 +18,6 @@
  */
 package org.beangle.security.session.http
 
-import java.net.{HttpURLConnection, URL}
-
 import org.beangle.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings
@@ -28,6 +26,8 @@ import org.beangle.commons.net.http.HttpUtils.{getData, getText}
 import org.beangle.commons.net.http.{HttpMethods, Https}
 import org.beangle.security.session.cache.CacheSessionRepo
 import org.beangle.security.session.{DefaultSession, Session}
+
+import java.net.{HttpURLConnection, URL}
 
 class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   extends CacheSessionRepo(cacheManager) {
@@ -66,6 +66,7 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   }
 
   override def expire(sid: String): Unit = {
+    evict(sid)
     getText(replace(expireUrl, "{id}", sid))
   }
 }
