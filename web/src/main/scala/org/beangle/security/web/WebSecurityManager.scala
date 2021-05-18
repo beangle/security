@@ -59,7 +59,7 @@ class WebSecurityManager extends SecurityManager {
     account match {
       case da: DefaultAccount =>
         da.credentialReadOnly = isCredentialReadOnly(token)
-        da.details ++= token.details
+        da.details ++= token.details.filter(_._2.isInstanceOf[String]).map(kv=> (kv._1,kv._2.toString))
       case _ =>
     }
     account
