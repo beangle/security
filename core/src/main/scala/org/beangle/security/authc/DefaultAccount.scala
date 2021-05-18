@@ -18,11 +18,11 @@
  */
 package org.beangle.security.authc
 
-import java.io.{ObjectInput, ObjectOutput}
-import java.util
-
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Objects
+
+import java.io.{ObjectInput, ObjectOutput}
+import java.util
 
 object DefaultAccount {
 
@@ -31,6 +31,7 @@ object DefaultAccount {
     val Disabled = 2
     val AccountExpired = 4
     val CredentialExpired = 8
+    val CredentialReadOnly = 16
   }
 
 }
@@ -74,6 +75,7 @@ final class DefaultAccount extends Account {
         this.accountLocked = account.accountLocked
         this.disabled = account.disabled
         this.credentialExpired = account.credentialExpired
+        this.credentialReadOnly = account.credentialReadOnly
     }
     if (account.authorities != null) this.authorities = account.authorities
     if (account.permissions != null) this.permissions = account.permissions
@@ -105,6 +107,10 @@ final class DefaultAccount extends Account {
   def disabled: Boolean = get(Disabled)
 
   def disabled_=(value: Boolean): Unit = change(value, Disabled)
+
+  def credentialReadOnly: Boolean = get(CredentialReadOnly)
+
+  def credentialReadOnly_=(value: Boolean): Unit = change(value, CredentialReadOnly)
 
   def addDetails(added: Map[String, Any]): this.type = {
     if (null != added) {

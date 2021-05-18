@@ -18,20 +18,30 @@
  */
 package org.beangle.security.authc
 
-import java.security.Principal
-
 import org.beangle.commons.lang.Objects
 
+import java.security.Principal
+
 /**
-  * Authentication Token used before authentication
-  */
+ * Authentication Token used before authentication
+ */
 trait AuthenticationToken extends Principal with Serializable {
 
   def principal: Any
 
   def credential: Any
 
-  def details: Map[String, Any]
+  var details: Map[String, Any] = Map.empty
+
+  def addDetail(name: String, value: Any): Unit = {
+    details += (name -> value)
+  }
+
+  def removeDetail(name: String): Option[Any] = {
+    val rs = details.get(name)
+    details -= name
+    rs
+  }
 
   override def getName: String = {
     Principals.getName(principal)
@@ -48,12 +58,10 @@ trait AuthenticationToken extends Principal with Serializable {
 }
 
 /**
-  * Simple Authentication Token
-  */
+ * Simple Authentication Token
+ */
 @SerialVersionUID(3966615358056184985L)
 class UsernamePasswordToken(val principal: Any, val credential: Any) extends AuthenticationToken {
-
-  var details: Map[String, Any] = Map.empty
 
   override def equals(obj: Any): Boolean = {
     obj match {
@@ -77,16 +85,16 @@ object AnonymousToken extends AuthenticationToken {
 
   def credential: Any = ""
 
-  def details: Map[String, Any] = Map.empty
+  override def addDetail(name: String, value: Any): Unit = {}
+
+  override def removeDetail(name: String): Option[Any] = None
 
 }
 
 /**
-  * Preauth Authentication Token
-  */
+ * Preauth Authentication Token
+ */
 class PreauthToken(val principal: Any, val credential: Any) extends AuthenticationToken {
-
-  var details: Map[String, Any] = Map.empty
 
   override def trusted: Boolean = {
     true
