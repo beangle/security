@@ -22,9 +22,10 @@ import java.io.Externalizable
 import java.security.Principal
 
 /**
-  * Authentication Information
-  * @author chaostone
-  */
+ * Authentication Information
+ *
+ * @author chaostone
+ */
 trait Account extends Principal with Externalizable {
 
   def name: String
@@ -44,6 +45,8 @@ trait Account extends Principal with Externalizable {
   def credentialExpired: Boolean
 
   def disabled: Boolean
+
+  def credentialReadOnly: Boolean
 
   def authorities: Array[String]
 

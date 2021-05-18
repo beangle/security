@@ -20,7 +20,7 @@ package org.beangle.security.web
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.web.security.RequestConvertor
-import org.beangle.security.authc.{AuthenticationToken, Authenticator}
+import org.beangle.security.authc._
 import org.beangle.security.authz.Authorizer
 import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.{Session, SessionProfileProvider, SessionRegistry}
@@ -37,21 +37,45 @@ class WebSecurityManager extends SecurityManager {
   var sessionProfileProvider: SessionProfileProvider = _
 
   override def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session = {
-    val account = authenticator.authenticate(token)
+    val account = authc(token)
     val profile = sessionProfileProvider.getProfile(account)
     registry.register(sessionId, account, client, profile)
   }
 
   def login(request: HttpServletRequest, response: HttpServletResponse, token: AuthenticationToken): Session = {
     val key = sessionIdPolicy.newId(request, response)
-    val account = authenticator.authenticate(token)
+    val account = authc(token)
     val profile = sessionProfileProvider.getProfile(account)
     registry.register(key, account, WebClient.get(request), profile)
   }
 
-  def logout(request: HttpServletRequest, response: HttpServletResponse,
-             session: Session): Unit = {
-    registry.remove(session.id,null)
+  /** 认证token，并负责将detail传递给最终的account
+   *
+   * @param token
+   * @return
+   */
+  private def authc(token: AuthenticationToken): Account = {
+    val account = authenticator.authenticate(token)
+    account match {
+      case da: DefaultAccount =>
+        da.credentialReadOnly = isCredentialReadOnly(token)
+        da.details ++= token.details
+      case _ =>
+    }
+    account
+  }
+
+  private def isCredentialReadOnly(token: AuthenticationToken): Boolean = {
+    token match {
+      case _: PreauthToken => true
+      case _ =>
+        val a = token.removeDetail("credentialReadOnly")
+        a.contains("true") || a.contains(true)
+    }
+  }
+
+  def logout(request: HttpServletRequest, response: HttpServletResponse, session: Session): Unit = {
+    registry.remove(session.id, null)
     sessionIdPolicy.delId(request, response)
     val s = request.getSession(false)
     if (null != s) s.invalidate()
