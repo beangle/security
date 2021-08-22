@@ -2,13 +2,13 @@ import Dependencies._
 import BuildSettings._
 import sbt.url
 
-ThisBuild / organization := "org.beangle.webmvc"
+ThisBuild / organization := "org.beangle.security"
 ThisBuild / version := "4.2.30"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/beangle/webmvc"),
-    "scm:git@github.com:beangle/webmvc.git"
+    url("https://github.com/beangle/security"),
+    "scm:git@github.com:beangle/security.git"
   )
 )
 
@@ -22,7 +22,7 @@ ThisBuild / developers := List(
 )
 
 ThisBuild / description := "The Beangle Data Library"
-ThisBuild / homepage := Some(url("https://beangle.github.io/webmvc/index.html"))
+ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 ThisBuild / resolvers += Resolver.mavenLocal
 
 lazy val root = (project in file("."))
