@@ -39,8 +39,8 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer with Initializing 
       case None => if (unknownIsProtected) context.isValid else false
       case Some(ra) =>
         ra.scope match {
-          case Scopes.Public => true //public
-          case Scopes.Protected => context.isValid //protected
+          case Scope.Public => true //public
+          case Scope.Protected => context.isValid //protected
           case _ => //private
             context.session match {
               case Some(session) =>

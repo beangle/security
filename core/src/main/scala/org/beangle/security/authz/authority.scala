@@ -36,11 +36,11 @@ class AuthorityDomain(val roots: Set[String], val authorities: Map[String, Autho
 
 object Authority {
   def apply(resourceName: String, scope: String, roles: Set[String]): Authority = {
-    new Authority(resourceName, Scopes.withName(scope).asInstanceOf[Scopes.Scope], roles)
+    new Authority(resourceName, Scope.valueOf(scope), roles)
   }
 }
 
-case class Authority(resourceName: String, scope: Scopes.Scope, roles: Set[String]) {
+case class Authority(resourceName: String, scope: Scope, roles: Set[String]) {
 
   def matches(authorities: Array[String]): Boolean = {
     authorities.exists(roles.contains)

@@ -17,22 +17,12 @@
 
 package org.beangle.security.authz
 
-object Resource {
-  /** 资源的所有部分 */
-  final val AllParts = "*"
+enum Scope (val name:String) {
 
-  /** 允许所有操作 */
-  final val AllActions = "*"
-}
-
-trait Resource extends Serializable {
-  def title: String
-
-  def actions: Option[String]
-
-  def remark: Option[String]
-
-  def name: String
-
-  def enabled: Boolean
+  /** 不受保护的公共资源 */
+  case Public extends Scope("Public")
+  /** 受保护的公有资源 */
+  case Protected extends Scope("Protected")
+  /** 受保护的私有资源 */
+  case Private extends Scope("Private")
 }

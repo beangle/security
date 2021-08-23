@@ -17,16 +17,8 @@
 
 package org.beangle.security.session
 
-object EventTypes extends Enumeration {
-
-  class Type extends super.Val {
-  }
-
-  val Login, Logout, EditPassword, AccountAlteration,
+enum EventTypes {
+  case Login, Logout, EditPassword, AccountAlteration,
   ModifyUserPermission, ModifyRolePermission,
-  ResourceAlteration = newValue()
-
-  private def newValue(): Type = {
-    new Type()
-  }
+  ResourceAlteration
 }
