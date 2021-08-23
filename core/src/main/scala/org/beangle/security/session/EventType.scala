@@ -17,7 +17,7 @@
 
 package org.beangle.security.session
 
-enum EventTypes {
+enum EventType {
   case Login, Logout, EditPassword, AccountAlteration,
   ModifyUserPermission, ModifyRolePermission,
   ResourceAlteration
