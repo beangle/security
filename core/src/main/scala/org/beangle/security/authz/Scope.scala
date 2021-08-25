@@ -15,20 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.beangle.security.web.authc
+package org.beangle.security.authz
 
-import org.beangle.security.session.Session
+enum Scope (val name:String) {
 
-import jakarta.servlet.{ServletRequest, ServletResponse}
-
-trait LogoutHandler {
-  def logout(req: ServletRequest, res: ServletResponse, session: Session): Unit
-}
-
-final class LogoutStack(handlers: List[LogoutHandler]) extends LogoutHandler {
-  def logout(req: ServletRequest, res: ServletResponse, session: Session): Unit = {
-    handlers.foreach { handler =>
-      handler.logout(req, res, session)
-    }
-  }
+  /** 不受保护的公共资源 */
+  case Public extends Scope("Public")
+  /** 受保护的公有资源 */
+  case Protected extends Scope("Protected")
+  /** 受保护的私有资源 */
+  case Private extends Scope("Private")
 }

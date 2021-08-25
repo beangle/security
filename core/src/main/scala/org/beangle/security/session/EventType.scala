@@ -15,20 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.beangle.security.web.authc
+package org.beangle.security.session
 
-import org.beangle.security.session.Session
-
-import jakarta.servlet.{ServletRequest, ServletResponse}
-
-trait LogoutHandler {
-  def logout(req: ServletRequest, res: ServletResponse, session: Session): Unit
-}
-
-final class LogoutStack(handlers: List[LogoutHandler]) extends LogoutHandler {
-  def logout(req: ServletRequest, res: ServletResponse, session: Session): Unit = {
-    handlers.foreach { handler =>
-      handler.logout(req, res, session)
-    }
-  }
+enum EventType {
+  case Login, Logout, EditPassword, AccountAlteration,
+  ModifyUserPermission, ModifyRolePermission,
+  ResourceAlteration
 }
