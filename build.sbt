@@ -2,7 +2,7 @@ import org.beangle.parent.Dependencies._
 import org.beangle.parent.Settings._
 
 ThisBuild / organization := "org.beangle.security"
-ThisBuild / version := "4.2.32-SNAPSHOT"
+ThisBuild / version := "4.2.32"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -22,12 +22,12 @@ ThisBuild / developers := List(
 
 ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
-val beangle_commons_core = "org.beangle.commons" %% "beangle-commons-core" % "5.2.6"
-val beangle_data_jdbc = "org.beangle.data" %% "beangle-data-jdbc" % "5.3.25"
-val beangle_serializer_protobuf = "org.beangle.serializer"  %% "beangle-serializer-protobuf" % "0.0.21"
+val beangle_commons_core = "org.beangle.commons" %% "beangle-commons-core" % "5.2.9"
+val beangle_data_jdbc = "org.beangle.data" %% "beangle-data-jdbc" % "5.3.26"
+val beangle_serializer_protobuf = "org.beangle.serializer"  %% "beangle-serializer-protobuf" % "0.0.22"
 
-val beangle_cache_api = "org.beangle.cache" %% "beangle-cache-api" %  "0.0.24"
-val beangle_web_servlet = "org.beangle.web" %% "beangle-web-servlet" % "0.0.2"
+val beangle_cache_api = "org.beangle.cache" %% "beangle-cache-api" %  "0.0.25"
+val beangle_web_servlet = "org.beangle.web" %% "beangle-web-servlet" % "0.0.4"
 val commonDeps = Seq(beangle_commons_core, logback_classic, logback_core, scalatest, beangle_web_servlet)
 
 lazy val root = (project in file("."))
