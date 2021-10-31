@@ -252,7 +252,7 @@ public final class Model {
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
-      com.google.protobuf.GeneratedMessageV3.UnusedPrivateParameter unused) {
+      UnusedPrivateParameter unused) {
       return new Account();
     }
 
@@ -725,7 +725,7 @@ public final class Model {
     public boolean containsDetails(
       java.lang.String key) {
       if (key == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException("map key");
       }
       return internalGetDetails().getMap().containsKey(key);
     }
@@ -757,7 +757,7 @@ public final class Model {
       java.lang.String key,
       java.lang.String defaultValue) {
       if (key == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException("map key");
       }
       java.util.Map<java.lang.String, java.lang.String> map =
         internalGetDetails().getMap();
@@ -772,7 +772,7 @@ public final class Model {
     public java.lang.String getDetailsOrThrow(
       java.lang.String key) {
       if (key == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException("map key");
       }
       java.util.Map<java.lang.String, java.lang.String> map =
         internalGetDetails().getMap();
@@ -2243,7 +2243,7 @@ public final class Model {
       public boolean containsDetails(
         java.lang.String key) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         return internalGetDetails().getMap().containsKey(key);
       }
@@ -2275,7 +2275,7 @@ public final class Model {
         java.lang.String key,
         java.lang.String defaultValue) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         java.util.Map<java.lang.String, java.lang.String> map =
           internalGetDetails().getMap();
@@ -2290,7 +2290,7 @@ public final class Model {
       public java.lang.String getDetailsOrThrow(
         java.lang.String key) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         java.util.Map<java.lang.String, java.lang.String> map =
           internalGetDetails().getMap();
@@ -2313,7 +2313,7 @@ public final class Model {
       public Builder removeDetails(
         java.lang.String key) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         internalGetMutableDetails().getMutableMap()
           .remove(key);
@@ -2336,11 +2336,12 @@ public final class Model {
         java.lang.String key,
         java.lang.String value) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         if (value == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map value");
         }
+
         internalGetMutableDetails().getMutableMap()
           .put(key, value);
         return this;
@@ -2484,7 +2485,7 @@ public final class Model {
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
-      com.google.protobuf.GeneratedMessageV3.UnusedPrivateParameter unused) {
+      UnusedPrivateParameter unused) {
       return new Agent();
     }
 
@@ -3463,7 +3464,7 @@ public final class Model {
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
-      com.google.protobuf.GeneratedMessageV3.UnusedPrivateParameter unused) {
+      UnusedPrivateParameter unused) {
       return new Session();
     }
 
@@ -4753,7 +4754,7 @@ public final class Model {
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
-      com.google.protobuf.GeneratedMessageV3.UnusedPrivateParameter unused) {
+      UnusedPrivateParameter unused) {
       return new Profile();
     }
 
@@ -4945,7 +4946,7 @@ public final class Model {
     public boolean containsProperties(
       java.lang.String key) {
       if (key == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException("map key");
       }
       return internalGetProperties().getMap().containsKey(key);
     }
@@ -4977,7 +4978,7 @@ public final class Model {
       java.lang.String key,
       java.lang.String defaultValue) {
       if (key == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException("map key");
       }
       java.util.Map<java.lang.String, java.lang.String> map =
         internalGetProperties().getMap();
@@ -4992,7 +4993,7 @@ public final class Model {
     public java.lang.String getPropertiesOrThrow(
       java.lang.String key) {
       if (key == null) {
-        throw new java.lang.NullPointerException();
+        throw new NullPointerException("map key");
       }
       java.util.Map<java.lang.String, java.lang.String> map =
         internalGetProperties().getMap();
@@ -5563,7 +5564,7 @@ public final class Model {
       public boolean containsProperties(
         java.lang.String key) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         return internalGetProperties().getMap().containsKey(key);
       }
@@ -5595,7 +5596,7 @@ public final class Model {
         java.lang.String key,
         java.lang.String defaultValue) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         java.util.Map<java.lang.String, java.lang.String> map =
           internalGetProperties().getMap();
@@ -5610,7 +5611,7 @@ public final class Model {
       public java.lang.String getPropertiesOrThrow(
         java.lang.String key) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         java.util.Map<java.lang.String, java.lang.String> map =
           internalGetProperties().getMap();
@@ -5633,7 +5634,7 @@ public final class Model {
       public Builder removeProperties(
         java.lang.String key) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         internalGetMutableProperties().getMutableMap()
           .remove(key);
@@ -5656,11 +5657,12 @@ public final class Model {
         java.lang.String key,
         java.lang.String value) {
         if (key == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map key");
         }
         if (value == null) {
-          throw new java.lang.NullPointerException();
+          throw new NullPointerException("map value");
         }
+
         internalGetMutableProperties().getMutableMap()
           .put(key, value);
         return this;
