@@ -214,8 +214,10 @@ public final class Model {
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
 
+    /* nullable */
     java.lang.String getDetailsOrDefault(
       java.lang.String key,
+      /* nullable */
       java.lang.String defaultValue);
 
     /**
@@ -360,6 +362,8 @@ public final class Model {
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
@@ -2542,6 +2546,8 @@ public final class Model {
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
@@ -3550,6 +3556,8 @@ public final class Model {
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
@@ -4721,8 +4729,10 @@ public final class Model {
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
 
+    /* nullable */
     java.lang.String getPropertiesOrDefault(
       java.lang.String key,
+      /* nullable */
       java.lang.String defaultValue);
 
     /**
@@ -4818,6 +4828,8 @@ public final class Model {
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
         throw e.setUnfinishedMessage(this);
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
