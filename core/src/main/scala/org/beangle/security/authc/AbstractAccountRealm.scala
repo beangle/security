@@ -53,14 +53,13 @@ abstract class AbstractAccountRealm extends Realm with Logging {
   }
 
   protected def additionalCheck(token: AuthenticationToken, ac: Account): Unit = {
-    if (ac.accountLocked)
-      throw new LockedException("AccountStatusChecker.locked", token)
-    if (ac.disabled)
-      throw new DisabledException("AccountStatusChecker.disabled", token)
-    if (ac.accountExpired)
-      throw new AccountExpiredException("AccountStatusChecker.expired", token)
-    if (ac.credentialExpired)
-      throw new CredentialExpiredException("AccountStatusChecker.credentialExpired", token)
+    if ac.accountLocked then throw new LockedException("AccountStatusChecker.locked", token)
+    if ac.disabled then throw new DisabledException("AccountStatusChecker.disabled", token)
+    if ac.accountExpired then throw new AccountExpiredException("AccountStatusChecker.expired", token)
+    token match {
+      case _: PreauthToken =>
+      case _ => if ac.credentialExpired then throw new CredentialExpiredException("AccountStatusChecker.credentialExpired", token)
+    }
   }
 
   protected def loadAccount(principal: Any): Option[Account]
