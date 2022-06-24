@@ -2,7 +2,7 @@ import org.beangle.parent.Dependencies._
 import org.beangle.parent.Settings._
 
 ThisBuild / organization := "org.beangle.security"
-ThisBuild / version := "4.2.34-SNAPSHOT"
+ThisBuild / version := "4.2.34"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -23,8 +23,8 @@ ThisBuild / developers := List(
 ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
-val beangle_common_ver="5.2.13"
-val beangle_data_ver="5.4.0"
+val beangle_common_ver="5.2.15"
+val beangle_data_ver="5.4.4"
 val beangle_serializer_ver="0.0.23"
 val beangle_cache_ver="0.0.26"
 val beangle_web_ver="0.0.6"
