@@ -24,10 +24,10 @@ ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
 val beangle_common_ver="5.3.0"
-val beangle_data_ver="5.4.6"
+val beangle_data_ver="5.4.9"
 val beangle_serializer_ver="0.0.24"
 val beangle_cache_ver="0.0.27"
-val beangle_web_ver="0.1.0"
+val beangle_web_ver="0.1.2-SNAPSHOT"
 val beangle_commons_core = "org.beangle.commons" %% "beangle-commons-core" % beangle_common_ver
 val beangle_data_jdbc = "org.beangle.data" %% "beangle-data-jdbc" % beangle_data_ver
 val beangle_serializer_protobuf = "org.beangle.serializer"  %% "beangle-serializer-protobuf" % beangle_serializer_ver
