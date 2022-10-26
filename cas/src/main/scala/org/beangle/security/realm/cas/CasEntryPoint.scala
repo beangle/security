@@ -19,21 +19,21 @@ package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
-import org.beangle.web.servlet.url.UrlBuilder
-import org.beangle.web.servlet.util.{CookieUtils, RequestUtils}
 import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
 import org.beangle.security.session.SessionException
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.session.SessionIdReader
+import org.beangle.web.servlet.url.UrlBuilder
+import org.beangle.web.servlet.util.{CookieUtils, RequestUtils}
 
 import java.net.URLEncoder
-import java.{util => ju}
+import java.util as ju
 
 class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
-  import CasConfig._
+  import CasConfig.*
 
-  var localLoginStrategy = new DefaultLocalLoginStrategy
+  var localLoginStrategy = new DefaultLocalLoginStrategy(config)
 
   var sessionIdReader: Option[SessionIdReader] = None
 
@@ -153,7 +153,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   override def remoteLogin(request: HttpServletRequest, response: HttpServletResponse): Unit = {
     val localUrl = this.localLoginUrl(request)
-    CookieUtils.addCookie(request, response, "CAS_" + CasConfig.ServiceName, localUrl, 1)
+    if config.gateway then CookieUtils.addCookie(request, response, "CAS_" + CasConfig.ServiceName, localUrl, 2)
     response.sendRedirect(this.casLoginUrl(localUrl, request.getParameter("remote") != null))
   }
 }
