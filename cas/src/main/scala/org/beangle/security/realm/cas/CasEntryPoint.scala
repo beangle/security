@@ -43,6 +43,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     Cas.cleanup(config, req, res)
     if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException]
       || ae.isInstanceOf[SessionException])) {
+      res.setContentType("text/html; charset=utf-8")
       val writer = res.getWriter
       writer.append("<!DOCTYPE html>\n<html lang=\"zh_CN\">" +
         "<head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" /></head><body><p>")
