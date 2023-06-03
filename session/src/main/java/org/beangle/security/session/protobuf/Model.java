@@ -213,7 +213,6 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
-
     /* nullable */
     java.lang.String getDetailsOrDefault(
       java.lang.String key,
@@ -223,7 +222,6 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
-
     java.lang.String getDetailsOrThrow(
       java.lang.String key);
   }
@@ -246,8 +244,10 @@ public final class Model {
       name_ = "";
       description_ = "";
       remoteToken_ = "";
-      authorities_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      permissions_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      authorities_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
+      permissions_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
       profiles_ = java.util.Collections.emptyList();
     }
 
@@ -256,130 +256,6 @@ public final class Model {
     protected java.lang.Object newInstance(
       UnusedPrivateParameter unused) {
       return new Account();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-
-    private Account(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              name_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              description_ = s;
-              break;
-            }
-            case 24: {
-
-              categoryId_ = input.readInt32();
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              remoteToken_ = s;
-              break;
-            }
-            case 40: {
-
-              status_ = input.readInt32();
-              break;
-            }
-            case 50: {
-              java.lang.String s = input.readStringRequireUtf8();
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                authorities_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              authorities_.add(s);
-              break;
-            }
-            case 58: {
-              java.lang.String s = input.readStringRequireUtf8();
-              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
-                permissions_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000002;
-              }
-              permissions_.add(s);
-              break;
-            }
-            case 66: {
-              if (!((mutable_bitField0_ & 0x00000004) != 0)) {
-                profiles_ = new java.util.ArrayList<org.beangle.security.session.protobuf.Model.Profile>();
-                mutable_bitField0_ |= 0x00000004;
-              }
-              profiles_.add(
-                input.readMessage(org.beangle.security.session.protobuf.Model.Profile.parser(), extensionRegistry));
-              break;
-            }
-            case 74: {
-              if (!((mutable_bitField0_ & 0x00000008) != 0)) {
-                details_ = com.google.protobuf.MapField.newMapField(
-                  DetailsDefaultEntryHolder.defaultEntry);
-                mutable_bitField0_ |= 0x00000008;
-              }
-              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
-                details__ = input.readMessage(
-                DetailsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-              details_.getMutableMap().put(
-                details__.getKey(), details__.getValue());
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          authorities_ = authorities_.getUnmodifiableView();
-        }
-        if (((mutable_bitField0_ & 0x00000002) != 0)) {
-          permissions_ = permissions_.getUnmodifiableView();
-        }
-        if (((mutable_bitField0_ & 0x00000004) != 0)) {
-          profiles_ = java.util.Collections.unmodifiableList(profiles_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
     }
 
     public static final com.google.protobuf.Descriptors.Descriptor
@@ -409,7 +285,8 @@ public final class Model {
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
-    private volatile java.lang.Object name_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
 
     /**
      * <code>string name = 1;</code>
@@ -451,7 +328,8 @@ public final class Model {
     }
 
     public static final int DESCRIPTION_FIELD_NUMBER = 2;
-    private volatile java.lang.Object description_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object description_ = "";
 
     /**
      * <code>string description = 2;</code>
@@ -493,7 +371,7 @@ public final class Model {
     }
 
     public static final int CATEGORYID_FIELD_NUMBER = 3;
-    private int categoryId_;
+    private int categoryId_ = 0;
 
     /**
      * <code>int32 categoryId = 3;</code>
@@ -506,7 +384,8 @@ public final class Model {
     }
 
     public static final int REMOTETOKEN_FIELD_NUMBER = 4;
-    private volatile java.lang.Object remoteToken_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object remoteToken_ = "";
 
     /**
      * <code>string remoteToken = 4;</code>
@@ -548,7 +427,7 @@ public final class Model {
     }
 
     public static final int STATUS_FIELD_NUMBER = 5;
-    private int status_;
+    private int status_ = 0;
 
     /**
      * <code>int32 status = 5;</code>
@@ -561,7 +440,9 @@ public final class Model {
     }
 
     public static final int AUTHORITIES_FIELD_NUMBER = 6;
-    private com.google.protobuf.LazyStringList authorities_;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.LazyStringArrayList authorities_ =
+      com.google.protobuf.LazyStringArrayList.emptyList();
 
     /**
      * <code>repeated string authorities = 6;</code>
@@ -604,7 +485,9 @@ public final class Model {
     }
 
     public static final int PERMISSIONS_FIELD_NUMBER = 7;
-    private com.google.protobuf.LazyStringList permissions_;
+    @SuppressWarnings("serial")
+    private com.google.protobuf.LazyStringArrayList permissions_ =
+      com.google.protobuf.LazyStringArrayList.emptyList();
 
     /**
      * <code>repeated string permissions = 7;</code>
@@ -647,6 +530,7 @@ public final class Model {
     }
 
     public static final int PROFILES_FIELD_NUMBER = 8;
+    @SuppressWarnings("serial")
     private java.util.List<org.beangle.security.session.protobuf.Model.Profile> profiles_;
 
     /**
@@ -705,6 +589,7 @@ public final class Model {
             "");
     }
 
+    @SuppressWarnings("serial")
     private com.google.protobuf.MapField<
       java.lang.String, java.lang.String> details_;
 
@@ -724,7 +609,6 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
-
     @java.lang.Override
     public boolean containsDetails(
       java.lang.String key) {
@@ -747,7 +631,6 @@ public final class Model {
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
     @java.lang.Override
-
     public java.util.Map<java.lang.String, java.lang.String> getDetailsMap() {
       return internalGetDetails().getMap();
     }
@@ -756,9 +639,10 @@ public final class Model {
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
     @java.lang.Override
-
-    public java.lang.String getDetailsOrDefault(
+    public /* nullable */
+    java.lang.String getDetailsOrDefault(
       java.lang.String key,
+      /* nullable */
       java.lang.String defaultValue) {
       if (key == null) {
         throw new NullPointerException("map key");
@@ -772,7 +656,6 @@ public final class Model {
      * <code>map&lt;string, string&gt; details = 9;</code>
      */
     @java.lang.Override
-
     public java.lang.String getDetailsOrThrow(
       java.lang.String key) {
       if (key == null) {
@@ -831,7 +714,7 @@ public final class Model {
           internalGetDetails(),
           DetailsDefaultEntryHolder.defaultEntry,
           9);
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -887,7 +770,7 @@ public final class Model {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(9, details__);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -920,7 +803,7 @@ public final class Model {
         .equals(other.getProfilesList())) return false;
       if (!internalGetDetails().equals(
         other.internalGetDetails())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -957,7 +840,7 @@ public final class Model {
         hash = (37 * hash) + DETAILS_FIELD_NUMBER;
         hash = (53 * hash) + internalGetDetails().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -1115,45 +998,35 @@ public final class Model {
 
       // Construct using org.beangle.security.session.protobuf.Model.Account.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
 
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-          .alwaysUseFieldBuilders) {
-          getProfilesFieldBuilder();
-        }
       }
 
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         name_ = "";
-
         description_ = "";
-
         categoryId_ = 0;
-
         remoteToken_ = "";
-
         status_ = 0;
-
-        authorities_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        permissions_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
+        authorities_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        permissions_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
         if (profilesBuilder_ == null) {
           profiles_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
+          profiles_ = null;
           profilesBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000080);
         internalGetMutableDetails().clear();
         return this;
       }
@@ -1181,35 +1054,55 @@ public final class Model {
       @java.lang.Override
       public org.beangle.security.session.protobuf.Model.Account buildPartial() {
         org.beangle.security.session.protobuf.Model.Account result = new org.beangle.security.session.protobuf.Model.Account(this);
-        int from_bitField0_ = bitField0_;
-        result.name_ = name_;
-        result.description_ = description_;
-        result.categoryId_ = categoryId_;
-        result.remoteToken_ = remoteToken_;
-        result.status_ = status_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          authorities_ = authorities_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) {
+          buildPartial0(result);
         }
-        result.authorities_ = authorities_;
-        if (((bitField0_ & 0x00000002) != 0)) {
-          permissions_ = permissions_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000002);
-        }
-        result.permissions_ = permissions_;
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(org.beangle.security.session.protobuf.Model.Account result) {
         if (profilesBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) != 0)) {
+          if (((bitField0_ & 0x00000080) != 0)) {
             profiles_ = java.util.Collections.unmodifiableList(profiles_);
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000080);
           }
           result.profiles_ = profiles_;
         } else {
           result.profiles_ = profilesBuilder_.build();
         }
-        result.details_ = internalGetDetails();
-        result.details_.makeImmutable();
-        onBuilt();
-        return result;
+      }
+
+      private void buildPartial0(org.beangle.security.session.protobuf.Model.Account result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.description_ = description_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.categoryId_ = categoryId_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.remoteToken_ = remoteToken_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.status_ = status_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          authorities_.makeImmutable();
+          result.authorities_ = authorities_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          permissions_.makeImmutable();
+          result.permissions_ = permissions_;
+        }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.details_ = internalGetDetails();
+          result.details_.makeImmutable();
+        }
       }
 
       @java.lang.Override
@@ -1264,10 +1157,12 @@ public final class Model {
         if (other == org.beangle.security.session.protobuf.Model.Account.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getDescription().isEmpty()) {
           description_ = other.description_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.getCategoryId() != 0) {
@@ -1275,6 +1170,7 @@ public final class Model {
         }
         if (!other.getRemoteToken().isEmpty()) {
           remoteToken_ = other.remoteToken_;
+          bitField0_ |= 0x00000008;
           onChanged();
         }
         if (other.getStatus() != 0) {
@@ -1283,7 +1179,7 @@ public final class Model {
         if (!other.authorities_.isEmpty()) {
           if (authorities_.isEmpty()) {
             authorities_ = other.authorities_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ |= 0x00000020;
           } else {
             ensureAuthoritiesIsMutable();
             authorities_.addAll(other.authorities_);
@@ -1293,7 +1189,7 @@ public final class Model {
         if (!other.permissions_.isEmpty()) {
           if (permissions_.isEmpty()) {
             permissions_ = other.permissions_;
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ |= 0x00000040;
           } else {
             ensurePermissionsIsMutable();
             permissions_.addAll(other.permissions_);
@@ -1304,7 +1200,7 @@ public final class Model {
           if (!other.profiles_.isEmpty()) {
             if (profiles_.isEmpty()) {
               profiles_ = other.profiles_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000080);
             } else {
               ensureProfilesIsMutable();
               profiles_.addAll(other.profiles_);
@@ -1317,7 +1213,7 @@ public final class Model {
               profilesBuilder_.dispose();
               profilesBuilder_ = null;
               profiles_ = other.profiles_;
-              bitField0_ = (bitField0_ & ~0x00000004);
+              bitField0_ = (bitField0_ & ~0x00000080);
               profilesBuilder_ =
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                   getProfilesFieldBuilder() : null;
@@ -1328,7 +1224,8 @@ public final class Model {
         }
         internalGetMutableDetails().mergeFrom(
           other.internalGetDetails());
-        this.mergeUnknownFields(other.unknownFields);
+        bitField0_ |= 0x00000100;
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -1343,17 +1240,89 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-        org.beangle.security.session.protobuf.Model.Account parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                description_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 24: {
+                categoryId_ = input.readInt32();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 34: {
+                remoteToken_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              case 40: {
+                status_ = input.readInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
+              case 50: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureAuthoritiesIsMutable();
+                authorities_.add(s);
+                break;
+              } // case 50
+              case 58: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensurePermissionsIsMutable();
+                permissions_.add(s);
+                break;
+              } // case 58
+              case 66: {
+                org.beangle.security.session.protobuf.Model.Profile m =
+                  input.readMessage(
+                    org.beangle.security.session.protobuf.Model.Profile.parser(),
+                    extensionRegistry);
+                if (profilesBuilder_ == null) {
+                  ensureProfilesIsMutable();
+                  profiles_.add(m);
+                } else {
+                  profilesBuilder_.addMessage(m);
+                }
+                break;
+              } // case 66
+              case 74: {
+                com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+                  details__ = input.readMessage(
+                  DetailsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableDetails().getMutableMap().put(
+                  details__.getKey(), details__.getValue());
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 74
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.session.protobuf.Model.Account) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
 
@@ -1409,8 +1378,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         name_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -1421,8 +1390,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearName() {
-
         name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -1439,8 +1408,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         name_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -1495,8 +1464,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         description_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -1507,8 +1476,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearDescription() {
-
         description_ = getDefaultInstance().getDescription();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -1525,8 +1494,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         description_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -1552,6 +1521,7 @@ public final class Model {
       public Builder setCategoryId(int value) {
 
         categoryId_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -1562,7 +1532,7 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearCategoryId() {
-
+        bitField0_ = (bitField0_ & ~0x00000004);
         categoryId_ = 0;
         onChanged();
         return this;
@@ -1618,8 +1588,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         remoteToken_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1630,8 +1600,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearRemoteToken() {
-
         remoteToken_ = getDefaultInstance().getRemoteToken();
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -1648,8 +1618,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         remoteToken_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1675,6 +1645,7 @@ public final class Model {
       public Builder setStatus(int value) {
 
         status_ = value;
+        bitField0_ |= 0x00000010;
         onChanged();
         return this;
       }
@@ -1685,19 +1656,20 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearStatus() {
-
+        bitField0_ = (bitField0_ & ~0x00000010);
         status_ = 0;
         onChanged();
         return this;
       }
 
-      private com.google.protobuf.LazyStringList authorities_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private com.google.protobuf.LazyStringArrayList authorities_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
 
       private void ensureAuthoritiesIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
+        if (!authorities_.isModifiable()) {
           authorities_ = new com.google.protobuf.LazyStringArrayList(authorities_);
-          bitField0_ |= 0x00000001;
         }
+        bitField0_ |= 0x00000020;
       }
 
       /**
@@ -1707,7 +1679,8 @@ public final class Model {
        */
       public com.google.protobuf.ProtocolStringList
       getAuthoritiesList() {
-        return authorities_.getUnmodifiableView();
+        authorities_.makeImmutable();
+        return authorities_;
       }
 
       /**
@@ -1754,6 +1727,7 @@ public final class Model {
         }
         ensureAuthoritiesIsMutable();
         authorities_.set(index, value);
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -1771,6 +1745,7 @@ public final class Model {
         }
         ensureAuthoritiesIsMutable();
         authorities_.add(value);
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -1786,6 +1761,7 @@ public final class Model {
         ensureAuthoritiesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
           values, authorities_);
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -1796,8 +1772,10 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearAuthorities() {
-        authorities_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        authorities_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        ;
         onChanged();
         return this;
       }
@@ -1816,17 +1794,19 @@ public final class Model {
         checkByteStringIsUtf8(value);
         ensureAuthoritiesIsMutable();
         authorities_.add(value);
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
 
-      private com.google.protobuf.LazyStringList permissions_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private com.google.protobuf.LazyStringArrayList permissions_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
 
       private void ensurePermissionsIsMutable() {
-        if (!((bitField0_ & 0x00000002) != 0)) {
+        if (!permissions_.isModifiable()) {
           permissions_ = new com.google.protobuf.LazyStringArrayList(permissions_);
-          bitField0_ |= 0x00000002;
         }
+        bitField0_ |= 0x00000040;
       }
 
       /**
@@ -1836,7 +1816,8 @@ public final class Model {
        */
       public com.google.protobuf.ProtocolStringList
       getPermissionsList() {
-        return permissions_.getUnmodifiableView();
+        permissions_.makeImmutable();
+        return permissions_;
       }
 
       /**
@@ -1883,6 +1864,7 @@ public final class Model {
         }
         ensurePermissionsIsMutable();
         permissions_.set(index, value);
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1900,6 +1882,7 @@ public final class Model {
         }
         ensurePermissionsIsMutable();
         permissions_.add(value);
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1915,6 +1898,7 @@ public final class Model {
         ensurePermissionsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
           values, permissions_);
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1925,8 +1909,10 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearPermissions() {
-        permissions_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
+        permissions_ =
+          com.google.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
+        ;
         onChanged();
         return this;
       }
@@ -1945,6 +1931,7 @@ public final class Model {
         checkByteStringIsUtf8(value);
         ensurePermissionsIsMutable();
         permissions_.add(value);
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1953,9 +1940,9 @@ public final class Model {
         java.util.Collections.emptyList();
 
       private void ensureProfilesIsMutable() {
-        if (!((bitField0_ & 0x00000004) != 0)) {
+        if (!((bitField0_ & 0x00000080) != 0)) {
           profiles_ = new java.util.ArrayList<org.beangle.security.session.protobuf.Model.Profile>(profiles_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000080;
         }
       }
 
@@ -2115,7 +2102,7 @@ public final class Model {
       public Builder clearProfiles() {
         if (profilesBuilder_ == null) {
           profiles_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000080);
           onChanged();
         } else {
           profilesBuilder_.clear();
@@ -2201,7 +2188,7 @@ public final class Model {
           profilesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             org.beangle.security.session.protobuf.Model.Profile, org.beangle.security.session.protobuf.Model.Profile.Builder, org.beangle.security.session.protobuf.Model.ProfileOrBuilder>(
             profiles_,
-            ((bitField0_ & 0x00000004) != 0),
+            ((bitField0_ & 0x00000080) != 0),
             getParentForChildren(),
             isClean());
           profiles_ = null;
@@ -2223,8 +2210,6 @@ public final class Model {
 
       private com.google.protobuf.MapField<java.lang.String, java.lang.String>
       internalGetMutableDetails() {
-        onChanged();
-        ;
         if (details_ == null) {
           details_ = com.google.protobuf.MapField.newMapField(
             DetailsDefaultEntryHolder.defaultEntry);
@@ -2232,6 +2217,8 @@ public final class Model {
         if (!details_.isMutable()) {
           details_ = details_.copy();
         }
+        bitField0_ |= 0x00000100;
+        onChanged();
         return details_;
       }
 
@@ -2242,7 +2229,6 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
-
       @java.lang.Override
       public boolean containsDetails(
         java.lang.String key) {
@@ -2265,7 +2251,6 @@ public final class Model {
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
       @java.lang.Override
-
       public java.util.Map<java.lang.String, java.lang.String> getDetailsMap() {
         return internalGetDetails().getMap();
       }
@@ -2274,9 +2259,10 @@ public final class Model {
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
       @java.lang.Override
-
-      public java.lang.String getDetailsOrDefault(
+      public /* nullable */
+      java.lang.String getDetailsOrDefault(
         java.lang.String key,
+        /* nullable */
         java.lang.String defaultValue) {
         if (key == null) {
           throw new NullPointerException("map key");
@@ -2290,7 +2276,6 @@ public final class Model {
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
       @java.lang.Override
-
       public java.lang.String getDetailsOrThrow(
         java.lang.String key) {
         if (key == null) {
@@ -2305,6 +2290,7 @@ public final class Model {
       }
 
       public Builder clearDetails() {
+        bitField0_ = (bitField0_ & ~0x00000100);
         internalGetMutableDetails().getMutableMap()
           .clear();
         return this;
@@ -2313,7 +2299,6 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
-
       public Builder removeDetails(
         java.lang.String key) {
         if (key == null) {
@@ -2330,6 +2315,7 @@ public final class Model {
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String>
       getMutableDetails() {
+        bitField0_ |= 0x00000100;
         return internalGetMutableDetails().getMutableMap();
       }
 
@@ -2345,20 +2331,20 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException("map value");
         }
-
         internalGetMutableDetails().getMutableMap()
           .put(key, value);
+        bitField0_ |= 0x00000100;
         return this;
       }
 
       /**
        * <code>map&lt;string, string&gt; details = 9;</code>
        */
-
       public Builder putAllDetails(
         java.util.Map<java.lang.String, java.lang.String> values) {
         internalGetMutableDetails().getMutableMap()
           .putAll(values);
+        bitField0_ |= 0x00000100;
         return this;
       }
 
@@ -2396,7 +2382,18 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Account(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -2493,70 +2490,6 @@ public final class Model {
       return new Agent();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-
-    private Agent(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              name_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              ip_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              os_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
       return org.beangle.security.session.protobuf.Model.internal_static_Agent_descriptor;
@@ -2571,7 +2504,8 @@ public final class Model {
     }
 
     public static final int NAME_FIELD_NUMBER = 1;
-    private volatile java.lang.Object name_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
 
     /**
      * <code>string name = 1;</code>
@@ -2613,7 +2547,8 @@ public final class Model {
     }
 
     public static final int IP_FIELD_NUMBER = 2;
-    private volatile java.lang.Object ip_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object ip_ = "";
 
     /**
      * <code>string ip = 2;</code>
@@ -2655,7 +2590,8 @@ public final class Model {
     }
 
     public static final int OS_FIELD_NUMBER = 3;
-    private volatile java.lang.Object os_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object os_ = "";
 
     /**
      * <code>string os = 3;</code>
@@ -2720,7 +2656,7 @@ public final class Model {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(os_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, os_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -2738,7 +2674,7 @@ public final class Model {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(os_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, os_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -2759,7 +2695,7 @@ public final class Model {
         .equals(other.getIp())) return false;
       if (!getOs()
         .equals(other.getOs())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -2776,7 +2712,7 @@ public final class Model {
       hash = (53 * hash) + getIp().hashCode();
       hash = (37 * hash) + OS_FIELD_NUMBER;
       hash = (53 * hash) + getOs().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -2910,30 +2846,22 @@ public final class Model {
 
       // Construct using org.beangle.security.session.protobuf.Model.Agent.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
 
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-          .alwaysUseFieldBuilders) {
-        }
       }
 
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         name_ = "";
-
         ip_ = "";
-
         os_ = "";
-
         return this;
       }
 
@@ -2960,11 +2888,24 @@ public final class Model {
       @java.lang.Override
       public org.beangle.security.session.protobuf.Model.Agent buildPartial() {
         org.beangle.security.session.protobuf.Model.Agent result = new org.beangle.security.session.protobuf.Model.Agent(this);
-        result.name_ = name_;
-        result.ip_ = ip_;
-        result.os_ = os_;
+        if (bitField0_ != 0) {
+          buildPartial0(result);
+        }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(org.beangle.security.session.protobuf.Model.Agent result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.ip_ = ip_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.os_ = os_;
+        }
       }
 
       @java.lang.Override
@@ -3019,17 +2960,20 @@ public final class Model {
         if (other == org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance()) return this;
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getIp().isEmpty()) {
           ip_ = other.ip_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getOs().isEmpty()) {
           os_ = other.os_;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -3044,19 +2988,49 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-        org.beangle.security.session.protobuf.Model.Agent parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                ip_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                os_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.session.protobuf.Model.Agent) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+
+      private int bitField0_;
 
       private java.lang.Object name_ = "";
 
@@ -3108,8 +3082,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         name_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -3120,8 +3094,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearName() {
-
         name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -3138,8 +3112,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         name_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -3194,8 +3168,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         ip_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -3206,8 +3180,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearIp() {
-
         ip_ = getDefaultInstance().getIp();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -3224,8 +3198,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         ip_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -3280,8 +3254,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         os_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -3292,8 +3266,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearOs() {
-
         os_ = getDefaultInstance().getOs();
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -3310,8 +3284,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         os_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -3350,7 +3324,18 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Agent(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -3474,99 +3459,6 @@ public final class Model {
       return new Session();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-
-    private Session(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              id_ = s;
-              break;
-            }
-            case 18: {
-              org.beangle.security.session.protobuf.Model.Account.Builder subBuilder = null;
-              if (principal_ != null) {
-                subBuilder = principal_.toBuilder();
-              }
-              principal_ = input.readMessage(org.beangle.security.session.protobuf.Model.Account.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(principal_);
-                principal_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 24: {
-
-              loginAt_ = input.readInt64();
-              break;
-            }
-            case 32: {
-
-              lastAccessAt_ = input.readInt64();
-              break;
-            }
-            case 42: {
-              org.beangle.security.session.protobuf.Model.Agent.Builder subBuilder = null;
-              if (agent_ != null) {
-                subBuilder = agent_.toBuilder();
-              }
-              agent_ = input.readMessage(org.beangle.security.session.protobuf.Model.Agent.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(agent_);
-                agent_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 48: {
-
-              ttiSeconds_ = input.readInt32();
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
       return org.beangle.security.session.protobuf.Model.internal_static_Session_descriptor;
@@ -3581,7 +3473,8 @@ public final class Model {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object id_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object id_ = "";
 
     /**
      * <code>string id = 1;</code>
@@ -3650,11 +3543,11 @@ public final class Model {
      */
     @java.lang.Override
     public org.beangle.security.session.protobuf.Model.AccountOrBuilder getPrincipalOrBuilder() {
-      return getPrincipal();
+      return principal_ == null ? org.beangle.security.session.protobuf.Model.Account.getDefaultInstance() : principal_;
     }
 
     public static final int LOGINAT_FIELD_NUMBER = 3;
-    private long loginAt_;
+    private long loginAt_ = 0L;
 
     /**
      * <code>int64 loginAt = 3;</code>
@@ -3667,7 +3560,7 @@ public final class Model {
     }
 
     public static final int LASTACCESSAT_FIELD_NUMBER = 4;
-    private long lastAccessAt_;
+    private long lastAccessAt_ = 0L;
 
     /**
      * <code>int64 lastAccessAt = 4;</code>
@@ -3707,11 +3600,11 @@ public final class Model {
      */
     @java.lang.Override
     public org.beangle.security.session.protobuf.Model.AgentOrBuilder getAgentOrBuilder() {
-      return getAgent();
+      return agent_ == null ? org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance() : agent_;
     }
 
     public static final int TTISECONDS_FIELD_NUMBER = 6;
-    private int ttiSeconds_;
+    private int ttiSeconds_ = 0;
 
     /**
      * <code>int32 ttiSeconds = 6;</code>
@@ -3756,7 +3649,7 @@ public final class Model {
       if (ttiSeconds_ != 0) {
         output.writeInt32(6, ttiSeconds_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -3788,7 +3681,7 @@ public final class Model {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, ttiSeconds_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -3821,7 +3714,7 @@ public final class Model {
       }
       if (getTtiSeconds()
         != other.getTtiSeconds()) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -3850,7 +3743,7 @@ public final class Model {
       }
       hash = (37 * hash) + TTISECONDS_FIELD_NUMBER;
       hash = (53 * hash) + getTtiSeconds();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -3984,44 +3877,33 @@ public final class Model {
 
       // Construct using org.beangle.security.session.protobuf.Model.Session.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
 
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-          .alwaysUseFieldBuilders) {
-        }
       }
 
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         id_ = "";
-
-        if (principalBuilder_ == null) {
-          principal_ = null;
-        } else {
-          principal_ = null;
+        principal_ = null;
+        if (principalBuilder_ != null) {
+          principalBuilder_.dispose();
           principalBuilder_ = null;
         }
         loginAt_ = 0L;
-
         lastAccessAt_ = 0L;
-
-        if (agentBuilder_ == null) {
-          agent_ = null;
-        } else {
-          agent_ = null;
+        agent_ = null;
+        if (agentBuilder_ != null) {
+          agentBuilder_.dispose();
           agentBuilder_ = null;
         }
         ttiSeconds_ = 0;
-
         return this;
       }
 
@@ -4048,22 +3930,37 @@ public final class Model {
       @java.lang.Override
       public org.beangle.security.session.protobuf.Model.Session buildPartial() {
         org.beangle.security.session.protobuf.Model.Session result = new org.beangle.security.session.protobuf.Model.Session(this);
-        result.id_ = id_;
-        if (principalBuilder_ == null) {
-          result.principal_ = principal_;
-        } else {
-          result.principal_ = principalBuilder_.build();
+        if (bitField0_ != 0) {
+          buildPartial0(result);
         }
-        result.loginAt_ = loginAt_;
-        result.lastAccessAt_ = lastAccessAt_;
-        if (agentBuilder_ == null) {
-          result.agent_ = agent_;
-        } else {
-          result.agent_ = agentBuilder_.build();
-        }
-        result.ttiSeconds_ = ttiSeconds_;
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(org.beangle.security.session.protobuf.Model.Session result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.principal_ = principalBuilder_ == null
+            ? principal_
+            : principalBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.loginAt_ = loginAt_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.lastAccessAt_ = lastAccessAt_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.agent_ = agentBuilder_ == null
+            ? agent_
+            : agentBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.ttiSeconds_ = ttiSeconds_;
+        }
       }
 
       @java.lang.Override
@@ -4118,6 +4015,7 @@ public final class Model {
         if (other == org.beangle.security.session.protobuf.Model.Session.getDefaultInstance()) return this;
         if (!other.getId().isEmpty()) {
           id_ = other.id_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (other.hasPrincipal()) {
@@ -4135,7 +4033,7 @@ public final class Model {
         if (other.getTtiSeconds() != 0) {
           setTtiSeconds(other.getTtiSeconds());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -4150,19 +4048,68 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-        org.beangle.security.session.protobuf.Model.Session parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                id_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                input.readMessage(
+                  getPrincipalFieldBuilder().getBuilder(),
+                  extensionRegistry);
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 24: {
+                loginAt_ = input.readInt64();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 32: {
+                lastAccessAt_ = input.readInt64();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              case 42: {
+                input.readMessage(
+                  getAgentFieldBuilder().getBuilder(),
+                  extensionRegistry);
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
+              case 48: {
+                ttiSeconds_ = input.readInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.session.protobuf.Model.Session) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+
+      private int bitField0_;
 
       private java.lang.Object id_ = "";
 
@@ -4214,8 +4161,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         id_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -4226,8 +4173,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearId() {
-
         id_ = getDefaultInstance().getId();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -4244,8 +4191,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         id_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -4260,7 +4207,7 @@ public final class Model {
        * @return Whether the principal field is set.
        */
       public boolean hasPrincipal() {
-        return principalBuilder_ != null || principal_ != null;
+        return ((bitField0_ & 0x00000002) != 0);
       }
 
       /**
@@ -4285,11 +4232,11 @@ public final class Model {
             throw new NullPointerException();
           }
           principal_ = value;
-          onChanged();
         } else {
           principalBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
 
@@ -4300,11 +4247,11 @@ public final class Model {
         org.beangle.security.session.protobuf.Model.Account.Builder builderForValue) {
         if (principalBuilder_ == null) {
           principal_ = builderForValue.build();
-          onChanged();
         } else {
           principalBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
 
@@ -4313,17 +4260,18 @@ public final class Model {
        */
       public Builder mergePrincipal(org.beangle.security.session.protobuf.Model.Account value) {
         if (principalBuilder_ == null) {
-          if (principal_ != null) {
-            principal_ =
-              org.beangle.security.session.protobuf.Model.Account.newBuilder(principal_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000002) != 0) &&
+            principal_ != null &&
+            principal_ != org.beangle.security.session.protobuf.Model.Account.getDefaultInstance()) {
+            getPrincipalBuilder().mergeFrom(value);
           } else {
             principal_ = value;
           }
-          onChanged();
         } else {
           principalBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
 
@@ -4331,14 +4279,13 @@ public final class Model {
        * <code>.Account principal = 2;</code>
        */
       public Builder clearPrincipal() {
-        if (principalBuilder_ == null) {
-          principal_ = null;
-          onChanged();
-        } else {
-          principal_ = null;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        principal_ = null;
+        if (principalBuilder_ != null) {
+          principalBuilder_.dispose();
           principalBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
 
@@ -4346,7 +4293,7 @@ public final class Model {
        * <code>.Account principal = 2;</code>
        */
       public org.beangle.security.session.protobuf.Model.Account.Builder getPrincipalBuilder() {
-
+        bitField0_ |= 0x00000002;
         onChanged();
         return getPrincipalFieldBuilder().getBuilder();
       }
@@ -4401,6 +4348,7 @@ public final class Model {
       public Builder setLoginAt(long value) {
 
         loginAt_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -4411,7 +4359,7 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearLoginAt() {
-
+        bitField0_ = (bitField0_ & ~0x00000004);
         loginAt_ = 0L;
         onChanged();
         return this;
@@ -4438,6 +4386,7 @@ public final class Model {
       public Builder setLastAccessAt(long value) {
 
         lastAccessAt_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -4448,7 +4397,7 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearLastAccessAt() {
-
+        bitField0_ = (bitField0_ & ~0x00000008);
         lastAccessAt_ = 0L;
         onChanged();
         return this;
@@ -4464,7 +4413,7 @@ public final class Model {
        * @return Whether the agent field is set.
        */
       public boolean hasAgent() {
-        return agentBuilder_ != null || agent_ != null;
+        return ((bitField0_ & 0x00000010) != 0);
       }
 
       /**
@@ -4489,11 +4438,11 @@ public final class Model {
             throw new NullPointerException();
           }
           agent_ = value;
-          onChanged();
         } else {
           agentBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
 
@@ -4504,11 +4453,11 @@ public final class Model {
         org.beangle.security.session.protobuf.Model.Agent.Builder builderForValue) {
         if (agentBuilder_ == null) {
           agent_ = builderForValue.build();
-          onChanged();
         } else {
           agentBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
 
@@ -4517,17 +4466,18 @@ public final class Model {
        */
       public Builder mergeAgent(org.beangle.security.session.protobuf.Model.Agent value) {
         if (agentBuilder_ == null) {
-          if (agent_ != null) {
-            agent_ =
-              org.beangle.security.session.protobuf.Model.Agent.newBuilder(agent_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000010) != 0) &&
+            agent_ != null &&
+            agent_ != org.beangle.security.session.protobuf.Model.Agent.getDefaultInstance()) {
+            getAgentBuilder().mergeFrom(value);
           } else {
             agent_ = value;
           }
-          onChanged();
         } else {
           agentBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
 
@@ -4535,14 +4485,13 @@ public final class Model {
        * <code>.Agent agent = 5;</code>
        */
       public Builder clearAgent() {
-        if (agentBuilder_ == null) {
-          agent_ = null;
-          onChanged();
-        } else {
-          agent_ = null;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        agent_ = null;
+        if (agentBuilder_ != null) {
+          agentBuilder_.dispose();
           agentBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
 
@@ -4550,7 +4499,7 @@ public final class Model {
        * <code>.Agent agent = 5;</code>
        */
       public org.beangle.security.session.protobuf.Model.Agent.Builder getAgentBuilder() {
-
+        bitField0_ |= 0x00000010;
         onChanged();
         return getAgentFieldBuilder().getBuilder();
       }
@@ -4605,6 +4554,7 @@ public final class Model {
       public Builder setTtiSeconds(int value) {
 
         ttiSeconds_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -4615,7 +4565,7 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearTtiSeconds() {
-
+        bitField0_ = (bitField0_ & ~0x00000020);
         ttiSeconds_ = 0;
         onChanged();
         return this;
@@ -4655,7 +4605,18 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Session(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
@@ -4728,7 +4689,6 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
-
     /* nullable */
     java.lang.String getPropertiesOrDefault(
       java.lang.String key,
@@ -4738,7 +4698,6 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
-
     java.lang.String getPropertiesOrThrow(
       java.lang.String key);
   }
@@ -4768,77 +4727,6 @@ public final class Model {
       return new Profile();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-
-    private Profile(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 8: {
-
-              id_ = input.readInt64();
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              name_ = s;
-              break;
-            }
-            case 26: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                properties_ = com.google.protobuf.MapField.newMapField(
-                  PropertiesDefaultEntryHolder.defaultEntry);
-                mutable_bitField0_ |= 0x00000001;
-              }
-              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
-                properties__ = input.readMessage(
-                PropertiesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
-              properties_.getMutableMap().put(
-                properties__.getKey(), properties__.getValue());
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
       return org.beangle.security.session.protobuf.Model.internal_static_Profile_descriptor;
@@ -4866,7 +4754,7 @@ public final class Model {
     }
 
     public static final int ID_FIELD_NUMBER = 1;
-    private long id_;
+    private long id_ = 0L;
 
     /**
      * <code>int64 id = 1;</code>
@@ -4879,7 +4767,8 @@ public final class Model {
     }
 
     public static final int NAME_FIELD_NUMBER = 2;
-    private volatile java.lang.Object name_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object name_ = "";
 
     /**
      * <code>string name = 2;</code>
@@ -4934,6 +4823,7 @@ public final class Model {
             "");
     }
 
+    @SuppressWarnings("serial")
     private com.google.protobuf.MapField<
       java.lang.String, java.lang.String> properties_;
 
@@ -4953,7 +4843,6 @@ public final class Model {
     /**
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
-
     @java.lang.Override
     public boolean containsProperties(
       java.lang.String key) {
@@ -4976,7 +4865,6 @@ public final class Model {
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
     @java.lang.Override
-
     public java.util.Map<java.lang.String, java.lang.String> getPropertiesMap() {
       return internalGetProperties().getMap();
     }
@@ -4985,9 +4873,10 @@ public final class Model {
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
     @java.lang.Override
-
-    public java.lang.String getPropertiesOrDefault(
+    public /* nullable */
+    java.lang.String getPropertiesOrDefault(
       java.lang.String key,
+      /* nullable */
       java.lang.String defaultValue) {
       if (key == null) {
         throw new NullPointerException("map key");
@@ -5001,7 +4890,6 @@ public final class Model {
      * <code>map&lt;string, string&gt; properties = 3;</code>
      */
     @java.lang.Override
-
     public java.lang.String getPropertiesOrThrow(
       java.lang.String key) {
       if (key == null) {
@@ -5042,7 +4930,7 @@ public final class Model {
           internalGetProperties(),
           PropertiesDefaultEntryHolder.defaultEntry,
           3);
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -5068,7 +4956,7 @@ public final class Model {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, properties__);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -5089,7 +4977,7 @@ public final class Model {
         .equals(other.getName())) return false;
       if (!internalGetProperties().equals(
         other.internalGetProperties())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -5109,7 +4997,7 @@ public final class Model {
         hash = (37 * hash) + PROPERTIES_FIELD_NUMBER;
         hash = (53 * hash) + internalGetProperties().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -5267,28 +5155,21 @@ public final class Model {
 
       // Construct using org.beangle.security.session.protobuf.Model.Profile.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
 
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-          .alwaysUseFieldBuilders) {
-        }
       }
 
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         id_ = 0L;
-
         name_ = "";
-
         internalGetMutableProperties().clear();
         return this;
       }
@@ -5316,13 +5197,25 @@ public final class Model {
       @java.lang.Override
       public org.beangle.security.session.protobuf.Model.Profile buildPartial() {
         org.beangle.security.session.protobuf.Model.Profile result = new org.beangle.security.session.protobuf.Model.Profile(this);
-        int from_bitField0_ = bitField0_;
-        result.id_ = id_;
-        result.name_ = name_;
-        result.properties_ = internalGetProperties();
-        result.properties_.makeImmutable();
+        if (bitField0_ != 0) {
+          buildPartial0(result);
+        }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(org.beangle.security.session.protobuf.Model.Profile result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.id_ = id_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.name_ = name_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.properties_ = internalGetProperties();
+          result.properties_.makeImmutable();
+        }
       }
 
       @java.lang.Override
@@ -5380,11 +5273,13 @@ public final class Model {
         }
         if (!other.getName().isEmpty()) {
           name_ = other.name_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         internalGetMutableProperties().mergeFrom(
           other.internalGetProperties());
-        this.mergeUnknownFields(other.unknownFields);
+        bitField0_ |= 0x00000004;
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -5399,17 +5294,49 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-        org.beangle.security.session.protobuf.Model.Profile parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                id_ = input.readInt64();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                name_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+                  properties__ = input.readMessage(
+                  PropertiesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableProperties().getMutableMap().put(
+                  properties__.getKey(), properties__.getValue());
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.beangle.security.session.protobuf.Model.Profile) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
 
@@ -5436,6 +5363,7 @@ public final class Model {
       public Builder setId(long value) {
 
         id_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -5446,7 +5374,7 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearId() {
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         id_ = 0L;
         onChanged();
         return this;
@@ -5502,8 +5430,8 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException();
         }
-
         name_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -5514,8 +5442,8 @@ public final class Model {
        * @return This builder for chaining.
        */
       public Builder clearName() {
-
         name_ = getDefaultInstance().getName();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -5532,8 +5460,8 @@ public final class Model {
           throw new NullPointerException();
         }
         checkByteStringIsUtf8(value);
-
         name_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -5552,8 +5480,6 @@ public final class Model {
 
       private com.google.protobuf.MapField<java.lang.String, java.lang.String>
       internalGetMutableProperties() {
-        onChanged();
-        ;
         if (properties_ == null) {
           properties_ = com.google.protobuf.MapField.newMapField(
             PropertiesDefaultEntryHolder.defaultEntry);
@@ -5561,6 +5487,8 @@ public final class Model {
         if (!properties_.isMutable()) {
           properties_ = properties_.copy();
         }
+        bitField0_ |= 0x00000004;
+        onChanged();
         return properties_;
       }
 
@@ -5571,7 +5499,6 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
-
       @java.lang.Override
       public boolean containsProperties(
         java.lang.String key) {
@@ -5594,7 +5521,6 @@ public final class Model {
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
       @java.lang.Override
-
       public java.util.Map<java.lang.String, java.lang.String> getPropertiesMap() {
         return internalGetProperties().getMap();
       }
@@ -5603,9 +5529,10 @@ public final class Model {
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
       @java.lang.Override
-
-      public java.lang.String getPropertiesOrDefault(
+      public /* nullable */
+      java.lang.String getPropertiesOrDefault(
         java.lang.String key,
+        /* nullable */
         java.lang.String defaultValue) {
         if (key == null) {
           throw new NullPointerException("map key");
@@ -5619,7 +5546,6 @@ public final class Model {
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
       @java.lang.Override
-
       public java.lang.String getPropertiesOrThrow(
         java.lang.String key) {
         if (key == null) {
@@ -5634,6 +5560,7 @@ public final class Model {
       }
 
       public Builder clearProperties() {
+        bitField0_ = (bitField0_ & ~0x00000004);
         internalGetMutableProperties().getMutableMap()
           .clear();
         return this;
@@ -5642,7 +5569,6 @@ public final class Model {
       /**
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
-
       public Builder removeProperties(
         java.lang.String key) {
         if (key == null) {
@@ -5659,6 +5585,7 @@ public final class Model {
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String>
       getMutableProperties() {
+        bitField0_ |= 0x00000004;
         return internalGetMutableProperties().getMutableMap();
       }
 
@@ -5674,20 +5601,20 @@ public final class Model {
         if (value == null) {
           throw new NullPointerException("map value");
         }
-
         internalGetMutableProperties().getMutableMap()
           .put(key, value);
+        bitField0_ |= 0x00000004;
         return this;
       }
 
       /**
        * <code>map&lt;string, string&gt; properties = 3;</code>
        */
-
       public Builder putAllProperties(
         java.util.Map<java.lang.String, java.lang.String> values) {
         internalGetMutableProperties().getMutableMap()
           .putAll(values);
+        bitField0_ |= 0x00000004;
         return this;
       }
 
@@ -5725,7 +5652,18 @@ public final class Model {
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Profile(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 
