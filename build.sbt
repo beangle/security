@@ -24,7 +24,7 @@ ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
 val beangle_common_ver="5.5.3"
-val beangle_data_ver="5.6.17"
+val beangle_data_ver="5.6.19"
 val beangle_serializer_ver="0.1.4"
 val beangle_cache_ver="0.1.4"
 val beangle_web_ver="0.4.2"
@@ -38,7 +38,7 @@ val commonDeps = Seq(beangle_commons_core, logback_classic, logback_core, scalat
 
 lazy val root = (project in file("."))
   .settings()
-  .aggregate(core,cas,session,web)
+  .aggregate(core,sso,session,web)
 
 lazy val core = (project in file("core"))
   .settings(
@@ -61,9 +61,9 @@ lazy val web = (project in file("web"))
     libraryDependencies ++= (commonDeps ++ Seq(beangle_web_servlet))
   ).dependsOn(core)
 
-lazy val cas = (project in file("cas"))
+lazy val sso = (project in file("sso"))
   .settings(
-    name := "beangle-security-cas",
+    name := "beangle-security-sso",
     common,
     libraryDependencies ++= (commonDeps ++ Seq(mockito))
   ).dependsOn(web)

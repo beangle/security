@@ -33,7 +33,7 @@ trait TicketValidator {
 }
 
 /**
-  * Abstarct Ticket Validator
+  * Abstract Ticket Validator
   */
 abstract class AbstractTicketValidator extends TicketValidator with Logging {
 

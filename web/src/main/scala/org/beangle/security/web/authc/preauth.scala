@@ -60,18 +60,18 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
 
   protected def getCredential(req: HttpServletRequest): Option[Any]
 
-  protected def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken]
+  protected def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken]
 
   protected def requiresAuthentication(req: HttpServletRequest, res: HttpServletResponse): Option[PreauthToken] = {
     getCredential(req) match {
       case None => None
       case Some(newer) =>
         Securities.session match {
-          case None => resovleToken(req, res, newer)
+          case None => resolveToken(req, res, newer)
           case Some(s) =>
             s.principal.asInstanceOf[Account].remoteToken match {
-              case Some(token) => if (newer == token) None else resovleToken(req, res, newer)
-              case None => resovleToken(req, res, newer)
+              case Some(token) => if (newer == token) None else resolveToken(req, res, newer)
+              case None => resolveToken(req, res, newer)
             }
         }
     }
@@ -102,7 +102,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
 class UsernamePreauthFilter(securityManager: WebSecurityManager) extends AbstractPreauthFilter(securityManager) {
   var usernameSource: UsernameSource = _
 
-  protected override def resovleToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {
+  protected override def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {
     usernameSource.resolveUser(req, credential) match {
       case Some(username) => if (Strings.isNotBlank(username)) Some(new PreauthToken(username, credential)) else None
       case None => None
