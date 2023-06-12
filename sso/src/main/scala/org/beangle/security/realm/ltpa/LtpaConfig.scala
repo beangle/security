@@ -31,4 +31,10 @@ object LtpaConfig {
 
 class LtpaConfig(val server: String, val key: Array[Byte], val cookieName: String, val usernameDns: Array[String]) {
 
+  var loginUri = "/login.jsp"
+  var logoutUri = "/logout.jsp"
+
+  def loginUrl = server + loginUri
+
+  def logoutUrl = server + logoutUri
 }
