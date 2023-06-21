@@ -27,7 +27,8 @@ class LtpaPreauthFilter(config: LtpaConfig, ltpaTokenGenerator: LtpaTokenGenerat
   extends AbstractPreauthFilter(securityManager) {
 
   override protected def getCredential(req: HttpServletRequest): Option[Any] = {
-    Option(CookieUtils.getCookieValue(req, config.cookieName))
+    val c = CookieUtils.getCookie(req, config.cookieName)
+    if c == null then None else Option(c.getValue)
   }
 
   override protected def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {

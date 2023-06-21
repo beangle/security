@@ -28,7 +28,8 @@ import org.beangle.web.servlet.util.{CookieGenerator, CookieUtils}
 abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name) with SessionIdPolicy with Initializing {
 
   override def getId(request: HttpServletRequest, res: HttpServletResponse): Option[String] = {
-    Option(CookieUtils.getCookieValue(request, name))
+    val c = CookieUtils.getCookie(request, name)
+    if null == c then None else Some(c.getValue)
   }
 
   override def newId(request: HttpServletRequest, response: HttpServletResponse): String = {
