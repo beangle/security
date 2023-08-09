@@ -18,6 +18,7 @@
 package org.beangle.security.authz
 
 import org.beangle.commons.bean.Initializing
+import org.beangle.commons.security.Request
 import org.beangle.security.authc.Account
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.util.{SecurityDaemon, Task}
@@ -30,10 +31,10 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer with Initializing 
 
   var refreshSeconds: Int = 5 * 60
 
-  override def isPermitted(context: SecurityContext): Boolean = {
+  override def isPermitted(context: SecurityContext, request: Request): Boolean = {
     if (context.root) return true
 
-    val resourceName = context.request.resource.toString
+    val resourceName = request.resource.toString
     val raOption = domain.authorities.get(resourceName)
     raOption match {
       case None => if (unknownIsProtected) context.isValid else false

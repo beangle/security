@@ -17,17 +17,22 @@
 
 package org.beangle.security.authz
 
+import org.beangle.commons.security.Request
 import org.beangle.security.context.SecurityContext
 
 trait Authorizer {
 
-  def isPermitted(context: SecurityContext): Boolean
+  final def isPermitted(context: SecurityContext): Boolean = {
+    isPermitted(context, context.request)
+  }
+
+  def isPermitted(context: SecurityContext, request: Request): Boolean
 
   def isRoot(user: String): Boolean
 }
 
 object PublicAuthorizer extends Authorizer {
-  def isPermitted(context: SecurityContext): Boolean = {
+  def isPermitted(context: SecurityContext, request: Request): Boolean = {
     true
   }
 
@@ -37,7 +42,7 @@ object PublicAuthorizer extends Authorizer {
 }
 
 object ProtectedAuthorizer extends Authorizer {
-  def isPermitted(context: SecurityContext): Boolean = {
+  def isPermitted(context: SecurityContext, request: Request): Boolean = {
     context.isValid
   }
 
