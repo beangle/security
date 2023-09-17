@@ -2360,6 +2360,7 @@ public final class Model {
         return super.mergeUnknownFields(unknownFields);
       }
 
+
       // @@protoc_insertion_point(builder_scope:Account)
     }
 
@@ -3301,6 +3302,7 @@ public final class Model {
         return super.mergeUnknownFields(unknownFields);
       }
 
+
       // @@protoc_insertion_point(builder_scope:Agent)
     }
 
@@ -3470,6 +3472,7 @@ public final class Model {
           org.beangle.security.session.protobuf.Model.Session.class, org.beangle.security.session.protobuf.Model.Session.Builder.class);
     }
 
+    private int bitField0_;
     public static final int ID_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
     private volatile java.lang.Object id_ = "";
@@ -3523,7 +3526,7 @@ public final class Model {
      */
     @java.lang.Override
     public boolean hasPrincipal() {
-      return principal_ != null;
+      return ((bitField0_ & 0x00000001) != 0);
     }
 
     /**
@@ -3580,7 +3583,7 @@ public final class Model {
      */
     @java.lang.Override
     public boolean hasAgent() {
-      return agent_ != null;
+      return ((bitField0_ & 0x00000002) != 0);
     }
 
     /**
@@ -3632,7 +3635,7 @@ public final class Model {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, id_);
       }
-      if (principal_ != null) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeMessage(2, getPrincipal());
       }
       if (loginAt_ != 0L) {
@@ -3641,7 +3644,7 @@ public final class Model {
       if (lastAccessAt_ != 0L) {
         output.writeInt64(4, lastAccessAt_);
       }
-      if (agent_ != null) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         output.writeMessage(5, getAgent());
       }
       if (ttiSeconds_ != 0) {
@@ -3659,7 +3662,7 @@ public final class Model {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, id_);
       }
-      if (principal_ != null) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, getPrincipal());
       }
@@ -3671,7 +3674,7 @@ public final class Model {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(4, lastAccessAt_);
       }
-      if (agent_ != null) {
+      if (((bitField0_ & 0x00000002) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, getAgent());
       }
@@ -3875,13 +3878,21 @@ public final class Model {
 
       // Construct using org.beangle.security.session.protobuf.Model.Session.newBuilder()
       private Builder() {
-
+        maybeForceBuilderInitialization();
       }
 
       private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
+        maybeForceBuilderInitialization();
+      }
 
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+          .alwaysUseFieldBuilders) {
+          getPrincipalFieldBuilder();
+          getAgentFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -3940,10 +3951,12 @@ public final class Model {
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.id_ = id_;
         }
+        int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.principal_ = principalBuilder_ == null
             ? principal_
             : principalBuilder_.build();
+          to_bitField0_ |= 0x00000001;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
           result.loginAt_ = loginAt_;
@@ -3955,10 +3968,12 @@ public final class Model {
           result.agent_ = agentBuilder_ == null
             ? agent_
             : agentBuilder_.build();
+          to_bitField0_ |= 0x00000002;
         }
         if (((from_bitField0_ & 0x00000020) != 0)) {
           result.ttiSeconds_ = ttiSeconds_;
         }
+        result.bitField0_ |= to_bitField0_;
       }
 
       @java.lang.Override
@@ -4268,8 +4283,10 @@ public final class Model {
         } else {
           principalBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000002;
-        onChanged();
+        if (principal_ != null) {
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
         return this;
       }
 
@@ -4474,8 +4491,10 @@ public final class Model {
         } else {
           agentBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000010;
-        onChanged();
+        if (agent_ != null) {
+          bitField0_ |= 0x00000010;
+          onChanged();
+        }
         return this;
       }
 
@@ -4580,6 +4599,7 @@ public final class Model {
         final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:Session)
     }
@@ -5626,6 +5646,7 @@ public final class Model {
         final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.mergeUnknownFields(unknownFields);
       }
+
 
       // @@protoc_insertion_point(builder_scope:Profile)
     }
