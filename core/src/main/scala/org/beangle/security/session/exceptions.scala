@@ -22,6 +22,7 @@ import java.security.Principal
 import org.beangle.security.authc.AuthenticationException
 
 class SessionException(message: String, principal: Any) extends AuthenticationException(message, principal) {
+  override def breakable: Boolean = true
 }
 
 class SessionExpiredException(message: String, principal: Principal) extends SessionException(message, principal)

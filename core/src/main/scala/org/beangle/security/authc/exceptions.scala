@@ -22,6 +22,7 @@ import org.beangle.security.SecurityException
 
 /**
   * 认证异常
+  *
   * @author chaostone
   */
 @SerialVersionUID(-3529782031102169004L)
@@ -33,16 +34,29 @@ class AuthenticationException(message: String, val principal: Any, cause: Throwa
       Strings.concat("security." + Strings.substringBefore(getClass.getSimpleName, "Exception"))
     } else msg
   }
+
+  //should display exception to user
+  def breakable: Boolean = false
 }
 
 class BadCredentialException(message: String, token: AuthenticationToken, cause: Throwable)
   extends AuthenticationException(message, token, cause)
 
+class BadPreauthTokenException(message: String, token: Any, cause: Throwable)
+  extends AuthenticationException(message, token, cause) {
+
+  override def breakable: Boolean = true
+}
+
 @SerialVersionUID(1L)
 class UsernameNotFoundException(message: String, token: AuthenticationToken, cause: Throwable = null)
-  extends AuthenticationException(message, token, cause)
+  extends AuthenticationException(message, token, cause) {
+  override def breakable: Boolean = true
+}
 
-class AccountStatusException(message: String, token: AuthenticationToken) extends AuthenticationException(message, token, null)
+class AccountStatusException(message: String, token: AuthenticationToken) extends AuthenticationException(message, token, null) {
+  override def breakable: Boolean = true
+}
 
 class LockedException(message: String, token: AuthenticationToken) extends AccountStatusException(message, token)
 

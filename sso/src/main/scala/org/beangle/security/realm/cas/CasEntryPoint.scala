@@ -19,8 +19,7 @@ package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
-import org.beangle.security.authc.{AccountStatusException, AuthenticationException, UsernameNotFoundException}
-import org.beangle.security.session.SessionException
+import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.web.EntryPoint
 import org.beangle.security.web.session.SessionIdReader
 import org.beangle.web.servlet.url.UrlBuilder
@@ -41,8 +40,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
     Cas.cleanup(config, req, res)
-    if (null != ae && (ae.isInstanceOf[UsernameNotFoundException] || ae.isInstanceOf[AccountStatusException]
-      || ae.isInstanceOf[SessionException])) {
+    if (null != ae && ae.breakable) {
       res.setContentType("text/html; charset=utf-8")
       val writer = res.getWriter
       writer.append("<!DOCTYPE html>\n<html lang=\"zh_CN\">" +
@@ -99,8 +97,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   }
 
   /**
-   * Constructs the URL to use to redirect to the CAS server.
-   */
+    * Constructs the URL to use to redirect to the CAS server.
+    */
   def casLoginUrl(service: String, forceRemote: Boolean): String = {
     val loginUrl = config.loginUrl
     val sb = new StringBuilder(loginUrl)

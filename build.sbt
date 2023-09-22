@@ -24,7 +24,7 @@ ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
 val beangle_common_ver="5.6.0"
-val beangle_data_ver="5.7.0"
+val beangle_data_ver="5.7.2"
 val beangle_serializer_ver="0.1.5"
 val beangle_cache_ver="0.1.5"
 val beangle_web_ver="0.4.6"

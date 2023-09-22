@@ -18,22 +18,25 @@
 package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
-import org.beangle.security.authc.PreauthToken
-import org.beangle.security.realm.cas.CasConfig.getLocalServer
+import org.beangle.security.authc.{BadPreauthTokenException, PreauthToken}
 import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.authc.AbstractPreauthFilter
 
 /**
- * Processes a CAS service ticket.
- */
+  * Processes a CAS service ticket.
+  */
 class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, ticketValidator: TicketValidator)
   extends AbstractPreauthFilter(securityManager) {
 
   var casEntryPoint: CasEntryPoint = _
 
   protected override def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {
-    val url = casEntryPoint.serviceUrl(req)
-    Some(new PreauthToken(ticketValidator.validate(credential.toString, url), credential))
+    try {
+      val url = casEntryPoint.serviceUrl(req)
+      Some(new PreauthToken(ticketValidator.validate(credential.toString, url), credential))
+    } catch
+      case e: TicketValidationException => throw new BadPreauthTokenException("CAS票据验证失败，请关闭后，重新登录", credential, e)
+      case e: Throwable => throw e
   }
 
   protected[cas] override def getCredential(request: HttpServletRequest): Option[Any] = {
