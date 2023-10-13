@@ -64,10 +64,10 @@ object DefaultPasswordEncoder extends PasswordEncoder {
         if (digestContent.length == 32 && !digestContent.contains("=")) {
           split(Hex.decode(digestContent), size)
         } else {
-          split(Base64.decode(digestContent.toCharArray), size)
+          split(Base64.decode(digestContent), size)
         }
       } else {
-        split(Base64.decode(digestContent.toCharArray), size)
+        split(Base64.decode(digestContent), size)
       }
 
     msgDigest.reset()
