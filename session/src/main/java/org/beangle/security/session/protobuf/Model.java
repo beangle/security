@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protobuf Java Version: 3.25.1
 package org.beangle.security.session.protobuf;
 
 public final class Model {
@@ -27,8 +28,7 @@ public final class Model {
 
   public static void registerAllExtensions(
     com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-      (com.google.protobuf.ExtensionRegistryLite) registry);
+    registerAllExtensions((com.google.protobuf.ExtensionRegistryLite) registry);
   }
 
   public interface AccountOrBuilder extends
@@ -265,7 +265,7 @@ public final class Model {
 
     @SuppressWarnings({"rawtypes"})
     @java.lang.Override
-    protected com.google.protobuf.MapField internalGetMapField(
+    protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
       int number) {
       switch (number) {
         case 9:
@@ -965,7 +965,7 @@ public final class Model {
       }
 
       @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMapField(
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
         int number) {
         switch (number) {
           case 9:
@@ -977,7 +977,7 @@ public final class Model {
       }
 
       @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMutableMapField(
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
         int number) {
         switch (number) {
           case 9:
@@ -4748,7 +4748,7 @@ public final class Model {
 
     @SuppressWarnings({"rawtypes"})
     @java.lang.Override
-    protected com.google.protobuf.MapField internalGetMapField(
+    protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
       int number) {
       switch (number) {
         case 3:
@@ -5136,7 +5136,7 @@ public final class Model {
       }
 
       @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMapField(
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
         int number) {
         switch (number) {
           case 3:
@@ -5148,7 +5148,7 @@ public final class Model {
       }
 
       @SuppressWarnings({"rawtypes"})
-      protected com.google.protobuf.MapField internalGetMutableMapField(
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
         int number) {
         switch (number) {
           case 3:
