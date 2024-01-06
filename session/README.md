@@ -1,3 +1,5 @@
 ## generate session's protobuf file
 
-    ~/protoc-24.3/bin/protoc  --java_out=src/main/java -Isrc/main/resources src/main/resources/org/beangle/security/session/protobuf/model.proto
+    wget -x -P ~/bin/ https://repo.maven.apache.org/maven2/com/google/protobuf/protoc/3.25.1/protoc-3.25.1-linux-x86_64.exe
+
+    ~/bin/protoc-3.25.1-linux-x86_64.exe  --java_out=src/main/java -Isrc/main/resources src/main/resources/org/beangle/security/session/protobuf/model.proto
