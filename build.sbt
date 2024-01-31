@@ -2,7 +2,7 @@ import org.beangle.parent.Dependencies._
 import org.beangle.parent.Settings._
 
 ThisBuild / organization := "org.beangle.security"
-ThisBuild / version := "4.3.16-SNAPSHOT"
+ThisBuild / version := "4.3.16"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -23,11 +23,11 @@ ThisBuild / developers := List(
 ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
-val beangle_common_ver="5.6.8"
-val beangle_data_ver="5.7.11"
-val beangle_web_ver="0.4.9"
-val beangle_serializer_ver="0.1.7"
-val beangle_cache_ver="0.1.6"
+val beangle_common_ver="5.6.10"
+val beangle_data_ver="5.8.0"
+val beangle_web_ver="0.4.10"
+val beangle_serializer_ver="0.1.8"
+val beangle_cache_ver="0.1.7"
 val beangle_commons_core = "org.beangle.commons" %% "beangle-commons-core" % beangle_common_ver
 val beangle_data_jdbc = "org.beangle.data" %% "beangle-data-jdbc" % beangle_data_ver
 val beangle_serializer_protobuf = "org.beangle.serializer"  %% "beangle-serializer-protobuf" % beangle_serializer_ver
