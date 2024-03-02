@@ -19,10 +19,10 @@ package org.beangle.security.session.cache
 
 import org.beangle.cache.CacheManager
 import org.beangle.commons.bean.Initializing
+import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.logging.Logging
 import org.beangle.security.session.util.UpdateDelayGenerator
 import org.beangle.security.session.{Session, SessionRepo}
-import org.beangle.security.util.SecurityDaemon
 
 import java.time.Instant
 
@@ -46,7 +46,7 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager)
   var flushInterval: Int = 3 * 60
 
   override def init(): Unit = {
-    SecurityDaemon.start("Beangle Session", flushInterval, this.accessReporter)
+    Timers.start("Beangle Session", flushInterval, this.accessReporter)
   }
 
   override def get(sessionId: String, refresh: Boolean = false): Option[Session] = {

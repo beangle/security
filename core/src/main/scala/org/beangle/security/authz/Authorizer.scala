@@ -17,10 +17,11 @@
 
 package org.beangle.security.authz
 
+import org.beangle.commons.bean.Refreshable
 import org.beangle.commons.security.Request
 import org.beangle.security.context.SecurityContext
 
-trait Authorizer {
+trait Authorizer extends Refreshable {
 
   final def isPermitted(context: SecurityContext): Boolean = {
     isPermitted(context, context.request)
@@ -29,6 +30,7 @@ trait Authorizer {
   def isPermitted(context: SecurityContext, request: Request): Boolean
 
   def isRoot(user: String): Boolean
+
 }
 
 object PublicAuthorizer extends Authorizer {
@@ -39,6 +41,8 @@ object PublicAuthorizer extends Authorizer {
   def isRoot(user: String): Boolean = {
     false
   }
+
+  override def refresh(): Unit = {}
 }
 
 object ProtectedAuthorizer extends Authorizer {
@@ -49,4 +53,6 @@ object ProtectedAuthorizer extends Authorizer {
   def isRoot(user: String): Boolean = {
     false
   }
+
+  override def refresh(): Unit = {}
 }

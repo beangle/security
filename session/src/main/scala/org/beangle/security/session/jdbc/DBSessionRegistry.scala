@@ -19,15 +19,14 @@ package org.beangle.security.session.jdbc
 
 import java.sql.{Timestamp, Types}
 import java.time.Instant
-
 import javax.sql.DataSource
 import org.beangle.cache.CacheManager
+import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
 import org.beangle.data.jdbc.query.ParamSetter
 import org.beangle.security.authc.Account
-import org.beangle.security.session._
-import org.beangle.security.util.SecurityDaemon
+import org.beangle.security.session.*
 
 /** 基于数据库的session注册表
   * 使用数据库的$sessionTable表
@@ -40,7 +39,7 @@ class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, 
 
   override def init(): Unit = {
     super.init()
-    SecurityDaemon.start("Beangle Session", flushInterval, accessReporter, new DBSessionCleaner(this))
+    Timers.start("Beangle Session", flushInterval, accessReporter, new DBSessionCleaner(this))
   }
 
   override def register(sessionId: String, info: Account, agent: Session.Agent, profile: SessionProfile): Session = {

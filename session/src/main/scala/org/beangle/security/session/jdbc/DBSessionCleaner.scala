@@ -19,7 +19,6 @@ package org.beangle.security.session.jdbc
 
 import org.beangle.commons.lang.time.Stopwatch
 import org.beangle.commons.logging.Logging
-import org.beangle.security.util.Task
 
 /** Database session registry cleaner.
   * <ul>
@@ -28,9 +27,9 @@ import org.beangle.security.util.Task
   * </ul>
   * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple deployed.
   */
-class DBSessionCleaner(val registry: DBSessionRegistry) extends Logging with Task {
+class DBSessionCleaner(val registry: DBSessionRegistry) extends Logging with Runnable {
 
-  def run(): Unit = {
+  override def run(): Unit = {
     val watch = new Stopwatch(true)
     logger.debug("starting clean up over expired time sessions ...")
     try {

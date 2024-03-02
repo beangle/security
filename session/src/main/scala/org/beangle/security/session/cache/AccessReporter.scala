@@ -17,18 +17,17 @@
 
 package org.beangle.security.session.cache
 
-import java.time.Instant
-import java.util.concurrent.ConcurrentHashMap
-
 import org.beangle.cache.Cache
 import org.beangle.commons.collection.Collections
 import org.beangle.security.session.Session
-import org.beangle.security.util.Task
+
+import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Report heartbeat.
- */
-class AccessReporter(sessions: Cache[String, Session], repo: CacheSessionRepo) extends Task {
+  * Report heartbeat.
+  */
+class AccessReporter(sessions: Cache[String, Session], repo: CacheSessionRepo) extends Runnable {
 
   private var lastReportAt: Instant = Instant.now
 
@@ -38,7 +37,7 @@ class AccessReporter(sessions: Cache[String, Session], repo: CacheSessionRepo) e
     sessionIds.put(sessionId, accessAt)
   }
 
-  def run(): Unit = {
+  override def run(): Unit = {
     val last = lastReportAt
     lastReportAt = Instant.now
     val expired = Collections.newBuffer[String]
