@@ -29,7 +29,7 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
 
   var unknownIsProtected: Boolean = true
 
-  var refreshSeconds: Int = 0 * 60
+  var refreshSeconds: Int = 5 * 60
 
   override def isPermitted(context: SecurityContext, request: Request): Boolean = {
     if (context.root) return true
@@ -54,6 +54,7 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
 
   override def init(): Unit = {
     if refreshSeconds > 0 then Timers.start("Beangle Authority Refresh", refreshSeconds, new DomainFetcher(this))
+    else Timers.setTimeout(3, () => refresh()) //refresh domain background
   }
 
   override def isRoot(user: String): Boolean = {
