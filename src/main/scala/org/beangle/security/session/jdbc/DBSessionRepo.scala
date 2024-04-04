@@ -25,7 +25,7 @@ import org.beangle.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer
-import org.beangle.data.jdbc.query.JdbcExecutor
+import org.beangle.jdbc.query.JdbcExecutor
 import org.beangle.security.session._
 import org.beangle.security.session.cache.CacheSessionRepo
 

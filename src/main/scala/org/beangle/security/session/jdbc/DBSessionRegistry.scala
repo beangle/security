@@ -17,20 +17,21 @@
 
 package org.beangle.security.session.jdbc
 
-import java.sql.{Timestamp, Types}
-import java.time.Instant
-import javax.sql.DataSource
 import org.beangle.cache.CacheManager
 import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
-import org.beangle.data.jdbc.query.ParamSetter
+import org.beangle.jdbc.query.ParamSetter
 import org.beangle.security.authc.Account
 import org.beangle.security.session.*
 
+import java.sql.{Timestamp, Types}
+import java.time.Instant
+import javax.sql.DataSource
+
 /** 基于数据库的session注册表
-  * 使用数据库的$sessionTable表
-  */
+ * 使用数据库的$sessionTable表
+ */
 class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
   extends DBSessionRepo(domainProvider, dataSource, cacheManager, serializer)
     with SessionRegistry {
