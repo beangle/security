@@ -1,7 +1,7 @@
 security
 ========
 
-Beangle Security Framework
+Beangle Security Library
 
 
 ## generate session's protobuf file
