@@ -17,12 +17,13 @@
 
 package org.beangle.security.realm.cas
 
-import java.net.{MalformedURLException, URL, URLEncoder}
-import java.nio.charset.Charset
-
 import org.beangle.commons.lang.Charsets
 import org.beangle.commons.logging.Logging
+import org.beangle.commons.net.Networks
 import org.beangle.commons.net.http.{HttpMethods, HttpUtils}
+
+import java.net.{MalformedURLException, URL, URLEncoder}
+import java.nio.charset.Charset
 
 class TicketValidationException(message: String) extends Exception(message)
 
@@ -33,8 +34,8 @@ trait TicketValidator {
 }
 
 /**
-  * Abstract Ticket Validator
-  */
+ * Abstract Ticket Validator
+ */
 abstract class AbstractTicketValidator extends TicketValidator with Logging {
 
   var config: CasConfig = _
@@ -45,16 +46,16 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   var customParameters: Map[String, String] = _
 
   /**
-    * Template method for ticket validators that need to provide additional parameters to the
-    * validation url.
-    */
+   * Template method for ticket validators that need to provide additional parameters to the
+   * validation url.
+   */
   protected def populateUrlAttributeMap(urlParameters: collection.mutable.Map[String, String]): Unit = {
     // nothing to do
   }
 
   /**
-    * Constructs the URL to send the validation request to.
-    */
+   * Constructs the URL to send the validation request to.
+   */
   protected final def constructValidationUrl(ticket: String, serviceUrl: String): String = {
     val urlParameters = new collection.mutable.HashMap[String, String]
     urlParameters.put("ticket", ticket)
@@ -80,8 +81,8 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   }
 
   /**
-    * Encodes a URL using the URLEncoder format.
-    */
+   * Encodes a URL using the URLEncoder format.
+   */
   protected def encodeUrl(url: String): String = {
     if (url == null) {
       null
@@ -91,14 +92,15 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   }
 
   /**
-    * Parses the response from the server into a CAS Assertion.
-    * @throws TicketValidationException valid ticket
-    */
+   * Parses the response from the server into a CAS Assertion.
+   *
+   * @throws TicketValidationException valid ticket
+   */
   protected def parseResponse(ticket: String, response: String): String
 
   /**
-    * Contacts the CAS Server to retrieve the response for the ticket validation.
-    */
+   * Contacts the CAS Server to retrieve the response for the ticket validation.
+   */
   protected def retrieveResponse(url: URL, ticket: String): String = {
     HttpUtils.getText(url, HttpMethods.GET, encoding).getOrElse(null)
   }
@@ -108,7 +110,7 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
     logger.debug(s"Constructing validation url: $validationUrl")
     try {
       logger.debug("Retrieving response from server.")
-      val serverResponse = retrieveResponse(new URL(validationUrl), ticket)
+      val serverResponse = retrieveResponse(Networks.url(validationUrl), ticket)
       if (serverResponse == null) throw new TicketValidationException("The CAS server returned no response.")
       logger.debug(s"Server response: $serverResponse")
       parseResponse(ticket, serverResponse)
@@ -118,12 +120,12 @@ abstract class AbstractTicketValidator extends TicketValidator with Logging {
   }
 }
 
-import java.io.StringReader
-
-import javax.xml.parsers.SAXParserFactory
 import org.beangle.commons.lang.Strings
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.{Attributes, InputSource, XMLReader}
+
+import java.io.StringReader
+import javax.xml.parsers.SAXParserFactory
 
 class DefaultTicketValidator extends AbstractTicketValidator {
 
@@ -137,9 +139,9 @@ class DefaultTicketValidator extends AbstractTicketValidator {
   }
 
   /**
-    * Get an instance of an XML reader from the XMLReaderFactory.
-    *
-    */
+   * Get an instance of an XML reader from the XMLReaderFactory.
+   *
+   */
   def xmlReader: XMLReader = {
     val parserFactory = SAXParserFactory.newInstance
     val parser = parserFactory.newSAXParser

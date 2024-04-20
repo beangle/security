@@ -21,6 +21,7 @@ import org.beangle.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.lang.Strings.replace
+import org.beangle.commons.net.Networks
 import org.beangle.commons.net.http.HttpUtils.{getData, getText}
 import org.beangle.commons.net.http.{HttpMethods, Https}
 import org.beangle.security.session.cache.CacheSessionRepo
@@ -57,8 +58,7 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   override def flush(session: Session): Boolean = {
     var surl = replace(accessUrl, "{id}", session.id)
     surl = replace(surl, "{time}", session.lastAccessAt.getEpochSecond.toString)
-    val url = new URL(surl)
-    val hc = url.openConnection().asInstanceOf[HttpURLConnection]
+    val hc = Networks.openURL(surl).asInstanceOf[HttpURLConnection]
     hc.setRequestMethod(HttpMethods.GET)
     Https.noverify(hc)
     hc.getResponseCode == 200
