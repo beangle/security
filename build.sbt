@@ -33,6 +33,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "beangle-security",
     common,
+    Compile / mainClass := Some("org.beangle.security.realm.ldap.Main"),
     libraryDependencies ++= Seq(beangle_commons, logback_classic % "test", scalatest, mockito),
     libraryDependencies ++= Seq(beangle_cache, beangle_jdbc, beangle_serializer),
     libraryDependencies ++= Seq(beangle_web, protobuf)

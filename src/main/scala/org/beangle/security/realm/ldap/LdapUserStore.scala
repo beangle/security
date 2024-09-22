@@ -17,22 +17,16 @@
 
 package org.beangle.security.realm.ldap
 
-import javax.naming.directory.{BasicAttributes, DirContext, SearchControls}
-import javax.naming.{CompositeName, NamingException}
-import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.{Account, AccountStore, CredentialStore, DefaultAccount}
-import org.beangle.security.codec.DefaultPasswordEncoder
-
-import scala.collection.mutable
+import org.beangle.security.authc.{Account, AccountStore}
 
 /**
-  * Ldap User Store (RFC 4510)
-  * @see http://tools.ietf.org/html/rfc4510
-  * @see http://www.rfc-base.org/rfc-4510.html
-  * @see http://directory.apache.org/api/java-api.html
-  */
+ * Ldap User Store (RFC 4510)
+ *
+ * @see http://tools.ietf.org/html/rfc4510
+ * @see http://www.rfc-base.org/rfc-4510.html
+ * @see http://directory.apache.org/api/java-api.html
+ */
 trait LdapUserStore extends AccountStore {
 
   def getUserDN(uid: String): Option[String]
@@ -49,4 +43,11 @@ trait LdapUserStore extends AccountStore {
 object LdapUserStore {
   val CommonName = "cn"
   val UserPassword = "userPassword"
+  val UserStatus = "inetUserStatus"
+
+  private val inactiveStatuses = Set("inactive", "deleted")
+
+  def isActive(status: String): Boolean = {
+    Strings.isEmpty(status) || !inactiveStatuses.contains(status.toLowerCase())
+  }
 }

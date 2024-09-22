@@ -17,10 +17,10 @@
 
 package org.beangle.security.realm.ldap
 
-import java.io.{BufferedReader, InputStreamReader}
-
 import org.beangle.commons.lang.{Consoles, Strings}
 import org.beangle.security.codec.DefaultPasswordEncoder
+
+import java.io.{BufferedReader, InputStreamReader}
 
 object Main {
 
@@ -71,14 +71,14 @@ object Main {
     println("Using base:" + base)
     val userStore = getStore("ldap://" + host, username, password, base)
     val credentialStore = new LdapCredentialStore(userStore)
-    println("verify/change user/password: ")
+    println("display/verify/change user/password: ")
     val stdin = new BufferedReader(new InputStreamReader(System.in))
     var value = stdin.readLine()
     while (Strings.isNotBlank(value)) {
       if (value == "quit" || value == "q" || value == "exit") System.exit(0)
       val action = Strings.substringBefore(value, " ")
       value = Strings.substringAfterLast(value, " ")
-      var myname: String = null
+      var myname: String = value
       var mypass: String = null
       if (value.contains("/")) {
         myname = Strings.substringBefore(value, "/")
@@ -90,8 +90,14 @@ object Main {
         val mypassRaw = DefaultPasswordEncoder.generate(mypass, null, "sha")
         credentialStore.updatePassword(myname, mypassRaw)
         tryTestPassword(credentialStore, myname, mypass)
+      } else if (action == "display") {
+        userStore.getUserDN(myname) match
+          case Some(dn) =>
+            println(s"dn:${dn}")
+            userStore.getAttributes(dn).foreach(e => println(e._1 + ":" + e._2))
+          case None => println(s"Cannot find user ${myname}")
       }
-      println("verify/change user[/password]: ")
+      println("display/verify/change user[/password]: ")
       value = stdin.readLine()
     }
 

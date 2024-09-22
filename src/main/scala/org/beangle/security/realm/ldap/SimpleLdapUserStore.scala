@@ -17,13 +17,14 @@
 
 package org.beangle.security.realm.ldap
 
-import javax.naming.directory.{BasicAttributes, DirContext, SearchControls}
-import javax.naming.{CompositeName, NamingException}
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.{Account, DefaultAccount}
+import org.beangle.security.realm.ldap.LdapUserStore.*
 
+import javax.naming.directory.{BasicAttributes, DirContext, SearchControls}
+import javax.naming.{CompositeName, NamingException}
 import scala.collection.mutable
 
 class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore with Logging {
@@ -99,7 +100,12 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
   }
 
   override def load(principal: Any): Option[Account] = {
-    getUserDN(principal.toString).map(dn => new DefaultAccount(principal.toString, dn))
+    getUserDN(principal.toString).map { dn =>
+      val account = new DefaultAccount(principal.toString, dn)
+      val active = getAttribute(dn, UserStatus).forall(s => LdapUserStore.isActive(s.toString))
+      account.accountExpired = !active
+      account
+    }
   }
 
   def create(user: Account, password: String): Unit = {
@@ -107,6 +113,6 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
     attrs.put("cn", user.description)
     attrs.put("sn", user.description)
     attrs.put(uidName, user.name)
-    attrs.put(LdapUserStore.UserPassword, password.getBytes)
+    attrs.put(UserPassword, password.getBytes)
   }
 }

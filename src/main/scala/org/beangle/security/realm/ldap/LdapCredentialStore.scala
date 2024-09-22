@@ -17,7 +17,9 @@
 
 package org.beangle.security.realm.ldap
 
+import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.{CredentialStore, Principals}
+import org.beangle.security.realm.ldap.LdapUserStore.{UserPassword, UserStatus}
 
 class LdapCredentialStore(userStore: LdapUserStore) extends CredentialStore {
 
@@ -25,8 +27,19 @@ class LdapCredentialStore(userStore: LdapUserStore) extends CredentialStore {
     val username = Principals.getName(principal)
     userStore.getUserDN(username) match {
       case Some(dn) =>
-        userStore.getAttribute(dn, LdapUserStore.UserPassword)
-          .map(p => new String(p.asInstanceOf[Array[Byte]]))
+        userStore.getAttribute(dn, UserPassword).map(p => new String(p.asInstanceOf[Array[Byte]]))
+      case None =>
+        None
+    }
+  }
+
+  def getActivePassword(principal: Any): Option[(String, Boolean)] = {
+    val username = Principals.getName(principal)
+    userStore.getUserDN(username) match {
+      case Some(dn) =>
+        val attrs = userStore.getAttributes(dn, UserPassword, UserStatus)
+        val active = attrs.get(UserStatus).forall(s => LdapUserStore.isActive(s.toString))
+        attrs.get(UserPassword).map(p => (new String(p.asInstanceOf[Array[Byte]]), active))
       case None =>
         None
     }
