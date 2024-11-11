@@ -42,6 +42,6 @@ case class Profile(id: Long, name: String, properties: Map[String, String]) {
       }
       props.setCharAt(props.length - 1, '}')
     }
-    s"""{"id":${id},"name":"$name","properties":$props}"""
+    s"""{"id":"${id}","name":"$name","properties":$props}"""
   }
 }
