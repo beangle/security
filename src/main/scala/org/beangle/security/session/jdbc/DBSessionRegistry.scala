@@ -17,7 +17,7 @@
 
 package org.beangle.security.session.jdbc
 
-import org.beangle.cache.CacheManager
+import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects

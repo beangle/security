@@ -21,7 +21,7 @@ import java.io.InputStream
 import java.sql.Timestamp
 
 import javax.sql.DataSource
-import org.beangle.cache.CacheManager
+import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.event.EventPublisher
 import org.beangle.commons.io.BinarySerializer

@@ -17,7 +17,7 @@
 
 package org.beangle.security.session.cache
 
-import org.beangle.cache.CacheManager
+import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.logging.Logging

@@ -17,7 +17,7 @@
 
 package org.beangle.security.session.http
 
-import org.beangle.cache.CacheManager
+import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.lang.Strings.replace

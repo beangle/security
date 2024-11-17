@@ -17,7 +17,7 @@
 
 package org.beangle.security.session.cache
 
-import org.beangle.cache.Cache
+import org.beangle.commons.cache.Cache
 import org.beangle.commons.collection.Collections
 import org.beangle.security.session.Session
 
