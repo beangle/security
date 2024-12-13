@@ -17,8 +17,6 @@
 
 package org.beangle.security.realm.cas
 
-import java.net.URLEncoder
-
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.logging.Logging
 import org.beangle.security.web.session.ParamSessionIdPolicy
@@ -26,10 +24,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import org.scalatest.matchers.should.Matchers
 import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
+import java.net.URLEncoder
+
+class CasEntryPointTest extends AnyFunSpec, Matchers, Logging {
   describe("CasConfig") {
     it("should worked on getter/setter") {
       val config = new CasConfig("https://cas")
@@ -57,8 +57,8 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
 
     it("commence with gateway") {
       val config = new CasConfig("https://school.edu.cn/cas")
-      config.gateway=true
-      config.localLoginUri=Some("/mylogin.jsp")
+      config.gateway = true
+      config.localLoginUri = Some("/mylogin.jsp")
       val ep = new CasEntryPoint(config)
       ep.sessionIdReader = Some(new ParamSessionIdPolicy)
       val request = mock(classOf[HttpServletRequest])
@@ -70,8 +70,8 @@ class CasEntryPointTest extends AnyFunSpec with Matchers with Logging {
 
       val response = mockResponse()
       ep.commence(request, response, null)
-      val originUrl="https://mycompany.com/bigWebApp/some_path"
-      val loginUrl="https://mycompany.com/bigWebApp/mylogin.jsp?service="+URLEncoder.encode(originUrl,"UTF-8")
+      val originUrl = "https://mycompany.com/bigWebApp/some_path"
+      val loginUrl = "https://mycompany.com/bigWebApp/mylogin.jsp?service=" + URLEncoder.encode(originUrl, "UTF-8")
       verify(response).sendRedirect(
         "https://school.edu.cn/cas/login?service="
           + URLEncoder.encode(loginUrl, "UTF-8") + "&gateway=true&sid_name=JSESSIONID")

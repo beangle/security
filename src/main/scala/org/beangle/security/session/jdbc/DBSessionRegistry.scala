@@ -33,8 +33,7 @@ import javax.sql.DataSource
  * 使用数据库的$sessionTable表
  */
 class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
-  extends DBSessionRepo(domainProvider, dataSource, cacheManager, serializer)
-    with SessionRegistry {
+  extends DBSessionRepo(domainProvider, dataSource, cacheManager, serializer), SessionRegistry {
 
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_seconds,category_id,domain_id,data"
 

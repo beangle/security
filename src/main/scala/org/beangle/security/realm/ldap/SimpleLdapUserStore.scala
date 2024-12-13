@@ -27,7 +27,7 @@ import javax.naming.directory.{BasicAttributes, DirContext, SearchControls}
 import javax.naming.{CompositeName, NamingException}
 import scala.collection.mutable
 
-class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore with Logging {
+class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore, Logging {
 
   var uidName = "uid"
 

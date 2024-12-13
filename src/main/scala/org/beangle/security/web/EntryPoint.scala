@@ -17,15 +17,15 @@
 
 package org.beangle.security.web
 
-import java.io.IOException
-
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
+import org.beangle.security.authc.AuthenticationException
 import org.beangle.web.servlet.url.UrlBuilder
 import org.beangle.web.servlet.util.RedirectUtils
-import org.beangle.security.authc.AuthenticationException
+
+import java.io.IOException
 
 trait EntryPoint {
 
@@ -38,7 +38,7 @@ trait EntryPoint {
   def commence(request: HttpServletRequest, response: HttpServletResponse, ae: AuthenticationException): Unit
 }
 
-class UrlEntryPoint(val url: String) extends EntryPoint with Logging {
+class UrlEntryPoint(val url: String) extends EntryPoint, Logging {
 
   var serverSideRedirect: Boolean = _
 
@@ -58,9 +58,9 @@ class UrlEntryPoint(val url: String) extends EntryPoint with Logging {
   }
 
   /**
-    * Allows subclasses to modify the login form URL that should be applicable
-    * for a given request.
-    */
+   * Allows subclasses to modify the login form URL that should be applicable
+   * for a given request.
+   */
   protected def determineUrl(req: HttpServletRequest, ae: AuthenticationException): String = {
     if (url.contains("${goto}")) Strings.replace(url, "${goto}", UrlBuilder.url(req))
     else url

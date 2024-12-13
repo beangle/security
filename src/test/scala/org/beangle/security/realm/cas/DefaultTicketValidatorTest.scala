@@ -17,13 +17,14 @@
 
 package org.beangle.security.realm.cas
 
-import java.io.File
 import org.beangle.commons.io.Files
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.funspec.AnyFunSpec
 import org.beangle.commons.lang.ClassLoaders
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-class Cas20TicketValidatorTest extends AnyFunSpec with Matchers {
+import java.io.File
+
+class Cas20TicketValidatorTest extends AnyFunSpec, Matchers {
   val validator = new DefaultTicketValidator
   describe("DefaultCasTicketValidator") {
     it("should parse success") {

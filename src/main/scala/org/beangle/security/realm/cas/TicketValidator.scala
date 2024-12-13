@@ -36,7 +36,7 @@ trait TicketValidator {
 /**
  * Abstract Ticket Validator
  */
-abstract class AbstractTicketValidator extends TicketValidator with Logging {
+abstract class AbstractTicketValidator extends TicketValidator, Logging {
 
   var config: CasConfig = _
 

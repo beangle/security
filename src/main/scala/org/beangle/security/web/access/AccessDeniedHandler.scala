@@ -17,13 +17,13 @@
 
 package org.beangle.security.web.access
 
-import java.io.File
-
-import jakarta.servlet.{ServletRequest, ServletResponse}
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
+import jakarta.servlet.{ServletRequest, ServletResponse}
 import org.beangle.commons.logging.Logging
-import org.beangle.web.servlet.context.ServletContextHolder
 import org.beangle.security.authz.AccessDeniedException
+import org.beangle.web.servlet.context.ServletContextHolder
+
+import java.io.File
 
 /**
  * @author chaostone
@@ -37,15 +37,16 @@ trait AccessDeniedHandler {
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit
 }
 
-class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHandler with Logging {
+class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHandler, Logging {
 
   def this() = {
     this(null)
   }
+
   if (null != errorPage) {
     require(errorPage.startsWith("/"), "errorPage must begin with '/'")
     val file = ServletContextHolder.context.getResource(errorPage)
-    if (null==file) errorPage = null
+    if (null == file) errorPage = null
   }
 
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {

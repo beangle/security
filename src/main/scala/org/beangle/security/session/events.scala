@@ -29,3 +29,9 @@ class LogoutEvent(src: Session, var reason: String = null) extends Event(src) {
 
   def session: Session = source.asInstanceOf[Session]
 }
+
+@SerialVersionUID(-6802410177820837015L)
+class OverTryLoginEvent(src: String, val failCount: Int, val agent: Session.Agent) extends Event(src) {
+
+  def principal: String = source.asInstanceOf[String]
+}

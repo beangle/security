@@ -21,13 +21,13 @@ import org.beangle.commons.lang.time.Stopwatch
 import org.beangle.commons.logging.Logging
 
 /** Database session registry cleaner.
-  * <ul>
-  * <li>removed expired session</li>
-  * <li>removed long time idle session( now - last access time>tti seconds)</li>
-  * </ul>
-  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple deployed.
-  */
-class DBSessionCleaner(val registry: DBSessionRegistry) extends Logging with Runnable {
+ * <ul>
+ * <li>removed expired session</li>
+ * <li>removed long time idle session( now - last access time>tti seconds)</li>
+ * </ul>
+ * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple deployed.
+ */
+class DBSessionCleaner(val registry: DBSessionRegistry) extends Logging, Runnable {
 
   override def run(): Unit = {
     val watch = new Stopwatch(true)

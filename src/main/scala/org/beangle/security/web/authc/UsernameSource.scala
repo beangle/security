@@ -17,31 +17,31 @@
 
 package org.beangle.security.web.authc
 
-import java.time.Instant
-
 import jakarta.servlet.http.HttpServletRequest
 import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.web.servlet.util.RequestUtils
 
+import java.time.Instant
+
 /**
-  * Source of the username supplied with pre-authenticated authentication
-  * request. The username can be supplied in the request: in cookie, request
-  * header, request parameter or as ServletRequest.getRemoteUser().
-  */
+ * Source of the username supplied with pre-authenticated authentication
+ * request. The username can be supplied in the request: in cookie, request
+ * header, request parameter or as ServletRequest.getRemoteUser().
+ */
 trait UsernameSource {
   /**
-    * Obtain username supplied in the request.
-    */
+   * Obtain username supplied in the request.
+   */
   def resolveUser(request: HttpServletRequest, credential: Any): Option[String]
 
   def getCredential(request: HttpServletRequest): Option[Any]
 }
 
 /**
-  * Abtain username by cookie
-  */
+ * Abtain username by cookie
+ */
 abstract class AbstractCookieUsernameSource extends UsernameSource {
 
   var cookieName: String = _
@@ -59,11 +59,11 @@ abstract class AbstractCookieUsernameSource extends UsernameSource {
 }
 
 /**
-  * Source of the username supplied with pre-authenticated authentication request
-  * as remote user header value. Optionally can strip prefix: "domain\\username"
-  * -> "username", if <tt>stripPrefix</tt> property value is "true".
-  */
-class RemoteUsernameSource extends UsernameSource with Logging {
+ * Source of the username supplied with pre-authenticated authentication request
+ * as remote user header value. Optionally can strip prefix: "domain\\username"
+ * -> "username", if <tt>stripPrefix</tt> property value is "true".
+ */
+class RemoteUsernameSource extends UsernameSource, Logging {
 
   var stripPrefix = true
 

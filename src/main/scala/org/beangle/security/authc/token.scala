@@ -24,7 +24,7 @@ import java.security.Principal
 /**
  * Authentication Token used before authentication
  */
-trait AuthenticationToken extends Principal with Serializable {
+trait AuthenticationToken extends Principal, Serializable {
 
   def principal: Any
 

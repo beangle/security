@@ -17,9 +17,6 @@
 
 package org.beangle.security.session.protobuf
 
-import java.io.{ByteArrayOutputStream, ObjectOutputStream}
-import java.time.Instant
-
 import org.beangle.commons.lang.Objects
 import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.{DefaultAccount, Profile}
@@ -28,7 +25,10 @@ import org.beangle.serializer.protobuf.ProtobufSerializer
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
-class SerializerTest extends AnyFunSpec with Matchers with Logging {
+import java.io.{ByteArrayOutputStream, ObjectOutputStream}
+import java.time.Instant
+
+class SerializerTest extends AnyFunSpec, Matchers, Logging {
   describe("erializer") {
     it("serializing") {
       val account = new DefaultAccount("0001", "root")

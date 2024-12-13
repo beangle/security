@@ -25,7 +25,7 @@ import java.security.Principal
  *
  * @author chaostone
  */
-trait Account extends Principal with Externalizable {
+trait Account extends Principal, Externalizable {
 
   def name: String
 

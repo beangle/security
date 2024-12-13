@@ -18,11 +18,11 @@
 package org.beangle.security.web.access
 
 import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
-import org.beangle.web.servlet.filter.GenericHttpFilter
 import org.beangle.security.authz.{AccessDeniedException, Authorizer}
 import org.beangle.security.context.SecurityContext
+import org.beangle.web.servlet.filter.GenericHttpFilter
 
-class AuthorizationFilter(val authorizer: Authorizer) extends GenericHttpFilter with SecurityFilter {
+class AuthorizationFilter(val authorizer: Authorizer) extends GenericHttpFilter, SecurityFilter {
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain): Unit = {
     if (!authorizer.isPermitted(SecurityContext.get))

@@ -21,14 +21,14 @@ import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.logging.Logging
-import org.beangle.web.servlet.intercept.Interceptor
 import org.beangle.security.SecurityException
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.web.EntryPoint
+import org.beangle.web.servlet.intercept.Interceptor
 
-class SecurityInterceptor extends Interceptor with Logging with Initializing {
+class SecurityInterceptor extends Interceptor, Logging, Initializing {
   var securityContextBuilder: SecurityContextBuilder = _
   var entryPoint: EntryPoint = _
   var accessDeniedHandler: AccessDeniedHandler = _

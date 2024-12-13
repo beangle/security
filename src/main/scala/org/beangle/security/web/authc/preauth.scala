@@ -21,22 +21,22 @@ import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
-import org.beangle.web.servlet.filter.GenericHttpFilter
 import org.beangle.security.Securities
 import org.beangle.security.authc.{Account, AuthenticationException, PreauthToken}
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.Session
 import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.access.SecurityContextBuilder
+import org.beangle.web.servlet.filter.GenericHttpFilter
 
-abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter with Logging {
+abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter, Logging {
 
   var securityContextBuilder: SecurityContextBuilder = _
 
   /**
-    * Try to authenticate a pre-authenticated user if the
-    * user has not yet been authenticated.
-    */
+   * Try to authenticate a pre-authenticated user if the
+   * user has not yet been authenticated.
+   */
   override final def doFilter(req: ServletRequest, res: ServletResponse, chain: FilterChain): Unit = {
     val request = req.asInstanceOf[HttpServletRequest]
     val response = res.asInstanceOf[HttpServletResponse]
@@ -78,20 +78,20 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
   }
 
   /**
-    * Puts the <code>Authentication</code> instance returned by the
-    * authentication manager into the secure context.
-    */
+   * Puts the <code>Authentication</code> instance returned by the
+   * authentication manager into the secure context.
+   */
   protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
     logger.debug(s"PreAuthentication success: $session")
     SecurityContext.set(securityContextBuilder.build(req, Some(session)))
   }
 
   /**
-    * Ensures the authentication object in the secure context is set to null when authentication
-    * fails.
-    * If username not found or account status exception.just let other know by throw it.
-    * It will be handled by ExceptionTranslationFilter
-    */
+   * Ensures the authentication object in the secure context is set to null when authentication
+   * fails.
+   * If username not found or account status exception.just let other know by throw it.
+   * It will be handled by ExceptionTranslationFilter
+   */
   protected def unsuccessfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, failed: AuthenticationException): Unit = {
     logger.debug("Cleared security context due to exception", failed)
     SecurityContext.clear()

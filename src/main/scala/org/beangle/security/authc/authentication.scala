@@ -22,8 +22,8 @@ import org.beangle.security.realm.Realm
 import org.beangle.security.session.Session
 
 /**
-  * Authentication Manager
-  */
+ * Authentication Manager
+ */
 trait Authenticator {
 
   @throws(classOf[AuthenticationException])
@@ -38,7 +38,7 @@ trait AuthenticationListener {
   def onLogout(info: Session): Unit
 }
 
-abstract class AbstractAuthenticator extends Authenticator with Logging {
+abstract class AbstractAuthenticator extends Authenticator, Logging {
 
   var listeners: List[AuthenticationListener] = List.empty
 
@@ -78,7 +78,7 @@ abstract class AbstractAuthenticator extends Authenticator with Logging {
 }
 
 /** How we authenticate user within multiple realms
-  */
+ */
 trait RealmAuthenticationStrategy {
 
   @throws(classOf[AuthenticationException])
@@ -91,8 +91,8 @@ trait RealmAuthenticationStrategy {
 }
 
 /** First win,imply at least one and ignore remainders
-  */
-object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging {
+ */
+object FirstSuccessfulStrategy extends RealmAuthenticationStrategy, Logging {
 
   override def authenticate(realms: List[Realm], token: AuthenticationToken): Account = {
     val realmIter = realms.iterator
@@ -115,8 +115,8 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy with Logging 
 }
 
 /** Realm Authenticator
-  */
-class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator with Logging {
+ */
+class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator, Logging {
   var strategy: RealmAuthenticationStrategy = FirstSuccessfulStrategy
 
   override def doAuthenticate(token: AuthenticationToken): Account = {
