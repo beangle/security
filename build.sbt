@@ -2,7 +2,7 @@ import org.beangle.parent.Dependencies.*
 import org.beangle.parent.Settings.*
 
 ThisBuild / organization := "org.beangle.security"
-ThisBuild / version := "4.3.27-SNAPSHOT"
+ThisBuild / version := "4.3.27"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -23,11 +23,11 @@ ThisBuild / developers := List(
 ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
-val beangle_commons = "org.beangle.commons" % "beangle-commons" % "5.6.23"
-val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.0.6"
-val beangle_serializer = "org.beangle.serializer" % "beangle-serializer" % "0.1.13"
-val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.12"
-val beangle_web = "org.beangle.web" % "beangle-web" % "0.6.2"
+val beangle_commons = "org.beangle.commons" % "beangle-commons" % "5.6.26"
+val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.0.9"
+val beangle_serializer = "org.beangle.serializer" % "beangle-serializer" % "0.1.15"
+val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.13"
+val beangle_web = "org.beangle.web" % "beangle-web" % "0.6.3"
 
 lazy val root = (project in file("."))
   .settings(
