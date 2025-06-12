@@ -43,7 +43,7 @@ class OpenidPreauthFilter(securityManager: WebSecurityManager) extends AbstractP
     url = Strings.replace(url, "{openid}", credential.toString)
     url = Strings.replace(url, "{username}", username)
     val rs = HttpUtils.getText(url).getText.trim
-    if Strings.isBlank(rs) && rs != "true" then None
-    else Some(new PreauthToken(username, credential))
+    if Strings.isNotBlank(rs) && rs == "true" then Some(new PreauthToken(username, credential))
+    else None
   }
 }
