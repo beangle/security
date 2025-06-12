@@ -84,7 +84,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
     if (req.getRequestURI.endsWith(localLogin)) {
       builder.queryString = req.getQueryString
     } else {
-      var queryString = new StringBuilder()
+      val queryString = new StringBuilder()
       if (Strings.isNotBlank(queryString)) {
         queryString ++= req.getQueryString
         queryString ++= "&"

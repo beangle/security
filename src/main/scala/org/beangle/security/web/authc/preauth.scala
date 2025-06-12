@@ -62,6 +62,12 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
 
   protected def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken]
 
+  /** 查询能否获得PreauthToken，以便进行认证
+   *
+   * @param req
+   * @param res
+   * @return
+   */
   protected def requiresAuthentication(req: HttpServletRequest, res: HttpServletResponse): Option[PreauthToken] = {
     getCredential(req) match {
       case None => None
