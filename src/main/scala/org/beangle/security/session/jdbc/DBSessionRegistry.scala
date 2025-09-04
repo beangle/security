@@ -21,7 +21,6 @@ import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Objects
-import org.beangle.jdbc.query.ParamSetter
 import org.beangle.security.authc.Account
 import org.beangle.security.session.*
 
@@ -105,7 +104,7 @@ class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, 
         x.setInt(9, s.ttiSeconds)
         x.setInt(10, s.principal.asInstanceOf[Account].categoryId)
         x.setInt(11, domainId)
-        ParamSetter.setParam(x, 12, serializer.asBytes(s), Types.BINARY)
+        executor.setParam(x, 12, serializer.asBytes(s), Types.BINARY)
       }).execute()
     put(s)
   }
