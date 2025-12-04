@@ -17,51 +17,132 @@
 
 package org.beangle.security.realm.cas
 
-import org.beangle.commons.lang.Charsets
+import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
-import org.beangle.commons.net.Networks
-import org.beangle.commons.net.http.{HttpMethods, HttpUtils}
+import org.beangle.commons.net.http.HttpUtils
+import org.xml.sax.helpers.DefaultHandler
+import org.xml.sax.{Attributes, InputSource, XMLReader}
 
-import java.net.{MalformedURLException, URL, URLEncoder}
-import java.nio.charset.Charset
+import java.io.StringReader
+import java.net.URLEncoder
+import javax.xml.parsers.SAXParserFactory
 
 class TicketValidationException(message: String) extends Exception(message)
 
 trait TicketValidator {
 
   @throws(classOf[TicketValidationException])
-  def validate(ticket: String, service: String): String
+  def validate(ticket: String, service: String): CasResponse
 }
 
-/**
- * Abstract Ticket Validator
+object DefaultTicketValidator {
+
+  def parse(response: String): CasResponse = {
+    val reader = this.xmlReader
+    reader.setFeature("http://xml.org/sax/features/namespaces", false)
+    val handler = new ServiceXmlHandler()
+    reader.setContentHandler(handler)
+    reader.parse(new InputSource(new StringReader(response)))
+    handler.result
+  }
+
+  /** Get an instance of an XML reader from the XMLReaderFactory.
+   */
+  private def xmlReader: XMLReader = {
+    val parserFactory = SAXParserFactory.newInstance
+    val parser = parserFactory.newSAXParser
+    parser.getXMLReader
+  }
+
+  private final class ServiceXmlHandler extends DefaultHandler {
+    private var currentText = new java.lang.StringBuffer()
+
+    private var authenticationSuccess = false
+    private val attributes = new collection.mutable.HashMap[String, String]
+    private var errorCode: String = _
+    private var errorMessage: String = _
+    private var user: String = _
+
+    private def localName(qualifiedName: String): String = {
+      Strings.substringAfter(qualifiedName, ":")
+    }
+
+    /** 开始处理标签（attrs 包含标签的属性)
+     *
+     * @param ns    namespace
+     * @param lnm   localName
+     * @param qn    qualifiedName
+     * @param attrs element attributes
+     */
+    override def startElement(ns: String, lnm: String, qn: String, attrs: Attributes): Unit = {
+      currentText = new StringBuffer()
+      localName(qn) match {
+        case "authenticationSuccess" => authenticationSuccess = true
+        case "authenticationFailure" =>
+          authenticationSuccess = false
+          errorCode = attrs.getValue("code")
+          if (errorCode != null) errorCode = errorCode.trim()
+        case "attribute" => attributes.put(attrs.getValue("name"), attrs.getValue("value"))
+        case _ =>
+      }
+    }
+
+    override def characters(ch: Array[Char], start: Int, length: Int): Unit = {
+      currentText.append(ch, start, length)
+    }
+
+    /** 接收user，如果是其他标签排除部分忽略的，直接进入attributes
+     *
+     * @param ns  namespace
+     * @param lnm localName
+     * @param qn  qualified name
+     */
+    override def endElement(ns: String, lnm: String, qn: String): Unit = {
+      localName(qn) match {
+        case "user" => user = currentText.toString.trim()
+        case "authenticationFailure" => errorMessage = currentText.toString.trim()
+        case "serviceResponse" | "authenticationSuccess" | "attributes" | "proxies" | "proxyGrantingTicket" | "proxy" =>
+        case ln =>
+          val text = currentText.toString.trim()
+          if Strings.isNotBlank(text) then attributes.put(ln, currentText.toString.trim())
+      }
+    }
+
+    def result: CasResponse = {
+      if (authenticationSuccess) CasResponse("success", Option(user), attributes.toMap, null)
+      else CasResponse(errorCode, None, attributes.toMap, errorMessage)
+    }
+  }
+}
+
+/** Default Ticket Validator
  */
-abstract class AbstractTicketValidator extends TicketValidator, Logging {
+class DefaultTicketValidator extends TicketValidator, Logging {
 
   var config: CasConfig = _
 
-  var encoding: Charset = Charsets.UTF_8
-
-  /** A map containing custom parameters to pass to the validation url. */
-  var customParameters: Map[String, String] = _
-
-  /**
-   * Template method for ticket validators that need to provide additional parameters to the
-   * validation url.
-   */
-  protected def populateUrlAttributeMap(urlParameters: collection.mutable.Map[String, String]): Unit = {
-    // nothing to do
+  override def validate(ticket: String, service: String): CasResponse = {
+    val validationUrl = constructValidationUrl(ticket, service)
+    logger.debug(s"Constructing validation url: $validationUrl")
+    try {
+      logger.debug("Retrieving response from server.")
+      val serverResponse = HttpUtils.getText(validationUrl).getOrElse(null)
+      if (serverResponse == null) throw new TicketValidationException("The CAS server returned no response.")
+      logger.debug(s"Server response: $serverResponse")
+      DefaultTicketValidator.parse(serverResponse)
+    } catch {
+      case e: Exception => throw new TicketValidationException(e.getMessage)
+    }
   }
 
-  /**
-   * Constructs the URL to send the validation request to.
+  /** Constructs the URL to send the validation request to.
    */
-  protected final def constructValidationUrl(ticket: String, serviceUrl: String): String = {
+  private def constructValidationUrl(ticket: String, serviceUrl: String): String = {
     val urlParameters = new collection.mutable.HashMap[String, String]
     urlParameters.put("ticket", ticket)
-    urlParameters.put("service", encodeUrl(serviceUrl))
-    populateUrlAttributeMap(urlParameters)
-    if (customParameters != null) urlParameters ++= customParameters
+    if (null != serviceUrl) {
+      urlParameters.put("service", URLEncoder.encode(serviceUrl, "UTF-8"))
+    }
     val suffix = config.validateUri
     val buffer = new java.lang.StringBuilder(urlParameters.size * 10 + config.casServer.length + suffix.length() + 1)
     buffer.append(config.casServer).append(suffix)
@@ -72,131 +153,9 @@ abstract class AbstractTicketValidator extends TicketValidator, Logging {
         if (value != null) {
           i += 1
           buffer.append(if (i == 1) "?" else "&")
-          buffer.append(key)
-          buffer.append("=")
-          buffer.append(value)
+          buffer.append(key).append("=").append(value)
         }
     }
     buffer.toString
   }
-
-  /**
-   * Encodes a URL using the URLEncoder format.
-   */
-  protected def encodeUrl(url: String): String = {
-    if (url == null) {
-      null
-    } else {
-      URLEncoder.encode(url, "UTF-8")
-    }
-  }
-
-  /**
-   * Parses the response from the server into a CAS Assertion.
-   *
-   * @throws TicketValidationException valid ticket
-   */
-  protected def parseResponse(ticket: String, response: String): String
-
-  /**
-   * Contacts the CAS Server to retrieve the response for the ticket validation.
-   */
-  protected def retrieveResponse(url: URL, ticket: String): String = {
-    HttpUtils.getText(url, HttpMethods.GET, encoding).getOrElse(null)
-  }
-
-  def validate(ticket: String, service: String): String = {
-    val validationUrl = constructValidationUrl(ticket, service)
-    logger.debug(s"Constructing validation url: $validationUrl")
-    try {
-      logger.debug("Retrieving response from server.")
-      val serverResponse = retrieveResponse(Networks.url(validationUrl), ticket)
-      if (serverResponse == null) throw new TicketValidationException("The CAS server returned no response.")
-      logger.debug(s"Server response: $serverResponse")
-      parseResponse(ticket, serverResponse)
-    } catch {
-      case e: MalformedURLException => throw new TicketValidationException(e.getMessage)
-    }
-  }
-}
-
-import org.beangle.commons.lang.Strings
-import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.{Attributes, InputSource, XMLReader}
-
-import java.io.StringReader
-import javax.xml.parsers.SAXParserFactory
-
-class DefaultTicketValidator extends AbstractTicketValidator {
-
-  protected[cas] override def parseResponse(ticket: String, response: String): String = {
-    val reader = this.xmlReader
-    reader.setFeature("http://xml.org/sax/features/namespaces", false)
-    val handler = new ServiceXmlHandler(ticket)
-    reader.setContentHandler(handler)
-    reader.parse(new InputSource(new StringReader(response)))
-    handler.preuser
-  }
-
-  /**
-   * Get an instance of an XML reader from the XMLReaderFactory.
-   *
-   */
-  def xmlReader: XMLReader = {
-    val parserFactory = SAXParserFactory.newInstance
-    val parser = parserFactory.newSAXParser
-    parser.getXMLReader
-  }
-
-  class ServiceXmlHandler(ticket: String) extends DefaultHandler {
-
-    private var currentText = new java.lang.StringBuffer()
-
-    private var authenticationSuccess = false
-    private val userMap = new collection.mutable.HashMap[String, Object]
-    private var errorCode: String = _
-    private var errorMessage: String = _
-    private var pgtIou: String = _
-    private var user: String = _
-    private var proxyList = new collection.mutable.ListBuffer[String]
-
-    def localName(qualifiedName: String): String = {
-      Strings.substringAfter(qualifiedName, ":")
-    }
-
-    override def startElement(ns: String, lnm: String, qn: String, a: Attributes): Unit = {
-      currentText = new StringBuffer()
-      localName(qn) match {
-        case "authenticationSuccess" => authenticationSuccess = true
-        case "authenticationFailure" =>
-          authenticationSuccess = false
-          errorCode = a.getValue("code")
-          if (errorCode != null) errorCode = errorCode.trim()
-        case "attribute" => userMap.put(a.getValue("name"), a.getValue("value"))
-        case _ =>
-      }
-    }
-
-    override def characters(ch: Array[Char], start: Int, length: Int): Unit = {
-      currentText.append(ch, start, length)
-    }
-
-    override def endElement(ns: String, lnm: String, qn: String): Unit = {
-      val ln = localName(qn)
-      ln match {
-        case "user" => user = currentText.toString.trim()
-        case "proxyGrantingTicket" => pgtIou = currentText.toString.trim()
-        case "authenticationFailure" => errorMessage = currentText.toString.trim()
-        case "proxy" => proxyList += currentText.toString.trim()
-        case "attributes" | "proxies" =>
-        case _ => userMap.put(ln, currentText.toString.trim())
-      }
-    }
-
-    def preuser: String = {
-      if (authenticationSuccess) user
-      else throw new TicketValidationException(errorCode + ":" + errorMessage)
-    }
-  }
-
 }

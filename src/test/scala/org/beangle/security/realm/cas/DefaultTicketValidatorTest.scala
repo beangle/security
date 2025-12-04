@@ -24,23 +24,34 @@ import org.scalatest.matchers.should.Matchers
 
 import java.io.File
 
-class Cas20TicketValidatorTest extends AnyFunSpec, Matchers {
+class DefaultTicketValidatorTest extends AnyFunSpec, Matchers {
   val validator = new DefaultTicketValidator
-  describe("DefaultCasTicketValidator") {
-    it("should parse success") {
-      val file = new File(ClassLoaders.getResource("auth-success.xml").get.getFile())
+  describe("DefaultTicketValidator") {
+    it("should parse sso success") {
+      val file = new File(ClassLoaders.getResource("auth-success.xml").get.getFile)
       val response = Files.readString(file)
-      val assertion = validator.parseResponse("testticket", response)
-      assert(null != assertion)
-      assert(assertion == "admin")
+      val rs = DefaultTicketValidator.parse(response)
+      assert(null != rs)
+      assert(rs.user.contains("admin"))
+      assert(rs.attributes.size == 8)
     }
 
-    it("should raise exception when failure") {
-      val file = new File(ClassLoaders.getResource("auth-failure.xml").get.getFile())
+    it("should parse cas success") {
+      val file = new File(ClassLoaders.getResource("auth-success2.xml").get.getFile)
       val response = Files.readString(file)
-      intercept[TicketValidationException] {
-        validator.parseResponse("ticket", response)
-      }
+      val rs = DefaultTicketValidator.parse(response)
+      assert(null != rs)
+      assert(rs.user.contains("admin"))
+      assert(rs.attributes.size == 6)
+    }
+
+    it("should catch error code when failure") {
+      val file = new File(ClassLoaders.getResource("auth-failure.xml").get.getFile)
+      val response = Files.readString(file)
+      val rs = DefaultTicketValidator.parse(response)
+      assert(!rs.validated)
+      assert(rs.code == "INVALID_TICKET")
+      assert(rs.message == "ticket 'ST_portal1_-458698-1IBoJaTT8rVVf99hhy' not recognized")
     }
   }
 }

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
+  <cas:authenticationSuccess>
+    <cas:user>admin</cas:user>
+    <cas:attributes>
+      <cas:credentialType>UsernamePasswordCredential</cas:credentialType>
+      <cas:isFromNewLogin>true</cas:isFromNewLogin>
+      <cas:authenticationDate>2019-08-01T19:33:21.527+08:00[Asia/Shanghai]</cas:authenticationDate>
+      <cas:authenticationMethod>RestAuthenticationHandler</cas:authenticationMethod>
+      <cas:successfulAuthenticationHandlers>RestAuthenticationHandler</cas:successfulAuthenticationHandlers>
+      <cas:longTermAuthenticationRequestTokenUsed>false</cas:longTermAuthenticationRequestTokenUsed>
+    </cas:attributes>
+  </cas:authenticationSuccess>
+</cas:serviceResponse>
