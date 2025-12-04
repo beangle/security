@@ -27,11 +27,8 @@ import java.io.StringReader
 import java.net.URLEncoder
 import javax.xml.parsers.SAXParserFactory
 
-class TicketValidationException(message: String) extends Exception(message)
-
 trait TicketValidator {
 
-  @throws(classOf[TicketValidationException])
   def validate(ticket: String, service: String): CasResponse
 }
 
@@ -124,28 +121,24 @@ class DefaultTicketValidator extends TicketValidator, Logging {
   override def validate(ticket: String, service: String): CasResponse = {
     val validationUrl = constructValidationUrl(ticket, service)
     val r = HttpUtils.getText(validationUrl)
-    logger.debug(s"Get ${validationUrl},and response is : ${r.getText}")
-    if (r.isOk) {
-      DefaultTicketValidator.parse(r.getText)
-    } else {
-      CasResponse("failure", None, Map.empty, r.getText)
-    }
+    logger.debug(s"Get $validationUrl,and response is : ${r.getText}")
+    if r.isOk then DefaultTicketValidator.parse(r.getText) else CasResponse("failure", None, Map.empty, r.getText)
   }
 
   /** Constructs the URL to send the validation request to.
    */
   private def constructValidationUrl(ticket: String, serviceUrl: String): String = {
-    val urlParameters = new collection.mutable.HashMap[String, String]
-    urlParameters.put("ticket", ticket)
+    val params = new collection.mutable.HashMap[String, String]
+    params.put("ticket", ticket)
     if (null != serviceUrl) {
-      urlParameters.put("service", URLEncoder.encode(serviceUrl, "UTF-8"))
+      params.put("service", URLEncoder.encode(serviceUrl, "UTF-8"))
     }
     val suffix = config.validateUri
-    val buffer = new java.lang.StringBuilder(urlParameters.size * 10 + config.casServer.length + suffix.length() + 1)
+    val buffer = new java.lang.StringBuilder(params.size * 10 + config.casServer.length + suffix.length() + 1)
     buffer.append(config.casServer).append(suffix)
 
     var i = 0
-    urlParameters foreach {
+    params foreach {
       case (key, value) =>
         if (value != null) {
           i += 1
