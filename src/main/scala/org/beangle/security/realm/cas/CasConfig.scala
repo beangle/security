@@ -45,7 +45,7 @@ object CasConfig {
 
   val TicketName = "ticket"
 
-  val ServiceName  = "service"
+  val ServiceName = "service"
 }
 
 class CasConfig(server: String) extends Initializing {
@@ -63,6 +63,8 @@ class CasConfig(server: String) extends Initializing {
   var checkAliveUri = "/checkAlive"
 
   var localLoginUri: Option[String] = None
+
+  var accountName: String = "user"
 
   def init(): Unit = {
     Assert.notEmpty(this.loginUri, "loginUri must be specified. like /login")

@@ -33,7 +33,7 @@ class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, t
     val url = casEntryPoint.serviceUrl(req)
     val result = ticketValidator.validate(credential.toString, url)
     result.user match {
-      case Some(u) => Some(new PreauthToken(u, credential))
+      case Some(u) => Some(new PreauthToken(result.getAccount(config.accountName), credential))
       case None => throw new BadPreauthTokenException("Cas验证失败:" + result.message, credential, null)
     }
   }
