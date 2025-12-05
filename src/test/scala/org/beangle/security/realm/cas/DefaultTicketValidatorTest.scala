@@ -53,5 +53,19 @@ class DefaultTicketValidatorTest extends AnyFunSpec, Matchers {
       assert(rs.code == "INVALID_TICKET")
       assert(rs.message == "ticket 'ST_portal1_-458698-1IBoJaTT8rVVf99hhy' not recognized")
     }
+
+    it("should parse error text") {
+      val txt = "any error response"
+      val response = DefaultTicketValidator.parse(txt)
+      assert(txt == response.message)
+      assert(response.user.isEmpty)
+    }
+
+    it("should parse error xml") {
+      val txt = "<a href='1'>anchor</a>"
+      val response = DefaultTicketValidator.parse(txt)
+      assert("Invalid Cas response xml." == response.message)
+      assert(response.user.isEmpty)
+    }
   }
 }

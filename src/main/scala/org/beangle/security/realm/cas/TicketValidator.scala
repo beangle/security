@@ -21,7 +21,7 @@ import org.beangle.commons.lang.Strings
 import org.beangle.commons.logging.Logging
 import org.beangle.commons.net.http.HttpUtils
 import org.xml.sax.helpers.DefaultHandler
-import org.xml.sax.{Attributes, InputSource, XMLReader}
+import org.xml.sax.{Attributes, InputSource, SAXParseException, XMLReader}
 
 import java.io.StringReader
 import java.net.URLEncoder
@@ -35,12 +35,16 @@ trait TicketValidator {
 object DefaultTicketValidator {
 
   def parse(response: String): CasResponse = {
-    val reader = this.xmlReader
-    reader.setFeature("http://xml.org/sax/features/namespaces", false)
-    val handler = new ServiceXmlHandler()
-    reader.setContentHandler(handler)
-    reader.parse(new InputSource(new StringReader(response)))
-    handler.result
+    try {
+      val reader = this.xmlReader
+      reader.setFeature("http://xml.org/sax/features/namespaces", false)
+      val handler = new ServiceXmlHandler()
+      reader.setContentHandler(handler)
+      reader.parse(new InputSource(new StringReader(response)))
+      handler.result
+    } catch {
+      case e: SAXParseException => CasResponse("failed", None, Map.empty, response)
+    }
   }
 
   /** Get an instance of an XML reader from the XMLReaderFactory.
@@ -54,6 +58,7 @@ object DefaultTicketValidator {
   private final class ServiceXmlHandler extends DefaultHandler {
     private var currentText = new java.lang.StringBuffer()
 
+    private var validCasResponse: Boolean = _
     private var authenticationSuccess = false
     private val attributes = new collection.mutable.HashMap[String, String]
     private var errorCode: String = _
@@ -74,6 +79,7 @@ object DefaultTicketValidator {
     override def startElement(ns: String, lnm: String, qn: String, attrs: Attributes): Unit = {
       currentText = new StringBuffer()
       localName(qn) match {
+        case "serviceResponse" => validCasResponse = true
         case "authenticationSuccess" => authenticationSuccess = true
         case "authenticationFailure" =>
           authenticationSuccess = false
@@ -107,7 +113,10 @@ object DefaultTicketValidator {
 
     def result: CasResponse = {
       if (authenticationSuccess) CasResponse("success", Option(user), attributes.toMap, null)
-      else CasResponse(errorCode, None, attributes.toMap, errorMessage)
+      else {
+        if validCasResponse then CasResponse(errorCode, None, attributes.toMap, errorMessage)
+        else CasResponse("failed", None, Map.empty, "Invalid Cas response xml.")
+      }
     }
   }
 }
@@ -122,7 +131,7 @@ class DefaultTicketValidator extends TicketValidator, Logging {
     val validationUrl = constructValidationUrl(ticket, service)
     val r = HttpUtils.getText(validationUrl)
     logger.debug(s"Get $validationUrl,and response is : ${r.getText}")
-    if r.isOk then DefaultTicketValidator.parse(r.getText) else CasResponse("failure", None, Map.empty, r.getText)
+    if r.isOk then DefaultTicketValidator.parse(r.getText) else CasResponse("failed", None, Map.empty, r.getText)
   }
 
   /** Constructs the URL to send the validation request to.
