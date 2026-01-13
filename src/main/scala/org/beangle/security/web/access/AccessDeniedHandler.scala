@@ -23,8 +23,6 @@ import org.beangle.commons.logging.Logging
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.web.servlet.context.ServletContextHolder
 
-import java.io.File
-
 /**
  * @author chaostone
  */
@@ -37,7 +35,7 @@ trait AccessDeniedHandler {
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit
 }
 
-class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHandler, Logging {
+class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHandler {
 
   def this() = {
     this(null)
