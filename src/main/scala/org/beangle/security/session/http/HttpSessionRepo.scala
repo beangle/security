@@ -21,13 +21,10 @@ import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.lang.Strings.replace
-import org.beangle.commons.net.Networks
+import org.beangle.commons.net.http.HttpUtils
 import org.beangle.commons.net.http.HttpUtils.{getData, getText}
-import org.beangle.commons.net.http.{HttpMethods, Https}
 import org.beangle.security.session.cache.CacheSessionRepo
 import org.beangle.security.session.{DefaultSession, Session}
-
-import java.net.{HttpURLConnection, URL}
 
 class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   extends CacheSessionRepo(cacheManager) {
@@ -58,10 +55,7 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   override def flush(session: Session): Boolean = {
     var surl = replace(accessUrl, "{id}", session.id)
     surl = replace(surl, "{time}", session.lastAccessAt.getEpochSecond.toString)
-    val hc = Networks.openURL(surl).asInstanceOf[HttpURLConnection]
-    hc.setRequestMethod(HttpMethods.GET)
-    Https.noverify(hc)
-    hc.getResponseCode == 200
+    HttpUtils.getData(surl).isOk
   }
 
   override def expire(sid: String): Unit = {
