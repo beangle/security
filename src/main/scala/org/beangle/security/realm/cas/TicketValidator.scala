@@ -129,7 +129,7 @@ class DefaultTicketValidator extends TicketValidator, Logging {
 
   override def validate(ticket: String, service: String): CasResponse = {
     val validationUrl = constructValidationUrl(ticket, service)
-    val r = HttpUtils.getText(validationUrl)
+    val r = HttpUtils.get(validationUrl)
     logger.debug(s"Get $validationUrl,and response is : ${r.getText}")
     if r.isOk then DefaultTicketValidator.parse(r.getText) else CasResponse("failed", None, Map.empty, r.getText)
   }

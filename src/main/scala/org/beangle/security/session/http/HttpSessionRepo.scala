@@ -22,7 +22,6 @@ import org.beangle.commons.io.BinarySerializer
 import org.beangle.commons.lang.Strings
 import org.beangle.commons.lang.Strings.replace
 import org.beangle.commons.net.http.HttpUtils
-import org.beangle.commons.net.http.HttpUtils.{getData, getText}
 import org.beangle.security.session.cache.CacheSessionRepo
 import org.beangle.security.session.{DefaultSession, Session}
 
@@ -35,18 +34,18 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   var expireUrl: String = _
 
   protected def getInternal(sid: String): Option[Session] = {
-    val response = getData(replace(geturl, "{id}", sid))
-    if (response.status == 200) {
-      Some(serializer.asObject(classOf[DefaultSession], response.content.asInstanceOf[Array[Byte]]))
+    val res = HttpUtils.get(replace(geturl, "{id}", sid))
+    if (res.isOk) {
+      Some(serializer.asObject(classOf[DefaultSession], res.content.asInstanceOf[Array[Byte]]))
     } else {
       None
     }
   }
 
   override def findByPrincipal(principal: String): collection.Seq[Session] = {
-    val response = getText(replace(findUrl, "{principal}", principal))
-    if (response.status == 200) {
-      Strings.split(response.getText).toSeq.flatMap(getInternal)
+    val res = HttpUtils.get(replace(findUrl, "{principal}", principal))
+    if (res.isOk) {
+      Strings.split(res.getText).toSeq.flatMap(getInternal)
     } else {
       List.empty
     }
@@ -55,11 +54,11 @@ class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   override def flush(session: Session): Boolean = {
     var surl = replace(accessUrl, "{id}", session.id)
     surl = replace(surl, "{time}", session.lastAccessAt.getEpochSecond.toString)
-    HttpUtils.getData(surl).isOk
+    HttpUtils.get(surl).isOk
   }
 
   override def expire(sid: String): Unit = {
     evict(sid)
-    getText(replace(expireUrl, "{id}", sid))
+    HttpUtils.get(replace(expireUrl, "{id}", sid))
   }
 }
