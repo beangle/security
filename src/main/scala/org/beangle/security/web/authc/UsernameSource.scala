@@ -18,12 +18,8 @@
 package org.beangle.security.web.authc
 
 import jakarta.servlet.http.HttpServletRequest
-import org.beangle.commons.codec.digest.Digests
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
-import org.beangle.web.servlet.util.RequestUtils
-
-import java.time.Instant
+import org.beangle.security.SecurityLogger
 
 /**
  * Source of the username supplied with pre-authenticated authentication
@@ -63,7 +59,7 @@ abstract class AbstractCookieUsernameSource extends UsernameSource {
  * as remote user header value. Optionally can strip prefix: "domain\\username"
  * -> "username", if <tt>stripPrefix</tt> property value is "true".
  */
-class RemoteUsernameSource extends UsernameSource, Logging {
+class RemoteUsernameSource extends UsernameSource {
 
   var stripPrefix = true
 
@@ -73,7 +69,7 @@ class RemoteUsernameSource extends UsernameSource, Logging {
     if (null != p) username = p.getName
     if (Strings.isEmpty(username)) username = request.getRemoteUser
     if (null != username && stripPrefix) username = stripPrefix(username)
-    if (null != username) logger.debug(s"Obtained username=[$username] from remote user")
+    if (null != username) SecurityLogger.debug(s"Obtained username=[$username] from remote user")
     Option(username)
   }
 

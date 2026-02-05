@@ -17,18 +17,15 @@
 
 package org.beangle.security.realm.cas
 
-import org.beangle.commons.logging.Logging
-import org.beangle.security.authc.{ Account, AuthenticationToken, Authenticator, BadCredentialException }
-import org.beangle.security.web.session.ParamSessionIdPolicy
+import jakarta.servlet.http.{HttpServletRequest, HttpSession}
+import org.beangle.security.authc.{Account, AuthenticationToken, Authenticator, BadCredentialException}
 import org.beangle.security.web.WebSecurityManager
-import org.mockito.Mockito.{ mock, when }
-import org.scalatest.matchers.should.Matchers
+import org.beangle.security.web.session.ParamSessionIdPolicy
+import org.mockito.Mockito.{mock, when}
 import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 
-import jakarta.servlet.FilterChain
-import jakarta.servlet.http.{ HttpServletRequest, HttpServletResponse, HttpSession }
-
-class CasPreauthFilterTest extends AnyFunSpec with Matchers with Logging {
+class CasPreauthFilterTest extends AnyFunSpec, Matchers {
 
   val authenticator = new Authenticator() {
     def authenticate(token: AuthenticationToken): Account = {

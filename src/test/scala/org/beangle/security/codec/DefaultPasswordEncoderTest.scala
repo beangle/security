@@ -17,14 +17,13 @@
 
 package org.beangle.security.codec
 
-import org.beangle.commons.logging.Logging
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
 /**
  * @author chaostone
  */
-class DefaultPasswordEncoderTest extends AnyFunSpec, Matchers, Logging {
+class DefaultPasswordEncoderTest extends AnyFunSpec, Matchers {
 
   describe("DefaultPasswordEncoder generate and verfity") {
     it("generate sha") {

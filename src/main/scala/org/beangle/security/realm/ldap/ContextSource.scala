@@ -18,7 +18,6 @@
 package org.beangle.security.realm.ldap
 
 import org.beangle.commons.bean.{Disposable, Initializing}
-import org.beangle.commons.logging.Logging
 
 import java.util as jl
 import javax.naming.Context.*
@@ -41,7 +40,7 @@ trait ContextSource {
  * @see http://docs.oracle.com/javase/jndi/tutorial/ldap/connect/pool.html
  * @see http://blog.pierreroudier.net/2013/10/jndi-ldap-pools-unlimited-size-and-no-timeout-by-default/
  */
-class PoolingContextSource(val url: String, userName: String, password: String) extends ContextSource, Initializing, Disposable, Logging {
+class PoolingContextSource(val url: String, userName: String, password: String) extends ContextSource, Initializing, Disposable {
 
   private var properties = new jl.Hashtable[String, String]
 

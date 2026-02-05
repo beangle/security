@@ -20,7 +20,6 @@ package org.beangle.security.web
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
 import org.beangle.security.authc.AuthenticationException
 import org.beangle.web.servlet.url.UrlBuilder
 import org.beangle.web.servlet.util.RedirectUtils
@@ -38,7 +37,7 @@ trait EntryPoint {
   def commence(request: HttpServletRequest, response: HttpServletResponse, ae: AuthenticationException): Unit
 }
 
-class UrlEntryPoint(val url: String) extends EntryPoint, Logging {
+class UrlEntryPoint(val url: String) extends EntryPoint {
 
   var serverSideRedirect: Boolean = _
 

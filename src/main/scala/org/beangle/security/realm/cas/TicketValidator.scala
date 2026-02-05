@@ -18,8 +18,8 @@
 package org.beangle.security.realm.cas
 
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
 import org.beangle.commons.net.http.HttpUtils
+import org.beangle.security.SecurityLogger
 import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.{Attributes, InputSource, SAXParseException, XMLReader}
 
@@ -123,14 +123,14 @@ object DefaultTicketValidator {
 
 /** Default Ticket Validator
  */
-class DefaultTicketValidator extends TicketValidator, Logging {
+class DefaultTicketValidator extends TicketValidator {
 
   var config: CasConfig = _
 
   override def validate(ticket: String, service: String): CasResponse = {
     val validationUrl = constructValidationUrl(ticket, service)
     val r = HttpUtils.get(validationUrl)
-    logger.debug(s"Get $validationUrl,and response is : ${r.getText}")
+    SecurityLogger.debug(s"Get $validationUrl,and response is : ${r.getText}")
     if r.isOk then DefaultTicketValidator.parse(r.getText) else CasResponse("failed", None, Map.empty, r.getText)
   }
 

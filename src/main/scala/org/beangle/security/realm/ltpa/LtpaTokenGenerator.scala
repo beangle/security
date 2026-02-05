@@ -18,7 +18,7 @@
 package org.beangle.security.realm.ltpa
 
 import org.beangle.commons.codec.binary.Base64
-import org.beangle.commons.logging.{Logger, Logging}
+import org.beangle.security.SecurityLogger
 import org.beangle.security.realm.ltpa.LtpaTokenGenerator.*
 
 import java.lang.System.arraycopy
@@ -33,7 +33,7 @@ object LtpaTokenGenerator {
   }
 }
 
-class LtpaTokenGenerator(securityKey: Array[Byte], usernameDns: Array[String]) extends Logging {
+class LtpaTokenGenerator(securityKey: Array[Byte], usernameDns: Array[String]) {
 
   var maxAge: Long = 43200L //12hours
 
@@ -60,7 +60,7 @@ class LtpaTokenGenerator(securityKey: Array[Byte], usernameDns: Array[String]) e
       val tokenString = new String(Base64.encode(token))
       LtpaToken(expireTime * 1000L, username, tokenString)
     } catch {
-      case var15: Exception => logger.error("加密Token信息发生错误：" + var15.getMessage)
+      case var15: Exception => SecurityLogger.error("加密Token信息发生错误：" + var15.getMessage)
         null
     }
   }
@@ -81,7 +81,7 @@ class LtpaTokenGenerator(securityKey: Array[Byte], usernameDns: Array[String]) e
           LtpaToken(expire, username, tokenString)
         }
       } catch {
-        case var10: Exception => logger.info("解密Token信息发生错误：" + var10.getMessage)
+        case var10: Exception => SecurityLogger.info("解密Token信息发生错误：" + var10.getMessage)
           null
       }
     } else null

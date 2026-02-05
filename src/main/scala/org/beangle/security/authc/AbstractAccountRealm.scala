@@ -18,10 +18,9 @@
 package org.beangle.security.authc
 
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
 import org.beangle.security.realm.Realm
 
-abstract class AbstractAccountRealm extends Realm, Logging {
+abstract class AbstractAccountRealm extends Realm {
 
   protected def determinePrincipal(token: AuthenticationToken): Any = {
     if (token == null) "NONE_PROVIDED" else token.getName

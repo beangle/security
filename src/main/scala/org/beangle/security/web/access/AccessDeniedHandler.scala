@@ -19,7 +19,6 @@ package org.beangle.security.web.access
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import jakarta.servlet.{ServletRequest, ServletResponse}
-import org.beangle.commons.logging.Logging
 import org.beangle.security.authz.AccessDeniedException
 import org.beangle.web.servlet.context.ServletContextHolder
 

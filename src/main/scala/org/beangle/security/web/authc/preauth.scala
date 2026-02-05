@@ -20,16 +20,15 @@ package org.beangle.security.web.authc
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import jakarta.servlet.{FilterChain, ServletRequest, ServletResponse}
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
-import org.beangle.security.Securities
 import org.beangle.security.authc.{Account, AuthenticationException, PreauthToken}
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.Session
 import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.access.SecurityContextBuilder
+import org.beangle.security.{Securities, SecurityLogger}
 import org.beangle.web.servlet.filter.GenericHttpFilter
 
-abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter, Logging {
+abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter {
 
   var securityContextBuilder: SecurityContextBuilder = _
 
@@ -88,7 +87,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
    * authentication manager into the secure context.
    */
   protected def successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, session: Session): Unit = {
-    logger.debug(s"PreAuthentication success: $session")
+    SecurityLogger.debug(s"PreAuthentication success: $session")
     SecurityContext.set(securityContextBuilder.build(req, Some(session)))
   }
 
@@ -99,7 +98,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
    * It will be handled by ExceptionTranslationFilter
    */
   protected def unsuccessfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, failed: AuthenticationException): Unit = {
-    logger.debug("Cleared security context due to exception", failed)
+    SecurityLogger.debug("Cleared security context due to exception", failed)
     SecurityContext.clear()
     if (null != failed) throw failed
   }

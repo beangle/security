@@ -17,11 +17,10 @@
 
 package org.beangle.security.realm.ltpa
 
-import org.beangle.commons.logging.Logging
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
-class LtpaTokenTest extends AnyFunSpec, Matchers, Logging {
+class LtpaTokenTest extends AnyFunSpec, Matchers {
 
   describe("LtpaTokenGenerator") {
     val tokenString = "AAECAzY0ODU1QTlBNjQ4NjAzNUFDTj0wMDA3MDEsZGVwYXJ0PUlUyPGAE8ptQyih9snR63ep19QkNO0="

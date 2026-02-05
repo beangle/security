@@ -19,7 +19,7 @@ package org.beangle.security.realm.ldap
 
 import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
-import org.beangle.commons.logging.Logging
+import org.beangle.security.SecurityLogger
 import org.beangle.security.authc.{Account, DefaultAccount}
 import org.beangle.security.realm.ldap.LdapUserStore.*
 
@@ -27,7 +27,7 @@ import javax.naming.directory.{BasicAttributes, DirContext, SearchControls}
 import javax.naming.{CompositeName, NamingException}
 import scala.collection.mutable
 
-class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore, Logging {
+class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends LdapUserStore {
 
   var uidName = "uid"
 
@@ -51,7 +51,7 @@ class SimpleLdapUserStore(contextSource: ContextSource, base: String) extends Ld
       results.close()
       results = null
     } catch {
-      case e: Throwable => logger.error("Ldap search error,uid=" + uid, e)
+      case e: Throwable => SecurityLogger.error("Ldap search error,uid=" + uid, e)
     } finally {
       contextSource.release(ctx)
     }

@@ -15,24 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.beangle.security.authc
+package org.beangle.security
 
-import org.scalatest.funspec.AnyFunSpec
-import org.scalatest.matchers.should.Matchers
+import org.beangle.commons.logging.{Logger, slf4j}
 
-/**
- * @author chaostone
- */
-class PasswordStrengthCheckerTest extends AnyFunSpec, Matchers {
-
-  describe("DefaultPasswordStrengthChecker check password") {
-    it("check week") {
-      val checker = PasswordStrengthChecker
-      import PasswordPolicy.*
-      checker.check("1234567", Weak) should be(true)
-      checker.check("12345678", Weak) should be(true)
-      checker.check("1234567A8", Medium) should be(true)
-      checker.check("1234a567A8", Strong) should be(true)
-    }
-  }
-}
+object SecurityLogger extends Logger(slf4j("org.beangle.security"))

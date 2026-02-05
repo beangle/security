@@ -17,13 +17,12 @@
 
 package org.beangle.security.authc
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
-
-import org.beangle.commons.logging.Logging
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
-class DefaultAccountSerializerTest extends AnyFunSpec with Matchers with Logging {
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+
+class DefaultAccountSerializerTest extends AnyFunSpec, Matchers {
 
   describe("DefaultAccount default serializer") {
     it(" read and write") {

@@ -18,7 +18,7 @@
 package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
-import org.beangle.commons.logging.Logging
+import org.beangle.security.SecurityLogger
 import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
@@ -29,7 +29,7 @@ import org.scalatest.matchers.should.Matchers
 
 import java.net.URLEncoder
 
-class CasEntryPointTest extends AnyFunSpec, Matchers, Logging {
+class CasEntryPointTest extends AnyFunSpec, Matchers {
   describe("CasConfig") {
     it("should worked on getter/setter") {
       val config = new CasConfig("https://cas")
@@ -90,9 +90,9 @@ class CasEntryPointTest extends AnyFunSpec, Matchers, Logging {
 
       val entryPoint = new CasEntryPoint(config)
       val urlEncodedService = entryPoint.serviceUrl(request)
-      logger.debug(urlEncodedService)
+      SecurityLogger.debug(urlEncodedService)
       val urlEncodedService2 = entryPoint.serviceUrl(request)
-      logger.debug(urlEncodedService2)
+      SecurityLogger.debug(urlEncodedService2)
     }
   }
 

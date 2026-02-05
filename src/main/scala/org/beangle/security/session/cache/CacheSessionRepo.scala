@@ -20,13 +20,12 @@ package org.beangle.security.session.cache
 import org.beangle.commons.bean.Initializing
 import org.beangle.commons.cache.CacheManager
 import org.beangle.commons.concurrent.Timers
-import org.beangle.commons.logging.Logging
 import org.beangle.security.session.util.UpdateDelayGenerator
 import org.beangle.security.session.{Session, SessionRepo}
 
 import java.time.Instant
 
-abstract class CacheSessionRepo(val cacheManager: CacheManager) extends SessionRepo, Initializing, Logging {
+abstract class CacheSessionRepo(val cacheManager: CacheManager) extends SessionRepo, Initializing {
 
   private val sessions = cacheManager.getCache("sessions", classOf[String], classOf[Session])
 
