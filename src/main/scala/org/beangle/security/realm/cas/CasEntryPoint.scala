@@ -32,7 +32,7 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   import CasConfig.*
 
-  var localLoginStrategy = new DefaultLocalLoginStrategy(config)
+  private val localLoginStrategy = new DefaultLocalLoginStrategy(config)
 
   var sessionIdReader: Option[SessionIdReader] = None
 
@@ -97,8 +97,8 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
   }
 
   /**
-    * Constructs the URL to use to redirect to the CAS server.
-    */
+   * Constructs the URL to use to redirect to the CAS server.
+   */
   def casLoginUrl(service: String, forceRemote: Boolean): String = {
     val loginUrl = config.loginUrl
     val sb = new StringBuilder(loginUrl)

@@ -117,7 +117,7 @@ object FirstSuccessfulStrategy extends RealmAuthenticationStrategy {
 /** Realm Authenticator
  */
 class RealmAuthenticator(val reams: List[Realm]) extends AbstractAuthenticator {
-  var strategy: RealmAuthenticationStrategy = FirstSuccessfulStrategy
+  private val strategy: RealmAuthenticationStrategy = FirstSuccessfulStrategy
 
   override def doAuthenticate(token: AuthenticationToken): Account = {
     strategy.authenticate(reams, token)

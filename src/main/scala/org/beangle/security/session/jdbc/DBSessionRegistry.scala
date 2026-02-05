@@ -108,5 +108,4 @@ class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource, 
       }).execute()
     put(s)
   }
-
 }

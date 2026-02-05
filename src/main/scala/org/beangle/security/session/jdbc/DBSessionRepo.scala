@@ -29,10 +29,17 @@ import java.io.InputStream
 import java.sql.Timestamp
 import javax.sql.DataSource
 
+/** 基于数据库的session仓库
+ *
+ * @param domainProvider
+ * @param dataSource
+ * @param cacheManager
+ * @param serializer
+ */
 class DBSessionRepo(domainProvider: DomainProvider, dataSource: DataSource, cacheManager: CacheManager, serializer: BinarySerializer)
   extends CacheSessionRepo(cacheManager), EventPublisher, Initializing {
 
-  var domainId: Int = _
+  protected var domainId: Int = _
 
   override def init(): Unit = {
     domainId = domainProvider.getDomainId
@@ -40,7 +47,7 @@ class DBSessionRepo(domainProvider: DomainProvider, dataSource: DataSource, cach
 
   protected val executor = new JdbcExecutor(dataSource)
 
-  var builder: SessionBuilder = DefaultSessionBuilder
+  protected var builder: SessionBuilder = DefaultSessionBuilder
 
   var sessionTable = "session_infoes"
 

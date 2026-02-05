@@ -25,7 +25,7 @@ import org.beangle.security.context.SecurityContext
 
 abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
 
-  var domain: AuthorityDomain = AuthorityDomain.empty
+  private var domain: AuthorityDomain = AuthorityDomain.empty
 
   var unknownIsProtected: Boolean = true
 
