@@ -23,6 +23,8 @@ import java.time.{Duration, Instant}
 
 object Jwts {
 
+  val DefaultExpiresIn: Duration = Duration.ofMinutes(2)
+
   def getClaims(token: String): JsonObject = {
     JwtDigest.getClaims(token)
   }
@@ -41,12 +43,12 @@ object Jwts {
 
   class JwtBuider {
 
-    private var _claims: Map[String, String] = Map.empty
+    private var _claims: Map[String, Any] = Map.empty
 
     def expiredAfter(d: Duration): JwtBuider = {
       val issuedAt = Instant.now
-      _claims = _claims.updated("iat", issuedAt.getEpochSecond.toString)
-      _claims = _claims.updated("exp", issuedAt.plusSeconds(d.getSeconds).getEpochSecond.toString)
+      _claims = _claims.updated("iat", issuedAt.getEpochSecond.intValue)
+      _claims = _claims.updated("exp", issuedAt.plusSeconds(d.getSeconds).getEpochSecond.intValue)
       this
     }
 
@@ -56,7 +58,7 @@ object Jwts {
     }
 
     def sign(key: String): String = {
-      if !_claims.contains("exp") then expiredAfter(Duration.ofHours(2))
+      if !_claims.contains("exp") then expiredAfter(DefaultExpiresIn)
       new JwtDigest(key).generateToken(_claims)
     }
   }

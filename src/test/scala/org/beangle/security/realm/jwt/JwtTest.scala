@@ -20,6 +20,8 @@ package org.beangle.security.realm.jwt
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
+import java.time.Duration
+
 class JwtTest extends AnyFunSpec, Matchers {
   describe("Jwts") {
     it("generate and verify") {
@@ -28,6 +30,9 @@ class JwtTest extends AnyFunSpec, Matchers {
       val token = Jwts.builder().claims(data).sign(s)
       val claim = Jwts.getClaims(token)
       Jwts.validateToken(s, token) should be(true)
+      claim.contains("exp") should be(true)
+      val exp = claim.getInt("exp", 0)
+      assert(exp > 0)
     }
   }
 }

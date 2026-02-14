@@ -17,10 +17,11 @@
 
 package org.beangle.security.realm.jwt
 
+import org.beangle.commons.collection.Collections
 import org.beangle.commons.json.{Json, JsonObject}
 import org.beangle.commons.lang.Charsets
-import org.beangle.commons.text.escape.JavascriptEscaper
 
+import java.time.{Duration, Instant}
 import java.util.Base64
 import javax.crypto.spec.SecretKeySpec
 import javax.crypto.{Mac, SecretKey}
@@ -64,11 +65,23 @@ class JwtDigest(secret: String) {
   private val key = buildKey(secret.getBytes)
   private var length = 256
 
-  def generateToken(claims: collection.Map[String, String]): String = {
+  def generateToken(claims: collection.Map[String, Any], expiresIn: Duration): String = {
+    var payload: String = null
+    if (claims.contains("exp")) {
+      payload = Json.toJson(claims)
+    } else {
+      val newClaims = Collections.newMap[String, Any]
+      newClaims.addAll(claims)
+      newClaims.put("exp", Instant.now.plusSeconds(expiresIn.toSeconds).getEpochSecond.intValue)
+    }
+
     val header = s"""{"alg":"${jwtAlgo}"}"""
-    val payload = claims.map(k => s""""${k._1}":"${JavascriptEscaper.escape(k._2, true)}"""").mkString("{", ",", "}")
     val body = JwtDigest.urlEncode(header) + "." + JwtDigest.urlEncode(payload)
     body + "." + JwtDigest.urlEncode(digest(body.getBytes))
+  }
+
+  def generateToken(claims: collection.Map[String, Any]): String = {
+    generateToken(claims, Jwts.DefaultExpiresIn)
   }
 
   def validateToken(token: String): Boolean = {
@@ -76,9 +89,15 @@ class JwtDigest(secret: String) {
     if (lastDot == -1) {
       false
     } else {
-      val body = token.substring(0, lastDot)
-      val signature = token.substring(lastDot+1)
-      JwtDigest.urlEncode(digest(body.getBytes)) == signature
+      val claims = JwtDigest.getClaims(token)
+      val exp = claims.getInt("exp", 0)
+      if (exp == 0 || exp < Instant.now.getEpochSecond) {
+        false
+      } else {
+        val body = token.substring(0, lastDot)
+        val signature = token.substring(lastDot + 1)
+        JwtDigest.urlEncode(digest(body.getBytes)) == signature
+      }
     }
   }
 
