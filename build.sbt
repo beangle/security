@@ -2,7 +2,7 @@ import org.beangle.parent.Dependencies.*
 import org.beangle.parent.Settings.*
 
 ThisBuild / organization := "org.beangle.security"
-ThisBuild / version := "4.4.7-SNAPSHOT"
+ThisBuild / version := "4.4.7"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -35,7 +35,6 @@ lazy val root = (project in file("."))
     name := "beangle-security",
     common,
     Compile / mainClass := Some("org.beangle.security.realm.ldap.Main"),
-    libraryDependencies ++= Seq(beangle_commons, slf4j, logback_classic % "test", scalatest, mockito),
-    libraryDependencies ++= Seq(beangle_cache, beangle_jdbc, beangle_serializer % "test"),
-    libraryDependencies ++= Seq(beangle_web, protobuf)
+    libraryDependencies ++= Seq(beangle_commons, beangle_cache, beangle_jdbc, beangle_web, slf4j, protobuf),
+    libraryDependencies ++= Seq(logback_classic % "test", beangle_serializer % "test", scalatest, mockito)
   )
