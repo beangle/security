@@ -66,14 +66,15 @@ class JwtDigest(secret: String) {
   private var length = 256
 
   def generateToken(claims: collection.Map[String, Any], expiresIn: Duration): String = {
-    var payload: String = null
-    if (claims.contains("exp")) {
-      payload = Json.toJson(claims)
-    } else {
-      val newClaims = Collections.newMap[String, Any]
-      newClaims.addAll(claims)
-      newClaims.put("exp", Instant.now.plusSeconds(expiresIn.toSeconds).getEpochSecond.intValue)
-    }
+    val payload =
+      if (claims.contains("exp")) {
+        Json.toJson(claims)
+      } else {
+        val newClaims = Collections.newMap[String, Any]
+        newClaims.addAll(claims)
+        newClaims.put("exp", Instant.now.plusSeconds(expiresIn.toSeconds).getEpochSecond.intValue)
+        Json.toJson(newClaims)
+      }
 
     val header = s"""{"alg":"${jwtAlgo}"}"""
     val body = JwtDigest.urlEncode(header) + "." + JwtDigest.urlEncode(payload)
