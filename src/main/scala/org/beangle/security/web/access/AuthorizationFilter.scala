@@ -25,8 +25,9 @@ import org.beangle.web.servlet.filter.GenericHttpFilter
 class AuthorizationFilter(val authorizer: Authorizer) extends GenericHttpFilter, SecurityFilter {
 
   override def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain): Unit = {
-    if (!authorizer.isPermitted(SecurityContext.get))
+    if (!authorizer.isPermitted(SecurityContext.get)) {
       throw new AccessDeniedException(request, "access denied", null)
+    }
     chain.doFilter(request, response)
   }
 }

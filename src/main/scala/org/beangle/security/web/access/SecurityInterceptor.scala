@@ -45,8 +45,7 @@ class SecurityInterceptor extends Interceptor, Initializing {
       if (hasFilter) new ResultChain(filters.iterator).doFilter(req, res)
       true
     } catch {
-      case bse: SecurityException =>
-        handleException(req, res, bse); false
+      case bse: SecurityException => handleException(req, res, bse); false
       case ex: Throwable => throw ex
     }
   }

@@ -24,11 +24,11 @@ import org.beangle.security.authc.{Account, AuthenticationException, PreauthToke
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.session.Session
 import org.beangle.security.web.WebSecurityManager
-import org.beangle.security.web.access.SecurityContextBuilder
+import org.beangle.security.web.access.{SecurityContextBuilder, SecurityFilter}
 import org.beangle.security.{Securities, SecurityLogger}
 import org.beangle.web.servlet.filter.GenericHttpFilter
 
-abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter {
+abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter, SecurityFilter {
 
   var securityContextBuilder: SecurityContextBuilder = _
 
