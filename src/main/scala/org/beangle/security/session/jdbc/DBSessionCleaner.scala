@@ -17,6 +17,7 @@
 
 package org.beangle.security.session.jdbc
 
+import org.beangle.commons.bean.Scheduled
 import org.beangle.commons.lang.time.Stopwatch
 import org.beangle.security.SecurityLogger
 
@@ -27,7 +28,9 @@ import org.beangle.security.SecurityLogger
  * </ul>
  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple deployed.
  */
-class DBSessionCleaner(val registry: DBSessionRegistry) extends Runnable {
+class DBSessionCleaner(val registry: DBSessionRegistry) extends Scheduled {
+
+  var expression: String = _
 
   override def run(): Unit = {
     val watch = new Stopwatch(true)

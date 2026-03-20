@@ -23,16 +23,23 @@ import org.beangle.web.servlet.util.CookieUtils
 class CookieSessionIdReader(val idName: String) extends SessionIdReader {
 
   override def getId(request: HttpServletRequest, response: HttpServletResponse): Option[String] = {
-    val csid = CookieUtils.getCookieValue(request, idName)
-    val psid = request.getParameter(idName)
+    var psid = request.getParameter(idName)
 
-    if (null != psid) {
-      if (null == csid || psid != csid) {
-        CookieUtils.addCookie(request, response, idName, psid, -1)
+    if (null == psid) {
+      val header = request.getHeader("Authorization")
+      if (header != null) {
+        if (header.startsWith("Bearer ")) {
+          psid = header.substring("Bearer ".length)
+        } else {
+          psid = header
+        }
       }
-      Some(psid)
+    }
+
+    if (null == psid) {
+      Option(CookieUtils.getCookieValue(request, idName))
     } else {
-      Option(csid)
+      Some(psid)
     }
   }
 
