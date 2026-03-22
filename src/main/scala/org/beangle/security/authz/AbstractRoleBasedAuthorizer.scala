@@ -18,18 +18,18 @@
 package org.beangle.security.authz
 
 import org.beangle.commons.bean.Initializing
-import org.beangle.commons.concurrent.Timers
 import org.beangle.commons.security.Request
 import org.beangle.security.authc.Account
 import org.beangle.security.context.SecurityContext
 
+/**
+ * 基于角色的授权管理服务
+ */
 abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
 
-  private var domain: AuthorityDomain = AuthorityDomain.empty
+  private var domain = AuthorityDomain.empty
 
   var unknownIsProtected: Boolean = true
-
-  var refreshSeconds: Int = 5 * 60 //5 分钟
 
   override def isPermitted(context: SecurityContext, request: Request): Boolean = {
     if (context.root) return true
@@ -53,8 +53,7 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
   }
 
   override def init(): Unit = {
-    if refreshSeconds > 0 then Timers.start("beangle-security-refresher", refreshSeconds, new DomainFetcher(this))
-    else Timers.setTimeout(3, () => refresh()) //refresh domain background
+    refresh()
   }
 
   override def isRoot(user: String): Boolean = {
@@ -66,10 +65,4 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
   }
 
   def fetchDomain(): AuthorityDomain
-}
-
-class DomainFetcher(authorizer: Authorizer) extends Runnable {
-  override def run(): Unit = {
-    authorizer.refresh()
-  }
 }

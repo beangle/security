@@ -34,7 +34,9 @@ abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name)
 
   override def newId(request: HttpServletRequest, response: HttpServletResponse): String = {
     val newid = generateId(request)
-    addCookie(request, response, newid)
+    if (null == request.getAttribute("beangle.web.disable_cookie")) {
+      addCookie(request, response, newid)
+    }
     newid
   }
 

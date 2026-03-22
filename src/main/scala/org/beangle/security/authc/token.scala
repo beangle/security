@@ -38,7 +38,9 @@ trait AuthenticationToken extends Principal, Serializable {
 
   def removeDetail(name: String): Option[Any] = {
     val rs = details.get(name)
-    details -= name
+    if (rs.nonEmpty) {
+      details -= name
+    }
     rs
   }
 

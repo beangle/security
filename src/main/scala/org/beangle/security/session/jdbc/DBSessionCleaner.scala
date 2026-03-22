@@ -28,9 +28,7 @@ import org.beangle.security.SecurityLogger
  * </ul>
  * <strong>Implementation note:</strong> Make sure only one instance run clean up when multiple deployed.
  */
-class DBSessionCleaner(val registry: DBSessionRegistry) extends Scheduled {
-
-  var expression: String = _
+class DBSessionCleaner(val registry: DBSessionRegistry, val expression: String) extends Scheduled {
 
   override def run(): Unit = {
     val watch = new Stopwatch(true)

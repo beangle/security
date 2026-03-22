@@ -55,9 +55,11 @@ object JwtDigest {
 
   def getClaims(token: String): JsonObject = {
     val parts = token.split("\\.")
-    if (parts.length < 2) throw new RuntimeException("JWT 格式非法，缺少 Payload 部分")
-    val json = JwtDigest.urlDecode(parts(1))
-    Json.parseObject(new String(json))
+    if (parts.length < 2) {
+      new JsonObject()
+    } else {
+      Json.parseObject(JwtDigest.urlDecode(parts(1)))
+    }
   }
 }
 
@@ -67,12 +69,12 @@ class JwtDigest(secret: String) {
 
   def generateToken(claims: collection.Map[String, Any], expiresIn: Duration): String = {
     val payload =
-      if (claims.contains("exp")) {
+      if (claims.contains(Claims.Exp)) {
         Json.toJson(claims)
       } else {
         val newClaims = Collections.newMap[String, Any]
         newClaims.addAll(claims)
-        newClaims.put("exp", Instant.now.plusSeconds(expiresIn.toSeconds).getEpochSecond.intValue)
+        newClaims.put(Claims.Exp, Instant.now.plusSeconds(expiresIn.toSeconds).getEpochSecond.intValue)
         Json.toJson(newClaims)
       }
 
@@ -91,7 +93,7 @@ class JwtDigest(secret: String) {
       false
     } else {
       val claims = JwtDigest.getClaims(token)
-      val exp = claims.getInt("exp", 0)
+      val exp = claims.getInt(Claims.Exp, 0)
       if (exp == 0 || exp < Instant.now.getEpochSecond) {
         false
       } else {

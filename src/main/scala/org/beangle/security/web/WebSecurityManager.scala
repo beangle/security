@@ -18,13 +18,13 @@
 package org.beangle.security.web
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
-import org.beangle.web.servlet.security.RequestConvertor
-import org.beangle.security.authc._
+import org.beangle.security.authc.*
 import org.beangle.security.authz.Authorizer
 import org.beangle.security.mgt.SecurityManager
-import org.beangle.security.session.{Session, SessionProfileProvider, SessionRegistry}
+import org.beangle.security.session.{Session, SessionProfile, SessionProfileProvider, SessionRegistry}
 import org.beangle.security.web.authc.WebClient
 import org.beangle.security.web.session.SessionIdPolicy
+import org.beangle.web.servlet.security.RequestConvertor
 
 class WebSecurityManager extends SecurityManager {
 
@@ -43,8 +43,9 @@ class WebSecurityManager extends SecurityManager {
 
   def login(request: HttpServletRequest, response: HttpServletResponse, token: AuthenticationToken): Session = {
     val key = sessionIdPolicy.newId(request, response)
+    val sp = token.removeDetail("session_profile")
     val account = authc(token)
-    val profile = sessionProfileProvider.getProfile(account)
+    val profile = sp.getOrElse(sessionProfileProvider.getProfile(account)).asInstanceOf[SessionProfile]
     registry.register(key, account, WebClient.get(request), profile)
   }
 
@@ -58,7 +59,7 @@ class WebSecurityManager extends SecurityManager {
     account match {
       case da: DefaultAccount =>
         da.credentialReadOnly = isCredentialReadOnly(token)
-        da.details ++= token.details.filter(_._2.isInstanceOf[String]).map(kv=> (kv._1,kv._2.toString))
+        da.details ++= token.details.filter(_._2.isInstanceOf[String]).map(kv => (kv._1, kv._2.toString))
       case _ =>
     }
     account

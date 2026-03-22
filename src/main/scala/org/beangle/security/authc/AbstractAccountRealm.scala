@@ -17,6 +17,7 @@
 
 package org.beangle.security.authc
 
+import org.beangle.commons.collection.Collections
 import org.beangle.commons.lang.Strings
 import org.beangle.security.realm.Realm
 
@@ -41,6 +42,10 @@ abstract class AbstractAccountRealm extends Realm {
       case Some(account) =>
         additionalCheck(token, account)
         val da = new DefaultAccount(account)
+        //如果授权中包含选择指定范围的角色，则进行过滤
+        token.removeDetail("authorities") foreach { scope =>
+          da.authorities = filter(da.authorities, scope.toString)
+        }
         token match {
           case p: PreauthToken => da.addRemoteToken(p.credential)
           case _ =>
@@ -58,6 +63,22 @@ abstract class AbstractAccountRealm extends Realm {
     token match {
       case _: PreauthToken =>
       case _ => if ac.credentialExpired then throw new CredentialExpiredException("AccountStatusChecker.credentialExpired", token)
+    }
+  }
+
+  /** 从全部数组中选择过滤的值
+   *
+   * @param all
+   * @param filter
+   * @return
+   */
+  private def filter(all: Array[String], filter: String): Array[String] = {
+    if (Strings.isBlank(filter)) {
+      all
+    } else {
+      val selected = Strings.split(filter).toSet
+      val allValues = all.toSet
+      if allValues.size > selected.size then Collections.intersection(allValues, selected).toArray else all
     }
   }
 

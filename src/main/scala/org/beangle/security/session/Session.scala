@@ -18,7 +18,7 @@
 package org.beangle.security.session
 
 import java.security.Principal
-import java.time.Instant
+import java.time.{Duration, Instant}
 
 object Session {
 
@@ -45,7 +45,7 @@ trait Session extends java.io.Externalizable {
   /** 访问session
    *
    * @return 据上一次的间隔秒数，-1 表示已经过期
-   **/
+   * */
   def access(accessAt: Instant): Long
 
   def expired: Boolean
@@ -59,6 +59,12 @@ trait Session extends java.io.Externalizable {
  * @param checkCapacity   是否检查系统会话上限
  */
 case class SessionProfile(ttiSeconds: Int, concurrent: Int, capacity: Int, checkConcurrent: Boolean, checkCapacity: Boolean)
+
+object SessionProfile {
+  def tti(tti: Duration): SessionProfile = {
+    SessionProfile(tti.getSeconds.toInt, 1, Int.MaxValue, checkConcurrent = false, checkCapacity = false)
+  }
+}
 
 trait SessionBuilder {
   def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int): Session
