@@ -18,6 +18,7 @@
 package org.beangle.security.web.session
 
 import org.beangle.commons.json.Json
+import org.beangle.commons.lang.Strings
 import org.beangle.security.SecurityLogger
 import org.beangle.security.realm.jwt.{Claims, JwtDigest}
 
@@ -26,6 +27,7 @@ import java.time.Instant
 object SessionId {
 
   def parse(psid: String): Option[String] = {
+    if (Strings.isEmpty(psid)) return None
     val dotIdx = psid.indexOf('.')
     //without dot or only last dot
     if (dotIdx < 0 || dotIdx == psid.length - 1) {

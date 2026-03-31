@@ -29,7 +29,7 @@ abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name)
 
   override def getId(request: HttpServletRequest, res: HttpServletResponse): Option[String] = {
     val c = CookieUtils.getCookie(request, name)
-    if null == c then None else SessionId.parse(c.getValue)
+    if null == c then SessionId.parse(request.getParameter(name)) else SessionId.parse(c.getValue)
   }
 
   override def newId(request: HttpServletRequest, response: HttpServletResponse): String = {
