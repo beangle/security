@@ -28,10 +28,11 @@ class CookieSessionIdReader(val idName: String) extends SessionIdReader {
     var fromParam = false
     if (Strings.isEmpty(psid)) {
       val header = request.getHeader("Authorization")
+      //只接受bearer和直接传输令牌两种方式
       if (Strings.isNotEmpty(header)) {
         if (header.startsWith("Bearer ")) {
           psid = header.substring("Bearer ".length)
-        } else {
+        } else if (!header.contains(" ")) {
           psid = header
         }
       }
@@ -53,5 +54,4 @@ class CookieSessionIdReader(val idName: String) extends SessionIdReader {
       rs
     }
   }
-
 }
