@@ -23,7 +23,7 @@ ThisBuild / developers := List(
 ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
-val beangle_commons = "org.beangle.commons" % "beangle-commons" % "6.0.16"
+val beangle_commons = "org.beangle.commons" % "beangle-commons" % "6.0.17"
 val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.1.8"
 val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.19"
 val beangle_web = "org.beangle.web" % "beangle-web" % "0.7.6"

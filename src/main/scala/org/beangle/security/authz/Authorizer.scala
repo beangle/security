@@ -45,9 +45,10 @@ object PublicAuthorizer extends Authorizer {
   override def refresh(): Unit = {}
 }
 
-object ProtectedAuthorizer extends Authorizer {
+class ProtectedAuthorizer(ignores: Set[String]) extends Authorizer {
   def isPermitted(context: SecurityContext, request: Request): Boolean = {
-    context.isValid
+    val resourceName = request.resource.toString
+    ignores.contains(resourceName) || context.isValid
   }
 
   def isRoot(user: String): Boolean = {
