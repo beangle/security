@@ -44,7 +44,7 @@ abstract class CacheSessionRepo(val cacheManager: CacheManager) extends SessionR
   var flushInterval: Int = 3 * 60
 
   override def init(): Unit = {
-    Timers.start("Beangle Session", flushInterval, this.accessReporter)
+    Timers.start("beangle-session-heartbeat", flushInterval, this.accessReporter)
   }
 
   override def get(sessionId: String, refresh: Boolean = false): Option[Session] = {
