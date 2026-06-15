@@ -20,7 +20,6 @@ package org.beangle.security.web.access
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import jakarta.servlet.{ServletRequest, ServletResponse}
 import org.beangle.security.authz.AccessDeniedException
-import org.beangle.web.servlet.context.ServletContextHolder
 
 /**
  * @author chaostone
@@ -42,8 +41,6 @@ class DefaultAccessDeniedHandler(var errorPage: String) extends AccessDeniedHand
 
   if (null != errorPage) {
     require(errorPage.startsWith("/"), "errorPage must begin with '/'")
-    val file = ServletContextHolder.context.getResource(errorPage)
-    if (null == file) errorPage = null
   }
 
   def handle(request: ServletRequest, response: ServletResponse, exception: AccessDeniedException): Unit = {

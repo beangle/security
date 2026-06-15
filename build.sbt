@@ -23,11 +23,11 @@ ThisBuild / developers := List(
 ThisBuild / description := "The Beangle Data Library"
 ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
 
-val beangle_commons = "org.beangle.commons" % "beangle-commons" % "6.1.0"
-val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.1.8"
-val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.19"
-val beangle_web = "org.beangle.web" % "beangle-web" % "0.7.7"
-val beangle_serializer = "org.beangle.serializer" % "beangle-serializer" % "0.1.25"
+val beangle_commons = "org.beangle.commons" % "beangle-commons" % "6.2.0"
+val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.1.9"
+val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.20"
+val beangle_web = "org.beangle.web" % "beangle-web" % "0.7.8"
+val beangle_serializer = "org.beangle.serializer" % "beangle-serializer" % "0.1.27"
 
 lazy val root = (project in file("."))
   .settings(

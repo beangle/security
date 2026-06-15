@@ -17,15 +17,14 @@
 
 package org.beangle.security.web.session
 
+import jakarta.servlet.ServletContext
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
-import org.beangle.commons.bean.Initializing
-import org.beangle.web.servlet.context.ServletContextHolder
 import org.beangle.web.servlet.util.{CookieGenerator, CookieUtils}
 
 /**
  * @author chaostone
  */
-abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name), SessionIdPolicy, Initializing {
+abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name), SessionIdPolicy {
 
   override def getId(request: HttpServletRequest, res: HttpServletResponse): Option[String] = {
     val c = CookieUtils.getCookie(request, name)
@@ -35,21 +34,13 @@ abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name)
   override def newId(request: HttpServletRequest, response: HttpServletResponse): String = {
     val newid = generateId(request)
     if (null == request.getAttribute(CookieUtils.DisableCookie)) {
-      addCookie(request, response, newid)
+      addCookie(request, response, path(request.getServletContext), newid)
     }
     newid
   }
 
-  def init(): Unit = {
-    if (null == this.path) {
-      val c = ServletContextHolder.context
-      if c == null then this.path = "/"
-      else this.path = if (c.getContextPath.isEmpty) "/" else c.getContextPath
-    }
-  }
-
   override def delId(request: HttpServletRequest, response: HttpServletResponse): Unit = {
-    removeCookie(request, response)
+    removeCookie(request, response, path(request.getServletContext))
   }
 
   override def idName: String = {
@@ -57,4 +48,11 @@ abstract class CookieSessionIdPolicy(name: String) extends CookieGenerator(name)
   }
 
   protected def generateId(request: HttpServletRequest): String
+
+  private def path(sc: ServletContext): String = {
+    if sc == null then "/"
+    else {
+      if (sc.getContextPath.isEmpty) "/" else sc.getContextPath
+    }
+  }
 }
