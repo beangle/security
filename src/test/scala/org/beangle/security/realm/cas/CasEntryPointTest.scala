@@ -46,6 +46,7 @@ class CasEntryPointTest extends AnyFunSpec, Matchers {
       when(request.getRequestURI).thenReturn("/bigWebApp/some_path")
       when(request.getServerName).thenReturn("mycompany.com")
       when(request.getScheme).thenReturn("https")
+      when(request.getServletPath).thenReturn("/some_path")
       when(request.getServerPort).thenReturn(443)
       val response = mockResponse()
 
