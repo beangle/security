@@ -19,8 +19,11 @@ package org.beangle.security.web
 
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.commons.activation.MediaTypes
+import org.beangle.commons.json.{JsonArray, JsonObject}
 import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.AuthenticationException
+import org.beangle.web.servlet.http.accept.{ContentNegotiationManager, ContentNegotiationManagerFactory}
 import org.beangle.web.servlet.url.UrlBuilder
 import org.beangle.web.servlet.util.RedirectUtils
 
@@ -37,9 +40,39 @@ trait EntryPoint {
   def commence(request: HttpServletRequest, response: HttpServletResponse, ae: AuthenticationException): Unit
 }
 
-class UrlEntryPoint(val url: String) extends EntryPoint {
+abstract class ContentNegotiationEntryPoint extends EntryPoint {
+  private val contentNegotiationManager: ContentNegotiationManager = buildContentNegotiationManagerFactory()
 
-  var serverSideRedirect: Boolean = _
+  protected def isJsonRequest(req: HttpServletRequest): Boolean = {
+    contentNegotiationManager.resolve(req).exists(x => x == MediaTypes.json || x == MediaTypes.jsonApi)
+  }
+
+  protected def responseAsJson(loginUrl: Option[String], req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
+    val error = new JsonObject()
+    error.add("status", 401)
+    error.add("title", if null == ae then "Unauthorized" else ae.getMessage)
+    loginUrl foreach { url =>
+      val meta = new JsonObject()
+      meta.add("redirectUrl", loginUrl)
+      error.add("meta", meta)
+    }
+    val rs = JsonObject("errors" -> JsonArray(error))
+    res.setContentType("application/json; charset=utf-8")
+    res.getWriter.write(rs.toString)
+  }
+
+  private def buildContentNegotiationManagerFactory(): ContentNegotiationManager = {
+    val factory = new ContentNegotiationManagerFactory
+    factory.favorPathExtension = true
+    factory.favorParameter = true
+    factory.parameterName = "format"
+    factory.ignoreAcceptHeader = false
+    factory.init()
+    factory.getObject
+  }
+}
+
+class UrlEntryPoint(val url: String) extends ContentNegotiationEntryPoint {
 
   /** Performs the redirect (or forward) to the login form URL. */
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
@@ -47,11 +80,12 @@ class UrlEntryPoint(val url: String) extends EntryPoint {
     if (failOnLogin) {
       res.getWriter.println(ae.getMessage)
     } else {
-      if (serverSideRedirect) {
-        req.getRequestDispatcher(determineUrl(req, ae)).forward(req, res)
+      // redirect to login page. Use https if forceHttps true
+      val url = determineUrl(req, ae)
+      if (isJsonRequest(req)) {
+        responseAsJson(Some(url), req, res, ae)
       } else {
-        // redirect to login page. Use https if forceHttps true
-        RedirectUtils.sendRedirect(req, res, determineUrl(req, ae))
+        RedirectUtils.sendRedirect(req, res, url)
       }
     }
   }

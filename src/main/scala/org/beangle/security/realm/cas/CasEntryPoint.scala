@@ -18,9 +18,10 @@
 package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.commons.json.{JsonArray, JsonObject}
 import org.beangle.commons.lang.Strings
 import org.beangle.security.authc.AuthenticationException
-import org.beangle.security.web.EntryPoint
+import org.beangle.security.web.ContentNegotiationEntryPoint
 import org.beangle.security.web.session.SessionIdReader
 import org.beangle.web.servlet.url.UrlBuilder
 import org.beangle.web.servlet.util.{CookieUtils, RequestUtils}
@@ -28,7 +29,7 @@ import org.beangle.web.servlet.util.{CookieUtils, RequestUtils}
 import java.net.URLEncoder
 import java.util as ju
 
-class CasEntryPoint(val config: CasConfig) extends EntryPoint {
+class CasEntryPoint(val config: CasConfig) extends ContentNegotiationEntryPoint {
 
   import CasConfig.*
 
@@ -40,13 +41,18 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
 
   override def commence(req: HttpServletRequest, res: HttpServletResponse, ae: AuthenticationException): Unit = {
     Cas.cleanup(config, req, res)
+    val needJson = isJsonRequest(req)
     if (null != ae && ae.breakable) {
-      res.setContentType("text/html; charset=utf-8")
-      val writer = res.getWriter
-      writer.append("<!DOCTYPE html>\n<html lang=\"zh_CN\">" +
-        "<head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" /></head><body><p>")
-      writer.append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
-      writer.append("<p></body></html>")
+      if (needJson) {
+        responseAsJson(None, req, res, ae)
+      } else {
+        res.setContentType("text/html; charset=utf-8")
+        val writer = res.getWriter
+        writer.append("<!DOCTYPE html>\n<html lang=\"zh_CN\">" +
+          "<head><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\" /></head><body><p>")
+        writer.append(String.valueOf(ae.principal.toString)).append(ae.getMessage())
+        writer.append("<p></body></html>")
+      }
     } else {
       if (config.gateway) {
         val localLogin = config.localLoginUri.get
@@ -55,19 +61,26 @@ class CasEntryPoint(val config: CasConfig) extends EntryPoint {
           throw ae
         } else {
           val localUrl = localLoginUrl(req)
-          CookieUtils.addCookie(req, res, CasConfig.ServiceName, localUrl, 30 * 60)
-          res.sendRedirect(casLoginUrl(localUrl, req.getParameter("remote") != null))
+          val loginUrl = casLoginUrl(localUrl, req.getParameter("remote") != null)
+          if (needJson) {
+            responseAsJson(Some(loginUrl), req, res, ae)
+          } else {
+            CookieUtils.addCookie(req, res, CasConfig.ServiceName, localUrl, 30 * 60)
+            res.sendRedirect(loginUrl)
+          }
         }
       } else {
-        config.localLoginUri match {
-          case None =>
-            res.sendRedirect(casLoginUrl(serviceUrl(req), false))
+        val loginUrl = config.localLoginUri match {
+          case None => casLoginUrl(serviceUrl(req), false)
           case Some(_) =>
-            if (isLocalLogin(req, ae)) {
-              res.sendRedirect(localLoginUrl(req))
-            } else {
-              res.sendRedirect(casLoginUrl(localLoginUrl(req), req.getParameter("remote") != null))
-            }
+            if isLocalLogin(req, ae) then localLoginUrl(req)
+            else
+              casLoginUrl(localLoginUrl(req), req.getParameter("remote") != null)
+        }
+        if (needJson) {
+          responseAsJson(Some(loginUrl), req, res, ae)
+        } else {
+          res.sendRedirect(loginUrl)
         }
       }
     }

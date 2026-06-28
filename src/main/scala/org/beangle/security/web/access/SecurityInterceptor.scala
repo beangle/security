@@ -56,7 +56,7 @@ class SecurityInterceptor extends Interceptor, Initializing {
         sendStartAuthentication(request, response, ae)
       case ade: AccessDeniedException =>
         if (SecurityContext.get.isValid) accessDeniedHandler.handle(request, response, ade)
-        else sendStartAuthentication(request, response, new AuthenticationException("access denied", ade))
+        else sendStartAuthentication(request, response, new AuthenticationException("Unauthorized", ade))
       case se: SecurityException =>
         sendStartAuthentication(request, response, new AuthenticationException(se.getMessage, se))
     }
