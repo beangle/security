@@ -57,6 +57,7 @@ abstract class ContentNegotiationEntryPoint extends EntryPoint {
       error.add("meta", meta)
     }
     val rs = JsonObject("errors" -> JsonArray(error))
+    res.setStatus(401)
     res.setContentType("application/json; charset=utf-8")
     res.getWriter.write(rs.toString)
   }
