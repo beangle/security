@@ -32,7 +32,7 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
   var unknownIsProtected: Boolean = true
 
   override def isPermitted(context: SecurityContext, request: Request): Boolean = {
-    if (context.root) return true
+    if (context.isRoot) return true
 
     val resourceName = request.resource.toString
     val raOption = domain.authorities.get(resourceName)

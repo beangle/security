@@ -28,6 +28,7 @@ object AccountSerializer extends ObjectSerializer {
   def toMessage(account: DefaultAccount): Model.Account = {
     val builder = Model.Account.newBuilder()
     builder.setName(account.name)
+    builder.setRoot(account.isRoot)
     builder.setDescription(account.description)
     builder.setStatus(account.status)
     builder.setCategoryId(account.categoryId)
@@ -59,6 +60,7 @@ object AccountSerializer extends ObjectSerializer {
   def fromMessage(pa: Model.Account): DefaultAccount = {
     val account = new DefaultAccount(pa.getName, pa.getDescription)
     account.status = pa.getStatus
+    account.isRoot = pa.getRoot
     account.categoryId = pa.getCategoryId
     val rt = pa.getRemoteToken
     if (Strings.isNotBlank(rt)) {

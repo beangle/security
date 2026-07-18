@@ -55,6 +55,8 @@ trait Account extends Principal, Externalizable {
 
   def isRemote: Boolean
 
+  def isRoot: Boolean
+
   override def hashCode: Int = {
     if (null == name) 629 else name.hashCode()
   }

@@ -35,7 +35,7 @@ object DefaultAccount {
 
 }
 
-import org.beangle.security.authc.DefaultAccount.StatusMask._
+import org.beangle.security.authc.DefaultAccount.StatusMask.*
 
 final class DefaultAccount extends Account {
 
@@ -56,6 +56,8 @@ final class DefaultAccount extends Account {
   var details: Map[String, String] = Map.empty
 
   var categoryId: Int = _
+
+  var isRoot: Boolean = _
 
   def this(name: String, description: String) = {
     this()
@@ -79,6 +81,7 @@ final class DefaultAccount extends Account {
     if (account.authorities != null) this.authorities = account.authorities
     if (account.permissions != null) this.permissions = account.permissions
     if (account.profiles != null) this.profiles = account.profiles
+    this.isRoot = account.isRoot
     this.addDetails(account.details)
   }
 

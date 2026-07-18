@@ -202,6 +202,12 @@ java.lang.String defaultValue);
      */
     java.lang.String getDetailsOrThrow(
         java.lang.String key);
+
+    /**
+     * <code>bool root = 10;</code>
+     * @return The root.
+     */
+    boolean getRoot();
   }
   /**
    * Protobuf type {@code Account}
@@ -593,6 +599,17 @@ java.lang.String defaultValue) {
       return map.get(key);
     }
 
+    public static final int ROOT_FIELD_NUMBER = 10;
+    private boolean root_ = false;
+    /**
+     * <code>bool root = 10;</code>
+     * @return The root.
+     */
+    @java.lang.Override
+    public boolean getRoot() {
+      return root_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -637,6 +654,9 @@ java.lang.String defaultValue) {
           internalGetDetails(),
           DetailsDefaultEntryHolder.defaultEntry,
           9);
+      if (root_ != false) {
+        output.writeBool(10, root_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -693,6 +713,10 @@ java.lang.String defaultValue) {
         size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(9, details__);
       }
+      if (root_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(10, root_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -726,6 +750,8 @@ java.lang.String defaultValue) {
           .equals(other.getProfilesList())) return false;
       if (!internalGetDetails().equals(
           other.internalGetDetails())) return false;
+      if (getRoot()
+          != other.getRoot()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -763,6 +789,9 @@ java.lang.String defaultValue) {
         hash = (37 * hash) + DETAILS_FIELD_NUMBER;
         hash = (53 * hash) + internalGetDetails().hashCode();
       }
+      hash = (37 * hash) + ROOT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getRoot());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -933,6 +962,7 @@ java.lang.String defaultValue) {
         }
         bitField0_ = (bitField0_ & ~0x00000080);
         internalGetMutableDetails().clear();
+        root_ = false;
         return this;
       }
 
@@ -1005,6 +1035,9 @@ java.lang.String defaultValue) {
         if (((from_bitField0_ & 0x00000100) != 0)) {
           result.details_ = internalGetDetails();
           result.details_.makeImmutable();
+        }
+        if (((from_bitField0_ & 0x00000200) != 0)) {
+          result.root_ = root_;
         }
       }
 
@@ -1090,6 +1123,9 @@ java.lang.String defaultValue) {
         internalGetMutableDetails().mergeFrom(
             other.internalGetDetails());
         bitField0_ |= 0x00000100;
+        if (other.getRoot() != false) {
+          setRoot(other.getRoot());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -1175,6 +1211,11 @@ java.lang.String defaultValue) {
                 bitField0_ |= 0x00000100;
                 break;
               } // case 74
+              case 80: {
+                root_ = input.readBool();
+                bitField0_ |= 0x00000200;
+                break;
+              } // case 80
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2058,6 +2099,38 @@ java.lang.String defaultValue) {
         internalGetMutableDetails().getMutableMap()
             .putAll(values);
         bitField0_ |= 0x00000100;
+        return this;
+      }
+
+      private boolean root_ ;
+      /**
+       * <code>bool root = 10;</code>
+       * @return The root.
+       */
+      @java.lang.Override
+      public boolean getRoot() {
+        return root_;
+      }
+      /**
+       * <code>bool root = 10;</code>
+       * @param value The root to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRoot(boolean value) {
+
+        root_ = value;
+        bitField0_ |= 0x00000200;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bool root = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRoot() {
+        bitField0_ = (bitField0_ & ~0x00000200);
+        root_ = false;
+        onChanged();
         return this;
       }
 
@@ -4990,23 +5063,23 @@ java.lang.String defaultValue) {
   static {
     java.lang.String[] descriptorData = {
       "\n1org/beangle/security/session/protobuf/" +
-      "model.proto\"\203\002\n\007Account\022\014\n\004name\030\001 \001(\t\022\023\n" +
+      "model.proto\"\221\002\n\007Account\022\014\n\004name\030\001 \001(\t\022\023\n" +
       "\013description\030\002 \001(\t\022\022\n\ncategoryId\030\003 \001(\005\022\023" +
       "\n\013remoteToken\030\004 \001(\t\022\016\n\006status\030\005 \001(\005\022\023\n\013a" +
       "uthorities\030\006 \003(\t\022\023\n\013permissions\030\007 \003(\t\022\032\n" +
       "\010profiles\030\010 \003(\0132\010.Profile\022&\n\007details\030\t \003" +
-      "(\0132\025.Account.DetailsEntry\032.\n\014DetailsEntr" +
-      "y\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"-\n\005Age" +
-      "nt\022\014\n\004name\030\001 \001(\t\022\n\n\002ip\030\002 \001(\t\022\n\n\002os\030\003 \001(\t" +
-      "\"\204\001\n\007Session\022\n\n\002id\030\001 \001(\t\022\033\n\tprincipal\030\002 " +
-      "\001(\0132\010.Account\022\017\n\007loginAt\030\003 \001(\003\022\024\n\014lastAc" +
-      "cessAt\030\004 \001(\003\022\025\n\005agent\030\005 \001(\0132\006.Agent\022\022\n\nt" +
-      "tiSeconds\030\006 \001(\005\"\204\001\n\007Profile\022\n\n\002id\030\001 \001(\003\022" +
-      "\014\n\004name\030\002 \001(\t\022,\n\nproperties\030\003 \003(\0132\030.Prof" +
-      "ile.PropertiesEntry\0321\n\017PropertiesEntry\022\013" +
-      "\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001B.\n%org.be" +
-      "angle.security.session.protobufB\005Modelb\006" +
-      "proto3"
+      "(\0132\025.Account.DetailsEntry\022\014\n\004root\030\n \001(\010\032" +
+      ".\n\014DetailsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 " +
+      "\001(\t:\0028\001\"-\n\005Agent\022\014\n\004name\030\001 \001(\t\022\n\n\002ip\030\002 \001" +
+      "(\t\022\n\n\002os\030\003 \001(\t\"\204\001\n\007Session\022\n\n\002id\030\001 \001(\t\022\033" +
+      "\n\tprincipal\030\002 \001(\0132\010.Account\022\017\n\007loginAt\030\003" +
+      " \001(\003\022\024\n\014lastAccessAt\030\004 \001(\003\022\025\n\005agent\030\005 \001(" +
+      "\0132\006.Agent\022\022\n\nttiSeconds\030\006 \001(\005\"\204\001\n\007Profil" +
+      "e\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022,\n\npropertie" +
+      "s\030\003 \003(\0132\030.Profile.PropertiesEntry\0321\n\017Pro" +
+      "pertiesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t" +
+      ":\0028\001B.\n%org.beangle.security.session.pro" +
+      "tobufB\005Modelb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5017,7 +5090,7 @@ java.lang.String defaultValue) {
     internal_static_Account_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_Account_descriptor,
-        new java.lang.String[] { "Name", "Description", "CategoryId", "RemoteToken", "Status", "Authorities", "Permissions", "Profiles", "Details", });
+        new java.lang.String[] { "Name", "Description", "CategoryId", "RemoteToken", "Status", "Authorities", "Permissions", "Profiles", "Details", "Root", });
     internal_static_Account_DetailsEntry_descriptor =
       internal_static_Account_descriptor.getNestedType(0);
     internal_static_Account_DetailsEntry_fieldAccessorTable = new

@@ -17,8 +17,9 @@
 
 package org.beangle.security
 
-import org.beangle.security.session.Session
+import org.beangle.security.authc.Account
 import org.beangle.security.context.SecurityContext
+import org.beangle.security.session.Session
 
 object Securities {
   def session: Option[Session] = {
@@ -30,7 +31,7 @@ object Securities {
     context.session match {
       case None => SecurityContext.Anonymous
       case Some(session) =>
-        if (context.root && context.runAs.isDefined) {
+        if (context.isRoot && context.runAs.isDefined) {
           context.runAs.get
         } else {
           session.principal.getName

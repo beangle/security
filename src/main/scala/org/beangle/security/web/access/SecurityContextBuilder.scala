@@ -17,16 +17,14 @@
 
 package org.beangle.security.web.access
 
-import java.time.Instant
-
+import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
+import org.beangle.security.context.SecurityContext
+import org.beangle.security.session.{Session, SessionRepo}
+import org.beangle.security.web.session.SessionIdReader
 import org.beangle.web.servlet.security.RequestConvertor
 import org.beangle.web.servlet.util.CookieUtils
-import org.beangle.security.authz.Authorizer
-import org.beangle.security.context.SecurityContext
-import org.beangle.security.session.{ Session, SessionRepo }
-import org.beangle.security.web.session.SessionIdReader
 
-import jakarta.servlet.http.{ HttpServletRequest, HttpServletResponse }
+import java.time.Instant
 
 trait SecurityContextBuilder {
 
@@ -37,7 +35,6 @@ trait SecurityContextBuilder {
 }
 
 class DefaultSecurityContextBuilder extends SecurityContextBuilder {
-  var authorizer: Authorizer = _
   var requestConvertor: RequestConvertor = _
 
   var repo: SessionRepo = _
@@ -47,20 +44,19 @@ class DefaultSecurityContextBuilder extends SecurityContextBuilder {
     val session =
       sessionIdReader.getId(request, response) match {
         case Some(sid) => repo.access(sid, Instant.now)
-        case None      => None
+        case None => None
       }
     build(request, session)
   }
 
   def build(request: HttpServletRequest, session: Option[Session]): SecurityContext = {
-    var isRoot = false
+    var runAs: Option[String] = None
     session foreach { s =>
-      isRoot = authorizer.isRoot(s.principal.getName)
+      val isRoot = s.principal.isRoot
+      if (isRoot) {
+        runAs = Option(CookieUtils.getCookieValue(request, "beangle.security.runAs"))
+      }
     }
-    var runAs: String = null
-    if (isRoot) {
-      runAs = CookieUtils.getCookieValue(request, "beangle.security.runAs")
-    }
-    new SecurityContext(session, requestConvertor.convert(request), isRoot, Option(runAs))
+    new SecurityContext(session, requestConvertor.convert(request), runAs)
   }
 }

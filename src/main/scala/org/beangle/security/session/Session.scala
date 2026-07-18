@@ -17,6 +17,8 @@
 
 package org.beangle.security.session
 
+import org.beangle.security.authc.Account
+
 import java.security.Principal
 import java.time.{Duration, Instant}
 
@@ -30,7 +32,7 @@ trait Session extends java.io.Externalizable {
 
   def id: String
 
-  def principal: Principal
+  def principal: Account
 
   def loginAt: Instant
 

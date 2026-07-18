@@ -13,6 +13,7 @@ message Account {
     repeated string permissions = 7;
     repeated Profile profiles = 8;
     map<string, string> details = 9;
+    bool root=10;
 }
 
 message Agent {
