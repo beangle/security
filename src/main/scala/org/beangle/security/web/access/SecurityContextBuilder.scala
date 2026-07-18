@@ -18,8 +18,11 @@
 package org.beangle.security.web.access
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
-import org.beangle.security.context.SecurityContext
+import org.beangle.commons.json.{Json, JsonArray}
+import org.beangle.security.authc.Profile
+import org.beangle.security.context.{RunAs, SecurityContext}
 import org.beangle.security.session.{Session, SessionRepo}
+import org.beangle.security.web.CookieKeys
 import org.beangle.security.web.session.SessionIdReader
 import org.beangle.web.servlet.security.RequestConvertor
 import org.beangle.web.servlet.util.CookieUtils
@@ -50,13 +53,29 @@ class DefaultSecurityContextBuilder extends SecurityContextBuilder {
   }
 
   def build(request: HttpServletRequest, session: Option[Session]): SecurityContext = {
-    var runAs: Option[String] = None
+    var runAs: Option[RunAs] = None
+    var profile: Option[Profile] = None
     session foreach { s =>
-      val isRoot = s.principal.isRoot
-      if (isRoot) {
-        runAs = Option(CookieUtils.getCookieValue(request, "beangle.security.runAs"))
+      if (s.principal.isRoot) {
+        val runAsJson = CookieUtils.getCookieValue(request, CookieKeys.RunAsKey)
+        if (null != runAsJson) {
+          runAs = RunAs.parseJson(runAsJson)
+        }
+      }
+
+      // 切换 profile 的当次请求：URL contextProfileId 优先于 cookie
+      val profileId = {
+        val fromParam = request.getParameter("contextProfileId")
+        if (null != fromParam && fromParam.nonEmpty) fromParam
+        else CookieUtils.getCookieValue(request, CookieKeys.ProfileIdKey)
+      }
+      if (null != profileId && profileId.nonEmpty) {
+        runAs match {
+          case None => profile = Option(s.principal.profiles).flatMap(_.find(_.id.toString == profileId))
+          case Some(rs) => profile = rs.profiles.find(_.id.toString == profileId)
+        }
       }
     }
-    new SecurityContext(session, requestConvertor.convert(request), runAs)
+    new SecurityContext(session, requestConvertor.convert(request), profile, runAs.map(_.name))
   }
 }

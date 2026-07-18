@@ -18,19 +18,19 @@
 package org.beangle.security.authz
 
 object AuthorityDomain {
-  def apply(roots: collection.Iterable[String], authorities: collection.Seq[Authority]): AuthorityDomain = {
-    new AuthorityDomain(roots.toSet, authorities.map(x => (x.resourceName, x)).toMap)
+  def apply(authorities: collection.Seq[Authority]): AuthorityDomain = {
+    new AuthorityDomain(authorities.map(x => (x.resourceName, x)).toMap)
   }
 
   def empty: AuthorityDomain = {
-    new AuthorityDomain(Set.empty, Map.empty)
+    new AuthorityDomain(Map.empty)
   }
 }
 
-class AuthorityDomain(val roots: Set[String], val authorities: Map[String, Authority]) {
+class AuthorityDomain(val authorities: Map[String, Authority]) {
 
   def isEmpty: Boolean = {
-    authorities.isEmpty && roots.isEmpty
+    authorities.isEmpty
   }
 }
 

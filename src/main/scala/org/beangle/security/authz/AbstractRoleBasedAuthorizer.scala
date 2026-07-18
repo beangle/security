@@ -45,7 +45,7 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
           case _ => //private
             context.session match {
               case Some(session) =>
-                ra.matches(session.principal.asInstanceOf[Account].authorities)
+                ra.matches(session.principal.authorities)
               case None => false
             }
         }
@@ -54,10 +54,6 @@ abstract class AbstractRoleBasedAuthorizer extends Authorizer, Initializing {
 
   override def init(): Unit = {
     refresh()
-  }
-
-  override def isRoot(user: String): Boolean = {
-    domain.roots.contains(user)
   }
 
   override def refresh(): Unit = {

@@ -29,17 +29,11 @@ trait Authorizer extends Refreshable {
 
   def isPermitted(context: SecurityContext, request: Request): Boolean
 
-  def isRoot(user: String): Boolean
-
 }
 
 object PublicAuthorizer extends Authorizer {
   def isPermitted(context: SecurityContext, request: Request): Boolean = {
     true
-  }
-
-  def isRoot(user: String): Boolean = {
-    false
   }
 
   override def refresh(): Unit = {}

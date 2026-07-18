@@ -19,7 +19,7 @@ package org.beangle.security.context
 
 import org.beangle.commons.lang.ScopedContext
 import org.beangle.commons.security.Request
-import org.beangle.security.authc.Account
+import org.beangle.security.authc.Profile
 import org.beangle.security.session.Session
 
 object SecurityContext {
@@ -40,7 +40,7 @@ object SecurityContext {
   }
 }
 
-class SecurityContext(val session: Option[Session], val request: Request, val runAs: Option[String]) {
+class SecurityContext(val session: Option[Session], val request: Request, val profile: Option[Profile], val runAs: Option[String]) {
 
   def isValid: Boolean = {
     session.isDefined
