@@ -1,33 +1,33 @@
 import org.beangle.parent.Dependencies.*
 import org.beangle.parent.Settings.*
 
-ThisBuild / organization := "org.beangle.security"
-ThisBuild / version := "4.5.1-SNAPSHOT"
+organization := "org.beangle.security"
+version := "4.5.1-SNAPSHOT"
 
-ThisBuild / scmInfo := Some(
+scmInfo := Some(
   ScmInfo(
-    url("https://github.com/beangle/security"),
+    uri("https://github.com/beangle/security"),
     "scm:git@github.com:beangle/security.git"
   )
 )
 
-ThisBuild / developers := List(
+developers := List(
   Developer(
     id = "chaostone",
     name = "Tihua Duan",
     email = "duantihua@gmail.com",
-    url = url("http://github.com/duantihua")
+    url = uri("http://github.com/duantihua")
   )
 )
 
-ThisBuild / description := "The Beangle Data Library"
-ThisBuild / homepage := Some(url("https://beangle.github.io/security/index.html"))
+description := "The Beangle Data Library"
+homepage := Some(uri("https://beangle.github.io/security/index.html"))
 
-val beangle_commons = "org.beangle.commons" % "beangle-commons" % "6.2.1"
-val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.1.9"
-val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.20"
-val beangle_web = "org.beangle.web" % "beangle-web" % "0.7.8"
-val beangle_serializer = "org.beangle.serializer" % "beangle-serializer" % "0.1.27"
+val beangle_commons = "org.beangle.commons" % "beangle-commons" % "6.3.0-SNAPSHOT"
+val beangle_jdbc = "org.beangle.jdbc" % "beangle-jdbc" % "1.1.13-SNAPSHOT"
+val beangle_cache = "org.beangle.cache" % "beangle-cache" % "0.1.21-SNAPSHOT"
+val beangle_web = "org.beangle.web" % "beangle-web" % "0.7.9-SNAPSHOT"
+val beangle_serializer = "org.beangle.serializer" % "beangle-serializer" % "0.1.28-SNAPSHOT"
 
 lazy val root = (project in file("."))
   .settings(

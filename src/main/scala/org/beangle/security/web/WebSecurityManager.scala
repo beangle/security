@@ -24,7 +24,6 @@ import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.{Session, SessionProfile, SessionProfileProvider, SessionRegistry}
 import org.beangle.security.web.authc.WebClient
 import org.beangle.security.web.session.SessionIdPolicy
-import org.beangle.web.servlet.security.RequestConvertor
 
 class WebSecurityManager extends SecurityManager {
 
@@ -32,7 +31,6 @@ class WebSecurityManager extends SecurityManager {
   var authorizer: Authorizer = _
   var registry: SessionRegistry = _
   var sessionIdPolicy: SessionIdPolicy = _
-  var requestConvertor: RequestConvertor = _
   var sessionProfileProvider: SessionProfileProvider = _
 
   override def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session = {

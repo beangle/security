@@ -17,19 +17,16 @@
 
 package org.beangle.security.realm.cas
 
-import org.beangle.commons.io.Files
+import org.beangle.commons.io.IOs
 import org.beangle.commons.lang.ClassLoaders
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
-
-import java.io.File
 
 class DefaultTicketValidatorTest extends AnyFunSpec, Matchers {
   val validator = new DefaultTicketValidator
   describe("DefaultTicketValidator") {
     it("should parse sso success") {
-      val file = new File(ClassLoaders.getResource("auth-success.xml").get.getFile)
-      val response = Files.readString(file)
+      val response = IOs.readString(ClassLoaders.getResourceAsStream("auth-success.xml").get)
       val rs = DefaultTicketValidator.parse(response)
       assert(null != rs)
       assert(rs.user.contains("admin"))
@@ -37,8 +34,7 @@ class DefaultTicketValidatorTest extends AnyFunSpec, Matchers {
     }
 
     it("should parse cas success") {
-      val file = new File(ClassLoaders.getResource("auth-success2.xml").get.getFile)
-      val response = Files.readString(file)
+      val response = IOs.readString(ClassLoaders.getResourceAsStream("auth-success2.xml").get)
       val rs = DefaultTicketValidator.parse(response)
       assert(null != rs)
       assert(rs.user.contains("admin"))
@@ -46,8 +42,7 @@ class DefaultTicketValidatorTest extends AnyFunSpec, Matchers {
     }
 
     it("should catch error code when failure") {
-      val file = new File(ClassLoaders.getResource("auth-failure.xml").get.getFile)
-      val response = Files.readString(file)
+      val response = IOs.readString(ClassLoaders.getResourceAsStream("auth-failure.xml").get)
       val rs = DefaultTicketValidator.parse(response)
       assert(!rs.validated)
       assert(rs.code == "INVALID_TICKET")
