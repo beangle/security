@@ -1,0 +1,2 @@
+# beangle-security 库 AOT 注册器（org.beangle.security.*，随 security jar 发布）
+org.beangle.security.aot.SecurityAotHints
