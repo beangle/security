@@ -40,7 +40,7 @@ object SecurityContext {
   }
 }
 
-class SecurityContext(val session: Option[Session], val request: Request, val profile: Option[Profile], val runAs: Option[String]) {
+final class SecurityContext(val session: Option[Session], val request: Request, val profile: Option[Profile], val runAs: Option[String]) {
 
   def isValid: Boolean = {
     session.isDefined
