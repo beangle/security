@@ -49,4 +49,8 @@ class SecurityContext(val session: Option[Session], val request: Request, val pr
   def isRoot: Boolean = {
     session.nonEmpty && session.get.principal.isRoot && runAs.isEmpty
   }
+
+  def loginAsRoot: Boolean = {
+    session.nonEmpty && session.get.principal.isRoot
+  }
 }
