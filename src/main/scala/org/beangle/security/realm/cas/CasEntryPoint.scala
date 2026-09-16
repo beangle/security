@@ -29,9 +29,40 @@ import org.beangle.web.servlet.util.{CookieUtils, RequestUtils}
 import java.net.URLEncoder
 import java.util as ju
 
-class CasEntryPoint(val config: CasConfig) extends ContentNegotiationEntryPoint {
+object CasEntryPoint {
 
-  import CasConfig.*
+  /** 构造本站 service url。剔除 cas 协议保留参数(ticket、renew 等)，保证登录时注册的 service
+   *  与回跳校验时提交的 service 完全一致。
+   */
+  def serviceUrl(req: HttpServletRequest, reservedNames: Set[String] = CasConfig.ReservedNames): String = {
+    val buffer = new StringBuilder()
+    val serverName = CasConfig.getLocalServer(req)
+    buffer.append(serverName).append(req.getRequestURI)
+    val queryString = req.getQueryString
+    if (Strings.isNotBlank(queryString)) {
+      val parts = Strings.split(queryString, '&')
+      //这里的排序，保证请求和验证的使用的service是一样的
+      ju.Arrays.sort(parts.asInstanceOf[Array[AnyRef]])
+      val paramBuf = new StringBuilder
+      parts foreach { part =>
+        val equIdx = part.indexOf('=')
+        if (equIdx > 0) {
+          val key = part.substring(0, equIdx)
+          if (!reservedNames.contains(key)) {
+            paramBuf.append("&").append(key).append(part.substring(equIdx))
+          }
+        }
+      }
+      if (paramBuf.nonEmpty) {
+        paramBuf.setCharAt(0, '?')
+        buffer.append(paramBuf)
+      }
+    }
+    buffer.toString
+  }
+}
+
+class CasEntryPoint(val config: CasConfig) extends ContentNegotiationEntryPoint {
 
   private val localLoginStrategy = new DefaultLocalLoginStrategy(config)
 
@@ -123,34 +154,11 @@ class CasEntryPoint(val config: CasConfig) extends ContentNegotiationEntryPoint 
   }
 
   def serviceUrl(req: HttpServletRequest): String = {
-    val buffer = new StringBuilder()
-    val serverName = getLocalServer(req)
     val reservedKeys = sessionIdReader match {
       case None => CasConfig.ReservedNames
       case Some(r) => CasConfig.ReservedNames + r.idName
     }
-    buffer.append(serverName).append(req.getRequestURI)
-    val queryString = req.getQueryString
-    if (Strings.isNotBlank(queryString)) {
-      val parts = Strings.split(queryString, '&')
-      //这里的排序，保证请求和验证的使用的service是一样的
-      ju.Arrays.sort(parts.asInstanceOf[Array[AnyRef]])
-      val paramBuf = new StringBuilder
-      parts foreach { part =>
-        val equIdx = part.indexOf('=')
-        if (equIdx > 0) {
-          val key = part.substring(0, equIdx)
-          if (!reservedKeys.contains(key)) {
-            paramBuf.append("&").append(key).append(part.substring(equIdx))
-          }
-        }
-      }
-      if (paramBuf.nonEmpty) {
-        paramBuf.setCharAt(0, '?')
-        buffer.append(paramBuf)
-      }
-    }
-    buffer.toString
+    CasEntryPoint.serviceUrl(req, reservedKeys)
   }
 
   override def isLocalLogin(req: HttpServletRequest, ae: AuthenticationException): Boolean = {
