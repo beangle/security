@@ -88,25 +88,19 @@ class CasEntryPoint(val config: CasConfig) extends ContentNegotiationEntryPoint 
 
   def localLoginUrl(req: HttpServletRequest): String = {
     val localLogin = config.localLoginUri.get
-    val builder = new UrlBuilder(req.getContextPath)
-    builder.serverName = req.getServerName
-    builder.port = RequestUtils.getServerPort(req)
-    builder.scheme = if (RequestUtils.isHttps(req)) "https" else "http"
-    builder.servletPath = localLogin
-
     if (req.getRequestURI.endsWith(localLogin)) {
-      builder.queryString = req.getQueryString
+      //当前请求就是本地登录页,它会被注册为cas的service,
+      //必须与CasPreauthFilter校验时使用的serviceUrl(req)完全一致,故直接复用serviceUrl
+      serviceUrl(req)
     } else {
-      val queryString = new StringBuilder()
-      if (Strings.isNotBlank(queryString)) {
-        queryString ++= req.getQueryString
-        queryString ++= "&"
-      }
-      queryString ++= "service="
-      queryString ++= URLEncoder.encode(serviceUrl(req), "UTF-8")
-      builder.queryString = queryString.mkString
+      val builder = new UrlBuilder(req.getContextPath)
+      builder.serverName = req.getServerName
+      builder.port = RequestUtils.getServerPort(req)
+      builder.scheme = if (RequestUtils.isHttps(req)) "https" else "http"
+      builder.servletPath = localLogin
+      builder.queryString = CasConfig.ServiceName + "=" + URLEncoder.encode(serviceUrl(req), "UTF-8")
+      builder.buildUrl()
     }
-    builder.buildUrl()
   }
 
   /**
@@ -132,8 +126,8 @@ class CasEntryPoint(val config: CasConfig) extends ContentNegotiationEntryPoint 
     val buffer = new StringBuilder()
     val serverName = getLocalServer(req)
     val reservedKeys = sessionIdReader match {
-      case None => Set(CasConfig.TicketName)
-      case Some(r) => Set(r.idName, CasConfig.TicketName)
+      case None => CasConfig.ReservedNames
+      case Some(r) => CasConfig.ReservedNames + r.idName
     }
     buffer.append(serverName).append(req.getRequestURI)
     val queryString = req.getQueryString

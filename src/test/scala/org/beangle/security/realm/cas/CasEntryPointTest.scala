@@ -95,6 +95,54 @@ class CasEntryPointTest extends AnyFunSpec, Matchers {
       val urlEncodedService2 = entryPoint.serviceUrl(request)
       SecurityLogger.debug(urlEncodedService2)
     }
+
+    it("keep service stable between cas login and ticket validate") {
+      val config = new CasConfig("https://cas.shcmusic.edu.cn/cas")
+      config.localLoginUri = Some("/cas/login")
+      val entryPoint = new CasEntryPoint(config)
+
+      // 直接访问本站登录页,/cas/login?openid=x&username=y&service=z
+      checkRoundTrip(
+        entryPoint,
+        "/cas/login",
+        "openid=ofmK86UD1tak5il52old_6Anj_FQ&username=10823&renew=true" +
+          "&service=https%3a%2f%2fyjs.shcmusic.edu.cn%2fedu%2fteaching%2fmini-coach")
+      // 访问业务页面,entry point会跳转到 /cas/login?service=业务页
+      checkRoundTrip(entryPoint, "/edu/teaching/mini-coach", "openid=ofmK86UD1tak5il52old_6Anj_FQ&username=10823")
+
+      // cas协议参数不参与service比对
+      val service = entryPoint.serviceUrl(mockRequest("/cas/login", "renew=true&ticket=ST-95841"))
+      assert(service == "https://yjs.shcmusic.edu.cn/cas/login")
+    }
+
+    def checkRoundTrip(entryPoint: CasEntryPoint, uri: String, queryString: String): Unit = {
+      // 注册到cas的service,即cas登录成功后回跳的地址
+      val registeredService = entryPoint.localLoginUrl(mockRequest(uri, queryString))
+
+      // 回跳时url上带ticket,过滤器用serviceUrl(req)构造出校验用的service
+      val pathStart = registeredService.indexOf('/', registeredService.indexOf("://") + 3)
+      val queryStart = registeredService.indexOf('?', pathStart)
+      val backRequest =
+        if (queryStart < 0) mockRequest(registeredService.substring(pathStart), "ticket=ST-95841")
+        else mockRequest(registeredService.substring(pathStart, queryStart),
+          registeredService.substring(queryStart + 1) + "&ticket=ST-95841")
+      val suppliedService = entryPoint.serviceUrl(backRequest)
+
+      SecurityLogger.debug("registered:" + registeredService)
+      SecurityLogger.debug("supplied:" + suppliedService)
+      assert(registeredService == suppliedService)
+    }
+
+    def mockRequest(uri: String, queryString: String): HttpServletRequest = {
+      val request = mock(classOf[HttpServletRequest])
+      when(request.getServerName).thenReturn("yjs.shcmusic.edu.cn")
+      when(request.getRequestURI).thenReturn(uri)
+      when(request.getContextPath).thenReturn("")
+      when(request.getServerPort).thenReturn(443)
+      when(request.getScheme).thenReturn("https")
+      when(request.getQueryString).thenReturn(queryString)
+      request
+    }
   }
 
   private def mockResponse(): HttpServletResponse = {

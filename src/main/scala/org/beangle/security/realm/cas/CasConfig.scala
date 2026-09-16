@@ -46,6 +46,11 @@ object CasConfig {
   val TicketName = "ticket"
 
   val ServiceName = "service"
+
+  val RenewName = "renew"
+
+  /** cas协议中由cas服务器附加或消费的参数,不参与service比对 */
+  val ReservedNames = Set(TicketName, RenewName)
 }
 
 class CasConfig(server: String) extends Initializing {
