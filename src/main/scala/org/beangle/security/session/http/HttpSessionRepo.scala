@@ -24,14 +24,15 @@ import org.beangle.commons.lang.Strings.replace
 import org.beangle.commons.net.http.HttpUtils
 import org.beangle.security.session.cache.CacheSessionRepo
 import org.beangle.security.session.{DefaultSession, Session}
+import scala.compiletime.uninitialized
 
 class HttpSessionRepo(cacheManager: CacheManager, serializer: BinarySerializer)
   extends CacheSessionRepo(cacheManager) {
 
-  var geturl: String = _
-  var accessUrl: String = _
-  var findUrl: String = _
-  var expireUrl: String = _
+  var geturl: String = uninitialized
+  var accessUrl: String = uninitialized
+  var findUrl: String = uninitialized
+  var expireUrl: String = uninitialized
 
   protected def getInternal(sid: String): Option[Session] = {
     val res = HttpUtils.get(replace(geturl, "{id}", sid))

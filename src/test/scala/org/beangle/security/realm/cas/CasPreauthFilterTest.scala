@@ -20,7 +20,6 @@ package org.beangle.security.realm.cas
 import jakarta.servlet.http.{HttpServletRequest, HttpSession}
 import org.beangle.security.authc.{Account, AuthenticationToken, Authenticator, BadCredentialException}
 import org.beangle.security.web.WebSecurityManager
-import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
@@ -46,11 +45,11 @@ class CasPreauthFilterTest extends AnyFunSpec, Matchers {
 
   private def mockRequest(): HttpServletRequest = {
     val request = mock(classOf[HttpServletRequest])
-    when(request.getParameter("ticket")) thenReturn ("ST-0-ER94xMJmn6pha35CQRoZ")
-    when(request.getMethod) thenReturn ("GET")
+    when(request.getParameter("ticket")) `thenReturn` ("ST-0-ER94xMJmn6pha35CQRoZ")
+    when(request.getMethod) `thenReturn` ("GET")
     val session = mock(classOf[HttpSession])
-    when(session.getId) thenReturn ("1")
-    when(request.getSession(true)) thenReturn (session)
+    when(session.getId) `thenReturn` ("1")
+    when(request.getSession(true)) `thenReturn` (session)
     request
   }
 }

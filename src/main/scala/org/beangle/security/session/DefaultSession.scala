@@ -22,6 +22,7 @@ import java.security.Principal
 import java.time.Instant
 
 import org.beangle.security.authc.DefaultAccount
+import scala.compiletime.uninitialized
 
 object DefaultSessionBuilder extends SessionBuilder {
   def build(id: String, principal: Principal, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int): Session = {
@@ -30,12 +31,12 @@ object DefaultSessionBuilder extends SessionBuilder {
 }
 
 class DefaultSession extends Session {
-  var id: String = _
-  var principal: DefaultAccount = _
-  var loginAt: Instant = _
-  var lastAccessAt: Instant = _
-  var agent: Session.Agent = _
-  var ttiSeconds: Int = _
+  var id: String = uninitialized
+  var principal: DefaultAccount = uninitialized
+  var loginAt: Instant = uninitialized
+  var lastAccessAt: Instant = uninitialized
+  var agent: Session.Agent = uninitialized
+  var ttiSeconds: Int = uninitialized
 
   def this(id: String, principal: DefaultAccount, loginAt: Instant, agent: Session.Agent, ttiSeconds: Int) = {
     this()

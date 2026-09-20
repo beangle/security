@@ -26,12 +26,13 @@ import org.beangle.security.authz.AccessDeniedException
 import org.beangle.security.context.SecurityContext
 import org.beangle.security.web.EntryPoint
 import org.beangle.web.servlet.intercept.Interceptor
+import scala.compiletime.uninitialized
 
 class SecurityInterceptor extends Interceptor, Initializing {
-  var securityContextBuilder: SecurityContextBuilder = _
-  var entryPoint: EntryPoint = _
-  var accessDeniedHandler: AccessDeniedHandler = _
-  var filters: List[SecurityFilter] = _
+  var securityContextBuilder: SecurityContextBuilder = uninitialized
+  var entryPoint: EntryPoint = uninitialized
+  var accessDeniedHandler: AccessDeniedHandler = uninitialized
+  var filters: List[SecurityFilter] = uninitialized
   var hasFilter = false
 
   override def init(): Unit = {
@@ -71,7 +72,7 @@ class SecurityInterceptor extends Interceptor, Initializing {
   }
 }
 
-class ResultChain(val filterIter: Iterator[_ <: SecurityFilter]) extends FilterChain {
+class ResultChain(val filterIter: Iterator[? <: SecurityFilter]) extends FilterChain {
   override def doFilter(request: ServletRequest, response: ServletResponse): Unit = {
     if (filterIter.hasNext) filterIter.next().doFilter(request, response, this)
   }

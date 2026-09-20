@@ -28,6 +28,7 @@ import org.beangle.web.servlet.security.RequestConvertor
 import org.beangle.web.servlet.util.CookieUtils
 
 import java.time.Instant
+import scala.compiletime.uninitialized
 
 trait SecurityContextBuilder {
 
@@ -38,10 +39,10 @@ trait SecurityContextBuilder {
 }
 
 class DefaultSecurityContextBuilder extends SecurityContextBuilder {
-  var requestConvertor: RequestConvertor = _
+  var requestConvertor: RequestConvertor = uninitialized
 
-  var repo: SessionRepo = _
-  var sessionIdReader: SessionIdReader = _
+  var repo: SessionRepo = uninitialized
+  var sessionIdReader: SessionIdReader = uninitialized
 
   def find(request: HttpServletRequest, response: HttpServletResponse): SecurityContext = {
     val session =

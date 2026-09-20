@@ -23,13 +23,14 @@ import org.beangle.commons.net.http.HttpUtils
 import org.beangle.security.authc.PreauthToken
 import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.authc.AbstractPreauthFilter
+import scala.compiletime.uninitialized
 
 /** 使用openid进行远程查询
  *
  * @param securityManager
  */
 class OpenidPreauthFilter(securityManager: WebSecurityManager) extends AbstractPreauthFilter(securityManager) {
-  var serviceUrl: String = _
+  var serviceUrl: String = uninitialized
 
   override protected def getCredential(req: HttpServletRequest): Option[Any] = {
     val p = req.getParameter("openid")

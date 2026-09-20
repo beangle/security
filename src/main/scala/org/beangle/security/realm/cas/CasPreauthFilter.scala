@@ -21,13 +21,14 @@ import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.security.authc.{BadPreauthTokenException, PreauthToken}
 import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.authc.AbstractPreauthFilter
+import scala.compiletime.uninitialized
 
 /** Processes a CAS service ticket.
  */
 class CasPreauthFilter(securityManager: WebSecurityManager, config: CasConfig, ticketValidator: TicketValidator)
   extends AbstractPreauthFilter(securityManager) {
 
-  var casEntryPoint: CasEntryPoint = _
+  var casEntryPoint: CasEntryPoint = uninitialized
 
   protected override def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {
     val url = casEntryPoint.serviceUrl(req)

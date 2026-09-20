@@ -19,7 +19,6 @@ package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.security.SecurityLogger
-import org.beangle.security.web.session.ParamSessionIdPolicy
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
 import org.mockito.invocation.InvocationOnMock

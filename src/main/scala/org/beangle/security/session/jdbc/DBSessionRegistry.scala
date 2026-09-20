@@ -31,6 +31,7 @@ import java.io.InputStream
 import java.sql.{Timestamp, Types}
 import java.time.Instant
 import javax.sql.DataSource
+import scala.compiletime.uninitialized
 
 /** 基于数据库的session注册表
  * 使用数据库的$sessionTable表
@@ -42,7 +43,7 @@ class DBSessionRegistry(domainProvider: DomainProvider, dataSource: DataSource,
   private val insertColumns = "id,principal,description,ip,agent,os,login_at,last_access_at,tti_seconds,category_id,domain_id,data"
   var sessionTable = "session_infoes"
 
-  private var domainId: Int = _
+  private var domainId: Int = uninitialized
 
   private val executor = new JdbcExecutor(dataSource)
 

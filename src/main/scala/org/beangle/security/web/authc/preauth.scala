@@ -27,10 +27,11 @@ import org.beangle.security.web.WebSecurityManager
 import org.beangle.security.web.access.{SecurityContextBuilder, SecurityFilter}
 import org.beangle.security.{Securities, SecurityLogger}
 import org.beangle.web.servlet.filter.GenericHttpFilter
+import scala.compiletime.uninitialized
 
 abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) extends GenericHttpFilter, SecurityFilter {
 
-  var securityContextBuilder: SecurityContextBuilder = _
+  var securityContextBuilder: SecurityContextBuilder = uninitialized
 
   /**
    * Try to authenticate a pre-authenticated user if the
@@ -105,7 +106,7 @@ abstract class AbstractPreauthFilter(val securityManager: WebSecurityManager) ex
 }
 
 class UsernamePreauthFilter(securityManager: WebSecurityManager) extends AbstractPreauthFilter(securityManager) {
-  var usernameSource: UsernameSource = _
+  var usernameSource: UsernameSource = uninitialized
 
   protected override def resolveToken(req: HttpServletRequest, res: HttpServletResponse, credential: Any): Option[PreauthToken] = {
     usernameSource.resolveUser(req, credential) match {

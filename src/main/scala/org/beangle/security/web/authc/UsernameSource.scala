@@ -20,6 +20,7 @@ package org.beangle.security.web.authc
 import jakarta.servlet.http.HttpServletRequest
 import org.beangle.commons.lang.Strings
 import org.beangle.security.SecurityLogger
+import scala.compiletime.uninitialized
 
 /**
  * Source of the username supplied with pre-authenticated authentication
@@ -40,7 +41,7 @@ trait UsernameSource {
  */
 abstract class AbstractCookieUsernameSource extends UsernameSource {
 
-  var cookieName: String = _
+  var cookieName: String = uninitialized
 
   override def getCredential(request: HttpServletRequest): Option[Any] = {
     val cookies = request.getCookies

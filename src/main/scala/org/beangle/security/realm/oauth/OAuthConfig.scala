@@ -18,6 +18,7 @@
 package org.beangle.security.realm.oauth
 
 import org.beangle.commons.lang.Strings
+import scala.compiletime.uninitialized
 
 class OAuthConfig(val server: String,val clientId: String) {
 
@@ -27,7 +28,7 @@ class OAuthConfig(val server: String,val clientId: String) {
 
   var tokenUri = "/oauth/token"
 
-  var clientSecret: String = _
+  var clientSecret: String = uninitialized
 
   var scope: Option[String] = None
 

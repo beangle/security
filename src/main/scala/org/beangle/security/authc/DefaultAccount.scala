@@ -22,6 +22,7 @@ import org.beangle.commons.lang.Objects
 
 import java.io.{ObjectInput, ObjectOutput}
 import java.util
+import scala.compiletime.uninitialized
 
 object DefaultAccount {
 
@@ -39,25 +40,25 @@ import org.beangle.security.authc.DefaultAccount.StatusMask.*
 
 final class DefaultAccount extends Account {
 
-  var name: String = _
+  var name: String = uninitialized
 
-  var description: String = _
+  var description: String = uninitialized
 
   var remoteToken: Option[String] = None
 
-  var status: Int = _
+  var status: Int = uninitialized
 
-  var authorities: Array[String] = _
+  var authorities: Array[String] = uninitialized
 
-  var permissions: Array[String] = _
+  var permissions: Array[String] = uninitialized
 
-  var profiles: Array[Profile] = _
+  var profiles: Array[Profile] = uninitialized
 
   var details: Map[String, String] = Map.empty
 
-  var categoryId: Int = _
+  var categoryId: Int = uninitialized
 
-  var isRoot: Boolean = _
+  var isRoot: Boolean = uninitialized
 
   def this(name: String, description: String) = {
     this()

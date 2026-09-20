@@ -24,14 +24,15 @@ import org.beangle.security.mgt.SecurityManager
 import org.beangle.security.session.{Session, SessionProfile, SessionProfileProvider, SessionRegistry}
 import org.beangle.security.web.authc.WebClient
 import org.beangle.security.web.session.SessionIdPolicy
+import scala.compiletime.uninitialized
 
 class WebSecurityManager extends SecurityManager {
 
-  var authenticator: Authenticator = _
-  var authorizer: Authorizer = _
-  var registry: SessionRegistry = _
-  var sessionIdPolicy: SessionIdPolicy = _
-  var sessionProfileProvider: SessionProfileProvider = _
+  var authenticator: Authenticator = uninitialized
+  var authorizer: Authorizer = uninitialized
+  var registry: SessionRegistry = uninitialized
+  var sessionIdPolicy: SessionIdPolicy = uninitialized
+  var sessionProfileProvider: SessionProfileProvider = uninitialized
 
   override def login(sessionId: String, token: AuthenticationToken, client: Session.Agent): Session = {
     val account = authc(token)

@@ -26,6 +26,7 @@ import org.xml.sax.{Attributes, InputSource, SAXParseException, XMLReader}
 import java.io.StringReader
 import java.net.URLEncoder
 import javax.xml.parsers.SAXParserFactory
+import scala.compiletime.uninitialized
 
 trait TicketValidator {
 
@@ -58,12 +59,12 @@ object DefaultTicketValidator {
   private final class ServiceXmlHandler extends DefaultHandler {
     private var currentText = new java.lang.StringBuffer()
 
-    private var validCasResponse: Boolean = _
+    private var validCasResponse: Boolean = uninitialized
     private var authenticationSuccess = false
     private val attributes = new collection.mutable.HashMap[String, String]
-    private var errorCode: String = _
-    private var errorMessage: String = _
-    private var user: String = _
+    private var errorCode: String = uninitialized
+    private var errorMessage: String = uninitialized
+    private var user: String = uninitialized
 
     private def localName(qualifiedName: String): String = {
       Strings.substringAfter(qualifiedName, ":")
@@ -125,7 +126,7 @@ object DefaultTicketValidator {
  */
 class DefaultTicketValidator extends TicketValidator {
 
-  var config: CasConfig = _
+  var config: CasConfig = uninitialized
 
   override def validate(ticket: String, service: String): CasResponse = {
     val validationUrl = constructValidationUrl(ticket, service)
