@@ -19,6 +19,7 @@ package org.beangle.security.realm.cas
 
 import jakarta.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.beangle.security.SecurityLogger
+import org.beangle.security.web.session.CookieSessionIdReader
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
 import org.mockito.invocation.InvocationOnMock
@@ -40,7 +41,7 @@ class CasEntryPointTest extends AnyFunSpec, Matchers {
     it("commence redirect") {
       val config = new CasConfig("https://cas")
       val ep = new CasEntryPoint(config)
-      ep.sessionIdReader = Some(new ParamSessionIdPolicy)
+      ep.sessionIdReader = Some(new CookieSessionIdReader("JSESSIONID"))
       val request = mock(classOf[HttpServletRequest])
       when(request.getRequestURI).thenReturn("/bigWebApp/some_path")
       when(request.getServerName).thenReturn("mycompany.com")
@@ -60,7 +61,7 @@ class CasEntryPointTest extends AnyFunSpec, Matchers {
       config.gateway = true
       config.localLoginUri = Some("/mylogin.jsp")
       val ep = new CasEntryPoint(config)
-      ep.sessionIdReader = Some(new ParamSessionIdPolicy)
+      ep.sessionIdReader = Some(new CookieSessionIdReader("JSESSIONID"))
       val request = mock(classOf[HttpServletRequest])
       when(request.getContextPath).thenReturn("/bigWebApp")
       when(request.getRequestURI).thenReturn("/bigWebApp/some_path")

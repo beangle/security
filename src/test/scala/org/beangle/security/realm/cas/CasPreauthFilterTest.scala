@@ -33,7 +33,6 @@ class CasPreauthFilterTest extends AnyFunSpec, Matchers {
   }
   val sm = new WebSecurityManager()
   sm.authenticator = authenticator
-  sm.sessionIdPolicy = new ParamSessionIdPolicy
 
   val filter = new CasPreauthFilter(sm, new CasConfig("http://localhost/cas"), null)
 
