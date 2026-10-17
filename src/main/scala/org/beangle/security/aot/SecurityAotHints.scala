@@ -57,6 +57,8 @@ class SecurityAotHints extends AotHintRegistrar {
 
     // session
     hints.registerType(
+      classOf[DefaultSession],
+      classOf[Session.Agent],
       classOf[SessionProfileProvider],
       classOf[SessionRegistry],
       classOf[SessionRepo],
